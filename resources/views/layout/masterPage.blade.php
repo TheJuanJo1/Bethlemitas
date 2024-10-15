@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <title>Biblioteca-Bethlemitas</title>
+    <title>@yield('title')</title>
 </head>
 <body class="bg-[#D5DBDB]">
    <div>
@@ -24,8 +24,8 @@
                   </button>
 
                   <a href="#" class="text-xl font-bold flex items-center lg:ml-2.5">
-                     <img src="{{asset('img/R.png')}}" class="h-6 mr-2" alt="Windster Logo">
-                     <span class="self-center whitespace-nowrap"> <em>Bethlemitas - Biblioteca</em></span>
+                     <img src="{{asset('img/R.png')}}" class="w-16 h-16 mr-2" alt="Windster Logo">
+                     <span class="self-center whitespace-nowrap"> <em>Bethlemitas - PiarManager</em></span>
                   </a>
                
                   <div class="flex items-center" style="display:none">
@@ -40,13 +40,10 @@
                </div>
                <div class="flex items-center">
                   <div class="flex items-center space-x-3 md:order-2 md:space-x-0 rtl:space-x-reverse">
+                     <span class="self-center mr-4 text-2xl whitespace-nowrap"><em>{{Auth::user()->name}} {{Auth::user()->last_name}}</em></span>
                      <button type="button" class="flex text-sm rounded-full md:me-0 focus:ring-4 focus:ring-gray-300  id="user-menu-button" aria-expanded="false" data-dropdown-toggle="user-dropdown" data-dropdown-placement="bottom">
                         <span class="sr-only">Open user menu</span>
-                        @if (auth()->user() ? auth()->user()->image : '')
-                        <img class="w-12 rounded-full h-11" src="{{ asset(auth()->user() ? auth()->user()->image : '') }}" alt="user photo">
-                        @else
-                        <img class="w-8 h-8 rounded-full" src="https://placekitten.com/200/200" alt="user photo">
-                        @endif
+                        <img class="w-10 h-10 rounded-full" src="{{ asset('img/icono-perfil.jpg')}}" alt="user photo">
                      </button>
                      <!-- Dropdown menu -->
                      <div class="z-50 hidden my-4 text-base list-none bg-[#D5DBDB] divide-y divide-gray-100 rounded-lg shadow dark:divide-gray-600" id="user-dropdown">
@@ -66,7 +63,7 @@
                            </li>
 
                            <li class="flex items-center hover:bg-[#95A5A6]">
-                              <a href="#" class="flex items-center px-4 py-2 text-sm text-black-800">
+                              <a href="{{ route('logout')}}" class="flex items-center px-4 py-2 text-sm text-black-800">
                                  <svg class="w-6 h-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                           d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
@@ -114,7 +111,102 @@
                                  <span class="mx-3">Página Principal</span>
                               </a>
 
-                              <div x-data="{ isOpen: false }">
+                              @if (Auth::user()->hasRole('coordinador'))
+                                 <!-- Usuarios -->
+                                 <div x-data="{ isOpen: false}">
+                                    <a @click="isOpen = !isOpen" class="flex items-center px-5 py-2 mt-4 hover:bg-[#95A5A6] hover:text-gray-900 hover:rounded-lg font-medium cursor-pointer">
+                                       <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                          <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4z"></path>
+                                          <path d="M6 18c0-2.21 3.58-4 6-4s6 1.79 6 4"></path>
+                                      </svg>
+                                      <span class="mx-3">Usuarios</span>
+                                      <svg class="w-6 h-6 ml-auto" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                       <polygon points="12 16, 6 8, 18 8" />
+                                   </svg>
+                                    </a>
+
+                                    <div x-show="isOpen" class="ml-10">
+                                       <a href="{{ route('create.user') }}"
+                                       class="flex items-center px-3  mt-2 hover:bg-[#95A5A6] hover:text-gray-900 hover:rounded-lg font-medium">
+                                             <!-- Icono si es necesario -->
+                                             <span class="mx-3">• Crear usuario</span>
+                                       </a>
+
+                                       <a href="#"
+                                       class="flex items-center px-3  mt-2 hover:bg-[#95A5A6] hover:text-gray-900 hover:rounded-lg font-medium">
+                                          <!-- Icono si es necesario -->
+                                          <span class="mx-3">• Listar usuarios</span>
+                                       </a>
+                                    </div>
+                                 </div>
+
+                                 <!-- Grados -->
+                                 <div x-data="{ isOpen: false}">
+                                    <a @click="isOpen = !isOpen" class="flex items-center px-5 py-2 mt-4 hover:bg-[#95A5A6] hover:text-gray-900 hover:rounded-lg font-medium cursor-pointer">
+                                       <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                          <line x1="3" y1="16" x2="21" y2="16"></line>
+                                      </svg>
+                                      <span class="mx-3">Grados</span>
+                                      <svg class="w-6 h-6 ml-auto" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                       <polygon points="12 16, 6 8, 18 8" />
+                                   </svg>
+                                    </a>
+
+                                    <div x-show="isOpen" class="ml-10">
+                                       <a href="#"
+                                       class="flex items-center px-3  mt-2 hover:bg-[#95A5A6] hover:text-gray-900 hover:rounded-lg font-medium">
+                                             <!-- Icono si es necesario -->
+                                             <span class="mx-3">• Crear grado</span>
+                                       </a>
+
+                                       <a href="#"
+                                       class="flex items-center px-3  mt-2 hover:bg-[#95A5A6] hover:text-gray-900 hover:rounded-lg font-medium">
+                                          <!-- Icono si es necesario -->
+                                          <span class="mx-3">• Listar grados</span>
+                                       </a>
+                                    </div>
+                                 </div>
+
+                                 <!-- Grupos -->
+                                 <div x-data="{ isOpen: false}">
+                                    <a @click="isOpen = !isOpen" class="flex items-center px-5 py-2 mt-4 hover:bg-[#95A5A6] hover:text-gray-900 hover:rounded-lg font-medium cursor-pointer">
+                                       <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                          <!-- Persona central -->
+                                          <circle cx="12" cy="8" r="3"></circle>
+                                          <path d="M10 16c0-2 2-3 2-3s2 1 2 3"></path>
+                                      
+                                          <!-- Persona izquierda -->
+                                          <circle cx="6" cy="9" r="2"></circle>
+                                          <path d="M4.5 16c0-1.5 1.5-2.5 1.5-2.5s1.5 1 1.5 2.5"></path>
+                                      
+                                          <!-- Persona derecha -->
+                                          <circle cx="18" cy="9" r="2"></circle>
+                                          <path d="M16.5 16c0-1.5 1.5-2.5 1.5-2.5s1.5 1 1.5 2.5"></path>
+                                      </svg>
+                                      <span class="mx-3">Grupos</span>
+                                      <svg class="w-6 h-6 ml-auto" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                       <polygon points="12 16, 6 8, 18 8" />
+                                   </svg>
+                                    </a>
+
+                                    <div x-show="isOpen" class="ml-10">
+                                       <a href="#"
+                                       class="flex items-center px-3  mt-2 hover:bg-[#95A5A6] hover:text-gray-900 hover:rounded-lg font-medium">
+                                             <!-- Icono si es necesario -->
+                                             <span class="mx-3">• Crear grupo</span>
+                                       </a>
+
+                                       <a href="#"
+                                       class="flex items-center px-3  mt-2 hover:bg-[#95A5A6] hover:text-gray-900 hover:rounded-lg font-medium">
+                                          <!-- Icono si es necesario -->
+                                          <span class="mx-3">• Listar grupos</span>
+                                       </a>
+                                    </div>
+                                 </div>
+                              @endif
+                              
+                              
+                              {{-- <div x-data="{ isOpen: false }">
                                  <a @click="isOpen = !isOpen" class="flex items-center px-5 py-2 mt-4 hover:bg-[#95A5A6] hover:text-gray-900 hover:rounded-lg font-medium cursor-pointer" >
                                  <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                     <path d="M12 5v14m-7-7h14" />
@@ -143,34 +235,32 @@
                                  </div>
                               </div>
                      
-                           <a class="flex items-center px-5 py-2 mt-4 hover:bg-[#95A5A6] hover:text-gray-900 hover:rounded-lg font-medium" href="#">
-                           <svg class="w-6 h-6 "  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round">  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />  <polyline points="14 2 14 8 20 8" />  <line x1="12" y1="18" x2="12" y2="12" />  <line x1="9" y1="15" x2="15" y2="15" /></svg>
-                              <span class="mx-3">Crear Registro</span>
-                           </a>
+                              <a class="flex items-center px-5 py-2 mt-4 hover:bg-[#95A5A6] hover:text-gray-900 hover:rounded-lg font-medium" href="#">
+                              <svg class="w-6 h-6 "  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round">  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />  <polyline points="14 2 14 8 20 8" />  <line x1="12" y1="18" x2="12" y2="12" />  <line x1="9" y1="15" x2="15" y2="15" /></svg>
+                                 <span class="mx-3">Crear Registro</span>
+                              </a>
 
 
-                           <a class="flex items-center px-5 py-2 mt-4 hover:bg-[#95A5A6] hover:text-gray-900 hover:rounded-lg font-medium" href="#">
-                              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: rgba(0, 0, 0, 1); transform: ; msFilter:;">
-                                 <rect x="2" y="4" width="20" height="16" rx="2" ry="2"></rect>
-                                 <path d="M8 2 L8 6 M16 2 L16 6"></path>
-                                 <path d="M2 8 L22 8 M2 12 L22 12"></path>
-                                 <path d="M8 14 L8 18 M16 14 L16 18"></path>
-                              </svg>
-                              <span class="mx-3">Inventario</span>
-                           </a>
+                              <a class="flex items-center px-5 py-2 mt-4 hover:bg-[#95A5A6] hover:text-gray-900 hover:rounded-lg font-medium" href="#">
+                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: rgba(0, 0, 0, 1); transform: ; msFilter:;">
+                                    <rect x="2" y="4" width="20" height="16" rx="2" ry="2"></rect>
+                                    <path d="M8 2 L8 6 M16 2 L16 6"></path>
+                                    <path d="M2 8 L22 8 M2 12 L22 12"></path>
+                                    <path d="M8 14 L8 18 M16 14 L16 18"></path>
+                                 </svg>
+                                 <span class="mx-3">Inventario</span>
+                              </a>
 
 
-                           <a class="flex items-center px-5 py-2 mt-4 hover:bg-[#95A5A6] hover:text-gray-900 hover:rounded-lg font-medium" href="#">
-                              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" style="fill: rgba(0, 0, 0, 1);transform: ;msFilter:;"><path d="M6.012 18H21V4c0-1.103-.897-2-2-2H6c-1.206 0-3 .799-3 3v14c0 2.201 1.794 3 3 3h15v-2H6.012C5.55 19.988 5 19.806 5 19s.55-.988 1.012-1zM8 9h3V6h2v3h3v2h-3v3h-2v-3H8V9z"></path></svg>
-                              <span class="mx-3">Donaciones</span>
-                           </a>
+                              <a class="flex items-center px-5 py-2 mt-4 hover:bg-[#95A5A6] hover:text-gray-900 hover:rounded-lg font-medium" href="#">
+                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" style="fill: rgba(0, 0, 0, 1);transform: ;msFilter:;"><path d="M6.012 18H21V4c0-1.103-.897-2-2-2H6c-1.206 0-3 .799-3 3v14c0 2.201 1.794 3 3 3h15v-2H6.012C5.55 19.988 5 19.806 5 19s.55-.988 1.012-1zM8 9h3V6h2v3h3v2h-3v3h-2v-3H8V9z"></path></svg>
+                                 <span class="mx-3">Donaciones</span>
+                              </a>
 
-                           <a class="flex items-center px-5 py-2 mt-4 hover:bg-[#95A5A6] hover:text-gray-900 hover:rounded-lg font-medium" href="#">
-                              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" style="fill: rgba(0, 0, 0, 1);transform: ;msFilter:; "><path d="m21.484 11.125-9.022-5a1 1 0 0 0-.968-.001l-8.978 4.96a1 1 0 0 0-.003 1.749l9.022 5.04a.995.995 0 0 0 .973.001l8.978-5a1 1 0 0 0-.002-1.749z"></path><path d="M20.515 15.126 12 19.856l-8.515-4.73-.971 1.748 9 5a1 1 0 0 0 .971 0l9-5-.97-1.748zM16 4h6v2h-6z"></path></svg>
-                                 <span class="mx-3">Descartes</span>
-                           </a>
-                           
-          
+                              <a class="flex items-center px-5 py-2 mt-4 hover:bg-[#95A5A6] hover:text-gray-900 hover:rounded-lg font-medium" href="#">
+                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" style="fill: rgba(0, 0, 0, 1);transform: ;msFilter:; "><path d="m21.484 11.125-9.022-5a1 1 0 0 0-.968-.001l-8.978 4.96a1 1 0 0 0-.003 1.749l9.022 5.04a.995.995 0 0 0 .973.001l8.978-5a1 1 0 0 0-.002-1.749z"></path><path d="M20.515 15.126 12 19.856l-8.515-4.73-.971 1.748 9 5a1 1 0 0 0 .971 0l9-5-.97-1.748zM16 4h6v2h-6z"></path></svg>
+                                    <span class="mx-3">Descartes</span>
+                              </a> --}}
                            
                            </li>
                         </div>
