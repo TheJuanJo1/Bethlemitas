@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\CreateController;
 use App\Http\Middleware\PreventBackHistoryMiddleware;
+use App\Http\Middleware\RoleMiddleware;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\auth\AuthController;
 
@@ -18,11 +19,18 @@ Route::middleware([PreventBackHistoryMiddleware::class])->group(function() {
             return view('layout.homePage');
         })->name('dashboard');
 
-        
+        //Middleware Rol coordinador.
+        Route::middleware([RoleMiddleware::class])->group(function() { 
             Route::prefix('/create')->group(function(){
-                Route::get('/user', [CreateController::class, 'create_user'])->name('create.user');
+                //Vista create user
+                Route::get('/user', [CreateController::class, 'create_user'])->name('create.user');  
+                // Store user
+                Route::post('/store/user', [CreateController::class, 'store_user'])->name('store.user');
+                 
             });
         });
-    
+
+    });
+        
 });
 

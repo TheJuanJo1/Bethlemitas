@@ -35,7 +35,8 @@ class Kernel extends HttpKernel
         'auth' => \App\Http\Middleware\Authenticate::class,
         'auth.basic' => \Illuminate\Auth\Middleware\AuthenticateWithBasicAuth::class,
         'bindings' => \Illuminate\Routing\Middleware\SubstituteBindings::class,
-        'role' => \App\Http\Middleware\RoleMiddleware::class, // Asegúrate de incluir tu middleware
-        // Agrega otros middlewares aquí
+        
+        // Agrega otros middlewares aquí. NOTA: Debe de haber algún error porque no está identificando los demas middlewares que se agregan.
+        // Tocó hacer middlewares directos para cada rol.
     ];
 }
