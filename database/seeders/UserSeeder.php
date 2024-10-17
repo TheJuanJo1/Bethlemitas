@@ -18,7 +18,6 @@ class UserSeeder extends Seeder
         $user1->number_documment = 1087986236;
         $user1->name = 'Sebastian';
         $user1->last_name = 'Ramirez';
-        $user1->group_director = 1;
         $user1->id_state = 2;
         $user1->email = 'wowco.2000@gmail.com';
         $user1->password = bcrypt('sebas123');

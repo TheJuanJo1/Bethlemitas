@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="{{ asset('css/sweetalert.css')}}">
     @yield('css')
     <title>@yield('title')</title>
 </head>
@@ -269,7 +270,71 @@
          <script src="https://demo.themesberg.com/windster/app.bundle.js"></script>
          <script src="https://cdn.tailwindcss.com"></script>
          <script src="https://cdn.jsdelivr.net/npm/alpinejs@2.8.2/dist/alpine.min.js" defer></script>
+         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
          @yield('JS')
+
+         {{-- Sweetalet de exito --}}
+         @if (session('success'))
+            <script>
+               const Toast = Swal.mixin({
+                     toast: true,
+                     position: 'top-end',
+                     iconColor: 'white',
+                     customClass: {
+                        popup: 'colored-toast',
+                     },
+                     showConfirmButton: false,
+                     timer: 2500,
+                     timerProgressBar: true,
+               });
+               Toast.fire({
+                     icon: 'success',
+                     title: '{{ session('success') }}',
+               });
+            </script>
+         @endif
+
+         {{-- Sweetalet de error --}}
+         @if (session('error'))
+            <script>
+               const Toast = Swal.mixin({
+                     toast: true,
+                     position: 'top-end',
+                     iconColor: 'white',
+                     customClass: {
+                        popup: 'colored-toast',
+                     },
+                     showConfirmButton: false,
+                     timer: 2500,
+                     timerProgressBar: true,
+               });
+               Toast.fire({
+                     icon: 'error',
+                     title: '{{ session('error') }}',
+               });
+            </script>
+         @endif
+
+         {{-- Sweetalet de info --}}
+         @if (session('info'))
+            <script>
+               const Toast = Swal.mixin({
+                     toast: true,
+                     position: 'top-end',
+                     iconColor: 'white',
+                     customClass: {
+                        popup: 'colored-toast',
+                     },
+                     showConfirmButton: false,
+                     timer: 2500,
+                     timerProgressBar: true,
+               });
+               Toast.fire({
+                     icon: 'info',
+                     title: '{{ session('info') }}',
+               });
+            </script>
+         @endif
    </div>
 </body>  
 </html>
