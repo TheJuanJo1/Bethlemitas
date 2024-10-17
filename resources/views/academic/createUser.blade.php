@@ -59,7 +59,7 @@
                 <div class="form-group" >       
                     <div class="form-group-half" id="group_asignatures">
                         <label for="subjects">Asignaturas * (manten presionada la tecla Ctrl y seleciona las asignaturas):</label>
-                        <select id="subjects" name="subjects[]" multiple required>
+                        <select id="subjects" name="subjects[]" multiple>
                             <option value="">Seleccionar</option>
                             @foreach ($asignatures as $asignature)
                                 <option value="{{ $asignature->id }}" 
@@ -72,7 +72,7 @@
 
                     <div class="form-group-half" id="group_load_group">
                         <label for="groups">Grupos a cargo * (manten presionada la tecla Ctrl y seleciona los grupos):</label>
-                        <select id="groups" name="groups[]" multiple required>
+                        <select id="groups" name="groups[]" multiple>
                             <option value="">Seleccionar</option>
                             @foreach($groups as $group)
                                 <option value="{{ $group->id }}"
