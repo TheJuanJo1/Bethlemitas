@@ -114,4 +114,54 @@ class CreateController extends Controller
         // Log::info('valor de ID Role: ' . json_encode($role));
         // return response()->json(['Role' => $role]);
     }
+
+    // Listar usuarios (docentes y psicoorientadores).
+    public function index_users(Request $request) {
+
+        $query = Users_teacher::whereHas('roles', function($q) {
+            $q->whereIn('name', ['docente', 'psicoorientador']);
+        });
+
+        if ($request->has('search')) {
+            $searchTerm = $request->input('search');
+            $query->where(function ($q) use ($searchTerm) {
+                $q->where('name', 'LIKE', '%' . $searchTerm . '%')
+                  ->orWhere('last_name', 'LIKE', '%' . $searchTerm . '%')
+                  ->orWhere('number_documment', 'LIKE', '%' . $searchTerm . '%')
+                  ->orWhereRaw("CONCAT(name, ' ', last_name) LIKE ?", ['%' . $searchTerm . '%']);
+            });
+        }
+
+        $users = $query->with(['groups', 'asignatures'])
+                ->orderBy('name', 'asc')
+                ->orderBy('last_name', 'asc')
+                ->paginate(15);
+
+        $userRoles = [];
+
+        foreach ($users as $user) {
+            $roles = $user->roles ? $user->roles->pluck('name') : collect();
+            $userRoles[$user->id] = $roles->all(); 
+        }
+
+        return view('academic.userList', compact('users', 'userRoles'));
+    }
+
+    // Vista de editar usuario (docentes y psicoorientadores).
+    public function edit_user(string $id) {
+
+        $user =  Users_teacher::findOrFail($id);
+        $roles = Role::whereNotIn('name', ['estudiante', 'coordinador'])->get();
+        $asignatures = Asignature::all();  // Todas las asignaturas disponibles
+        $selectedAsignatures = $user->asignatures->pluck('id')->toArray();
+        $groups = Group::all();
+        $selectedGroups = $user->groups->pluck('id')->toArray();
+        
+
+        
+        
+
+        return view('academic.userEdit', compact('user', 'roles', 'asignatures', 'selectedAsignatures', 'groups', 'selectedGroups'));
+    }
+
 }

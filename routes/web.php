@@ -21,13 +21,15 @@ Route::middleware([PreventBackHistoryMiddleware::class])->group(function() {
 
         //Middleware Rol coordinador.
         Route::middleware([RoleMiddleware::class])->group(function() { 
-            Route::prefix('/create')->group(function(){
-                //Vista create user
-                Route::get('/user', [CreateController::class, 'create_user'])->name('create.user');  
-                // Store user
-                Route::post('/store/user', [CreateController::class, 'store_user'])->name('store.user');
-                 
-            });
+            
+            //Vista create user
+            Route::get('/create/user', [CreateController::class, 'create_user'])->name('create.user');  
+            // Store user
+            Route::post('/store/user', [CreateController::class, 'store_user'])->name('store.user');
+            //Index Users (docentes y psicoorientadores)
+            Route::get('/listing/users', [CreateController::class, 'index_users'])->name('index.users');  
+            // Edit User
+            Route::get('/edit/{id}/user', [CreateController::class, 'edit_user'])->name('edit.user');              
         });
 
     });

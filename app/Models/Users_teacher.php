@@ -43,11 +43,16 @@ class Users_teacher extends Authenticatable
 
     public function asignatures()
     {
-        return $this->belongsToMany(Group::class, 'users_load_asignatures', 'id_user_teacher', 'id_asignature');
+        return $this->belongsToMany(Asignature::class, 'users_load_asignatures', 'id_user_teacher', 'id_asignature');
     }
 
-    public function degrees()
+    public function load_degrees()
     {
-        return $this->belongsToMany(Group::class, 'users_load_degrees', 'id_user', 'id_degree');
+        return $this->belongsToMany(Degree::class, 'users_load_degrees', 'id_user', 'id_degree');
     }
+
+    public function director() {
+        return $this->belongsTo(Group::class, 'group_director');
+    }
+
 }
