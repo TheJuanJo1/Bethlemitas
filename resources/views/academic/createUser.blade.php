@@ -50,7 +50,7 @@
                     <div class="form-group-half">
                         <label for="email">Email *</label>
                         <input type="email" id="email" name="email" value="{{ old('email') }}" placeholder="Email" required>
-                        @error('name')
+                        @error('email')
                             <p class="mt-2 text-sm text-red-600 dark:text-red-500"><span class="font-medium">El email ya se encuentra registrado</span></p>
                         @enderror
                     </div>
@@ -59,7 +59,7 @@
                 <div class="form-group" >       
                     <div class="form-group-half" id="group_asignatures">
                         <label for="subjects">Asignaturas * (manten presionada la tecla Ctrl y seleciona las asignaturas):</label>
-                        <select id="subjects" name="subjects[]" multiple>
+                        <select id="subjects" name="subjects[]" multiple disabled>
                             <option value="">Seleccionar</option>
                             @foreach ($asignatures as $asignature)
                                 <option value="{{ $asignature->id }}" 
@@ -68,11 +68,14 @@
                                 </option>
                             @endforeach
                         </select>
+                        @error('subjects')
+                            <p class="mt-2 text-sm text-red-600 dark:text-red-500"><span class="font-medium">¡Error! Campo vacío</span></p>
+                        @enderror
                     </div>
 
                     <div class="form-group-half" id="group_load_group">
                         <label for="groups">Grupos a cargo * (manten presionada la tecla Ctrl y seleciona los grupos):</label>
-                        <select id="groups" name="groups[]" multiple>
+                        <select id="groups" name="groups[]" multiple disabled>
                             <option value="">Seleccionar</option>
                             @foreach($groups as $group)
                                 <option value="{{ $group->id }}"
@@ -80,28 +83,38 @@
                                     {{ $group->group }}</option>
                             @endforeach
                         </select>
+                        @error('groups')
+                            <p class="mt-2 text-sm text-red-600 dark:text-red-500"><span class="font-medium">¡Error! Campo vacío</span></p>
+                        @enderror
                     </div>
 
                     <div class="form-group-half" id="group_group_director">
                         <label for="group_director">Director de grupo </label>
-                        <select id="group_director" name="group_director">
+                        <select id="group_director" name="group_director" disabled>
                             <option value="">Seleccionar</option>
                             @foreach($groups as $group)
                                 <option value="{{ $group->id }}" {{ old('group_director') == $group->id ? 'selected' : '' }}>
                                     {{ $group->group }}</option>
                             @endforeach
                         </select>
+                        @error('group_director')
+                            <p class="mt-2 text-sm text-red-600 dark:text-red-500"><span class="font-medium">¡Error! Campo vacío</span></p>
+                        @enderror
                     </div>
 
-                    <div class="hidden form-group-half" id="group_load_degree">
+                    <div class="form-group-half" id="group_load_degree">
                         <label for="load_degree">Grados a cargo * (manten presionada la tecla Ctrl y seleciona los grados):</label>
-                        <select id="load_degreer" name="load_degree[]" multiple>
+                        <select id="load_degree" name="load_degree[]" multiple disabled>
                             <option value="">Seleccionar</option>
                             @foreach($degrees as $degree)
                                 <option value="{{ $degree->id }}">{{ $degree->degree }}</option>
                             @endforeach
                         </select>
+                        @error('load_degree')
+                            <p class="mt-2 text-sm text-red-600 dark:text-red-500"><span class="font-medium">¡Error! Campo vacío</span></p>
+                        @enderror
                     </div>
+                    
                 </div>
             </div>
 
