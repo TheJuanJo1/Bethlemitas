@@ -28,8 +28,12 @@ Route::middleware([PreventBackHistoryMiddleware::class])->group(function() {
             Route::post('/store/user', [CreateController::class, 'store_user'])->name('store.user');
             //Index Users (docentes y psicoorientadores)
             Route::get('/listing/users', [CreateController::class, 'index_users'])->name('index.users');  
-            // Edit User
-            Route::get('/edit/{id}/user', [CreateController::class, 'edit_user'])->name('edit.user');              
+            // Edit User (Vista)
+            Route::get('/edit/{id}/user', [CreateController::class, 'edit_user'])->name('edit.user');      
+            // Update User
+            Route::put('/update/user/{id}', [CreateController::class, 'update_user'])->name('update.user');   
+            // Delete User (No lo estoy eliminando sino que cambio su estado a bloqueado)
+            Route::put('/delete/user/{id}', [CreateController::class, 'destroy_user'])->name('destroy.user');  
         });
 
     });

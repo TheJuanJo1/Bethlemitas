@@ -72,7 +72,13 @@
                         <td class="px-6 py-4 whitespace-nowrap">
                             <a href="{{ route('edit.user', $user->id) }}" class="text-blue-500 hover:underline">Editar</a>
                             <span class="mx-2">|</span>
-                            <a href="#" class="text-red-500 hover:underline">Eliminar</a>
+                            <form action="{{ route('destroy.user', $user->id) }}" method="POST" style="display:inline;">
+                                @csrf
+                                @method('PUT')
+                                <button type="submit" class="text-red-500 hover:underline" onclick="return confirm('¿Estás seguro de eliminar este usuario?')">
+                                    Eliminar
+                                </button>
+                            </form>
                         </td>
                     </tr>
                 @endforeach

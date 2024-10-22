@@ -55,4 +55,8 @@ class Users_teacher extends Authenticatable
         return $this->belongsTo(Group::class, 'group_director');
     }
 
+    public function states() {
+        return $this->belongsTo(State::class, 'id_state'); // 'id_state' es la llave foránea en users_teachers
+    }
+
 }

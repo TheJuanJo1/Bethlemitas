@@ -5,9 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\Asignature;
 use App\Models\Degree;
 use App\Models\Group;
+use App\Models\State;
 use App\Models\Users_teacher;
 use Spatie\Permission\Models\Role;
-use Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log; // Hace pruebas para verificar algun dato
@@ -120,6 +120,9 @@ class CreateController extends Controller
 
         $query = Users_teacher::whereHas('roles', function($q) {
             $q->whereIn('name', ['docente', 'psicoorientador']);
+        })
+        ->whereHas('states', function($q) {
+            $q->where('state', 'activo');
         });
 
         if ($request->has('search')) {
@@ -156,12 +159,196 @@ class CreateController extends Controller
         $selectedAsignatures = $user->asignatures->pluck('id')->toArray();
         $groups = Group::all();
         $selectedGroups = $user->groups->pluck('id')->toArray();
-        
+        $degrees = Degree::all();
+        $selectedDegrees = $user->load_degrees->pluck('id')->toArray();
 
-        
-        
+        return view('academic.userEdit', compact('user', 'roles', 'asignatures', 'selectedAsignatures', 'groups', 'selectedGroups', 'degrees', 'selectedDegrees'));
+    }
 
-        return view('academic.userEdit', compact('user', 'roles', 'asignatures', 'selectedAsignatures', 'groups', 'selectedGroups'));
+    // Editar usuarios (docentes y psicoorientadores)
+    public function update_user(Request $request, string $id) {
+        $user = Users_teacher::findOrFail($id);
+        $datos_actuales = $user->toArray();
+        $huboCambios = false;
+
+        $role_user = $user->roles->first();
+        $role_actual = $role_user ? $role_user->name : null;
+
+        if ($role_actual == 'docente') {
+            // Validar los datos de la solicitud
+            $request->validate([
+                'number_documment' => 'required|digits_between:1,20|unique:users_teachers,number_documment,' . $id,
+                'name' => 'required',
+                'last_name' => 'required',
+                'email' => 'required|unique:users_teachers,email,' . $id,
+                'subjects' => 'required|array',
+                'subjects.*' => 'exists:asignatures,id',
+                'groups' =>'required|array',
+                'groups.*' => 'exists:groups,id',
+                'group_director' => 'nullable',
+            ]);
+
+            // Verificar si hubo cambios en los datos del usuario
+            $nuevos_datos = [
+                'number_documment' => $request->number_documment,
+                'name' => $request->name,
+                'last_name' => $request->last_name,
+                'email' => $request->email,
+                'group_director' => $request->group_director,
+            ];
+
+            // Comparar los datos actuales con los nuevos
+            foreach ($nuevos_datos as $key => $value) {
+                if ($datos_actuales[$key] != $value) {
+                    $huboCambios = true;
+                    break; 
+                }
+            }
+
+            // Obtener las asignaturas y grupos actuales
+            $asignaturas_actuales = DB::table('users_load_asignatures')
+                ->where('id_user_teacher', $id)
+                ->pluck('id_asignature')
+                ->toArray();
+
+            $grupos_actuales = DB::table('users_load_groups')
+                ->where('id_user_teacher', $id)
+                ->pluck('id_group')
+                ->toArray();
+
+            // Comparar asignaturas y grupos actuales con los nuevos
+            $asignaturas_nuevas = $request->subjects;
+            $grupos_nuevos = $request->groups;
+
+            // Verificar si hay cambios en asignaturas
+            if (array_diff($asignaturas_actuales, $asignaturas_nuevas) || array_diff($asignaturas_nuevas, $asignaturas_actuales)) {
+                $huboCambios = true;
+            }
+
+            // Verificar si hay cambios en grupos
+            if (array_diff($grupos_actuales, $grupos_nuevos) || array_diff($grupos_nuevos, $grupos_actuales)) {
+                $huboCambios = true;
+            }
+
+            if ($huboCambios) {
+                try {
+                    DB::transaction(function () use ($id, $asignaturas_nuevas, $grupos_nuevos) {
+                        // Eliminar las asignaturas actuales
+                        DB::table('users_load_asignatures')->where('id_user_teacher', $id)->delete();
+                        
+                        // Eliminar los grupos actuales
+                        DB::table('users_load_groups')->where('id_user_teacher', $id)->delete();
+            
+                        // Insertar las nuevas asignaturas
+                        foreach ($asignaturas_nuevas as $subject) {
+                            DB::table('users_load_asignatures')->insert([
+                                'id_user_teacher' => $id,
+                                'id_asignature' => $subject,
+                            ]);
+                        }
+            
+                        // Insertar los nuevos grupos
+                        foreach ($grupos_nuevos as $group) {
+                            DB::table('users_load_groups')->insert([
+                                'id_user_teacher' => $id,
+                                'id_group' => $group,
+                            ]);
+                        }
+                    });
+
+                    // Actualizar los campos del usuario
+                    $user->update($nuevos_datos);
+            
+                    return redirect()->back()->with('success', 'Usuario actualizado correctamente.');
+                } catch (\Exception $e) {
+                    // Manejo del error
+                    return redirect()->back()->with('error', 'Ocurrió un error al actualizar el usuario: ' . $e->getMessage());
+                }
+            } else {
+                return redirect()->back()->with('info', 'No hubo cambios en la actualización del usuario.');
+            }
+        }
+
+        if ($role_actual == 'psicoorientador') {
+            // Validación
+            $request->validate([
+                'number_documment' => 'required|digits_between:1,20|unique:users_teachers,number_documment,' . $id,
+                'name' => 'required',
+                'last_name' => 'required',
+                'email' => 'required|unique:users_teachers,email,' . $id,
+                'load_degree' => 'required|array',
+                'load_degree.*' => 'exists:asignatures,id',
+            ]);
+
+            // verificar si hubo cambios
+            $datos_nuevos = [
+                'number_documment' => $request->number_documment,
+                'name' => $request->name,
+                'last_name' => $request->last_name,
+                'email' => $request->email,
+            ];
+
+            // Comparar los datos actuales con los nuevos
+            foreach ($datos_nuevos as $key => $value) {
+                if ($datos_actuales[$key] != $value) {
+                    $huboCambios = true;
+                    break; 
+                }
+            }
+
+            // Obtener las grados a cargo actuales
+            $grados_actuales = DB::table('users_load_degrees')
+            ->where('id_user', $id)
+            ->pluck('id_degree')
+            ->toArray();
+
+            // Comparar asignaturas y grupos actuales con los nuevos
+            $grados_nuevos = $request->load_degree;
+
+            // Verificar si hay cambios
+            if (array_diff($grados_actuales, $grados_nuevos) || array_diff($grados_nuevos, $grados_actuales)) {
+                $huboCambios = true;
+            }
+
+            // Si hubo cambios, eliminar e insertar
+            if ($huboCambios) {
+                DB::transaction(function () use ($id, $grados_nuevos) {
+                    // Eliminar grados actuales
+                    DB::table('users_load_degrees')->where('id_user', $id)->delete();
+
+                    // Insertar nuevos grados
+                    foreach ($grados_nuevos as $grado) {
+                        DB::table('users_load_degrees')->insert([
+                            'id_user' => $id,
+                            'id_degree' => $grado,
+                        ]);
+                    }
+                });
+
+                $user->update($datos_nuevos);
+
+                return redirect()->back()->with('success', 'Usuario actualizado correctamente.');
+            } else {
+                return redirect()->back()->with('info', 'No hubo cambios en la actualización del usuario.');
+            }
+
+        }
+
+    }
+
+    public function destroy_user(string $id) {
+        // Obtener el usuario por ID
+        $user = Users_teacher::findOrFail($id);
+
+        // Obtener el estado 'bloqueado'
+        $state = State::where('state', 'bloqueado')->firstOrFail();
+
+        // Actualizar el estado del usuario
+        $user->update([
+            'id_state' => $state->id, // Asegúrate de actualizar con el ID del estado
+        ]);
+
+        return redirect()->back()->with('error', 'El usuario se ha eliminado exitosamente.');
     }
 
 }

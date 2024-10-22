@@ -7,9 +7,11 @@
 @section('title', 'User edit')
 
 @section('content')
+
 <div class="container">
+    <a href=" {{ route('index.users')}} "><i class="bi bi-arrow-left" style="font-size: 2rem;"></i></a>
     <h2 style="font-size: 32px; text-align: left; margin-bottom: 40px; font-weight: 600;">Editar usuario</h2>
-    <form action="#" method="POST">
+    <form action="{{ route('update.user', $user->id) }}" method="POST">
         @csrf
         @method('PUT')
         <div class="container-div">
@@ -99,8 +101,8 @@
                         <option value="">Seleccionar</option>
                         @foreach ($groups as $group)
                             <option value="{{ $group->id }}" 
-                                {{ in_array($group->id, $group->id) ? 'selected' : '' }}>
-                                {{ $group->group}}
+                                {{ $user->group_director == $group->id ? 'selected' : '' }}>
+                                {{ $group->group }}
                             </option>
                         @endforeach
                     </select>
@@ -113,7 +115,12 @@
                     <label for="load_degree">Grados a cargo * (manten presionada la tecla Ctrl y seleciona los grados):</label>
                     <select id="load_degree" name="load_degree[]" multiple disabled>
                         <option value="">Seleccionar</option>
-                        
+                        @foreach ($degrees as $degree)
+                            <option value="{{ $degree->id }}" 
+                                {{ in_array($degree->id, $selectedDegrees ?? [], true) ? 'selected' : '' }}>
+                                {{ $degree->degree}}
+                            </option>
+                        @endforeach
                     </select>
                     @error('load_degree')
                         <p class="mt-2 text-sm text-red-600 dark:text-red-500"><span class="font-medium">¡Error! Campo vacío</span></p>
@@ -123,7 +130,11 @@
             </div>
         </div>
 
-        <button type="submit" class="btn">Crear usuario</button>
+        <button type="submit" class="btn">Editar usuario</button>
     </form>
 </div>
+@endsection
+
+@section('JS')
+    <script src=" {{ asset('scripts/userEdit.js') }} "></script>
 @endsection
