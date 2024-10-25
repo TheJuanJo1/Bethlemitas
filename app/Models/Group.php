@@ -12,4 +12,9 @@ class Group extends Model
     protected $fillable = [
         'group',
     ];
+
+    public function asignatures()
+    {
+        return $this->belongsToMany(Asignature::class, 'subjects_receiveds', 'id_group', 'id_asignature');
+    }
 }

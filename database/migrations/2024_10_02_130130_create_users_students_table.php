@@ -22,8 +22,8 @@ return new class extends Migration
             $table->unsignedBigInteger('id_degree');
             $table->foreign('id_degree')->references('id')->on('degrees');
             //Grupo
-            $table->unsignedBigInteger('id_group');
-            $table->foreign('id_group')->references('id')->on('groups');
+            $table->unsignedBigInteger('id_group')->nullable();
+            $table->foreign('id_group')->references('id')->on('groups')->onDelete('set null');
             //Docente
             $table->unsignedBigInteger('sent_by');
             $table->foreign('sent_by')->references('id')->on('users_teachers');

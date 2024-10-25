@@ -18,8 +18,8 @@ return new class extends Migration
             $table->unsignedBigInteger('id_user_teacher');
             $table->foreign('id_user_teacher')->references('id')->on('users_teachers');
             //Grupo
-            $table->unsignedBigInteger('id_group');
-            $table->foreign('id_group')->references('id')->on('groups');
+            $table->unsignedBigInteger('id_group')->nullable();
+            $table->foreign('id_group')->references('id')->on('groups')->onDelete('cascade');
 
             $table->timestamps();
         });

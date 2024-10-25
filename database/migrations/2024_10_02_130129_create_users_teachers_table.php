@@ -19,7 +19,7 @@ return new class extends Migration
 
             // Grupo
             $table->unsignedBigInteger('group_director')->nullable();
-            $table->foreign('group_director')->references('id')->on('groups');
+            $table->foreign('group_director')->references('id')->on('groups')->onDelete('set null');
             
             // Estado
             $table->unsignedBigInteger('id_state');

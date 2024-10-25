@@ -159,8 +159,8 @@
                                  </div>
 
                                  <!-- Grupos -->
-                                 <div x-data="{ isOpen: false}">
-                                    <a @click="isOpen = !isOpen" class="flex items-center px-5 py-2 mt-4 hover:bg-[#95A5A6] hover:text-gray-900 hover:rounded-lg font-medium cursor-pointer">
+                                 <div>
+                                    <a href="{{ route('create.group') }}" class="flex items-center px-5 py-2 mt-4 hover:bg-[#95A5A6] hover:text-gray-900 hover:rounded-lg font-medium cursor-pointer">
                                        <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                           <!-- Persona central -->
                                           <circle cx="12" cy="8" r="3"></circle>
@@ -175,24 +175,7 @@
                                           <path d="M16.5 16c0-1.5 1.5-2.5 1.5-2.5s1.5 1 1.5 2.5"></path>
                                       </svg>
                                       <span class="mx-3">Grupos</span>
-                                      <svg class="w-6 h-6 ml-auto" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                       <polygon points="12 16, 6 8, 18 8" />
-                                   </svg>
                                     </a>
-
-                                    <div x-show="isOpen" class="ml-10">
-                                       <a href="#"
-                                       class="flex items-center px-3  mt-2 hover:bg-[#95A5A6] hover:text-gray-900 hover:rounded-lg font-medium">
-                                             <!-- Icono si es necesario -->
-                                             <span class="mx-3">• Crear grupo</span>
-                                       </a>
-
-                                       <a href="#"
-                                       class="flex items-center px-3  mt-2 hover:bg-[#95A5A6] hover:text-gray-900 hover:rounded-lg font-medium">
-                                          <!-- Icono si es necesario -->
-                                          <span class="mx-3">• Listar grupos</span>
-                                       </a>
-                                    </div>
                                  </div>
                               @endif
                               

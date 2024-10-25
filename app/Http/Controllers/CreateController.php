@@ -17,12 +17,11 @@ class CreateController extends Controller
     // Vista create user
     public function create_user() {
 
-        $groups = Group::all();
-        $asignatures = Asignature::all();
-        $degrees = Degree::all();
+        $groups = Group::orderByRaw('CAST(`group` AS UNSIGNED), `group`')->get();
+        $asignatures = Asignature::orderBy('name_asignature', 'asc')->get();
+        $degrees = Degree::orderByRaw('CAST(`degree` AS UNSIGNED), `degree`')->get();
         $roles = Role::whereNotIn('name', ['estudiante', 'coordinador'])->get();
         
-
         return view('academic.createUser', compact('groups', 'asignatures', 'degrees', 'roles'));
     }
 
@@ -155,11 +154,11 @@ class CreateController extends Controller
 
         $user =  Users_teacher::findOrFail($id);
         $roles = Role::whereNotIn('name', ['estudiante', 'coordinador'])->get();
-        $asignatures = Asignature::all();  // Todas las asignaturas disponibles
+        $asignatures = Asignature::orderBy('name_asignature', 'asc')->get();
         $selectedAsignatures = $user->asignatures->pluck('id')->toArray();
-        $groups = Group::all();
+        $groups = Group::orderByRaw('CAST(`group` AS UNSIGNED), `group`')->get();
         $selectedGroups = $user->groups->pluck('id')->toArray();
-        $degrees = Degree::all();
+        $degrees = Degree::orderByRaw('CAST(`degree` AS UNSIGNED), `degree`')->get();
         $selectedDegrees = $user->load_degrees->pluck('id')->toArray();
 
         return view('academic.userEdit', compact('user', 'roles', 'asignatures', 'selectedAsignatures', 'groups', 'selectedGroups', 'degrees', 'selectedDegrees'));

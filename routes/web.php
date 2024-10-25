@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\CreateController;
+use App\Http\Controllers\CreateGroupController;
 use App\Http\Middleware\PreventBackHistoryMiddleware;
 use App\Http\Middleware\RoleMiddleware;
 use Illuminate\Support\Facades\Route;
@@ -33,7 +34,15 @@ Route::middleware([PreventBackHistoryMiddleware::class])->group(function() {
             // Update User
             Route::put('/update/user/{id}', [CreateController::class, 'update_user'])->name('update.user');   
             // Delete User (No lo estoy eliminando sino que cambio su estado a bloqueado)
-            Route::put('/delete/user/{id}', [CreateController::class, 'destroy_user'])->name('destroy.user');  
+            Route::put('/delete/user/{id}', [CreateController::class, 'destroy_user'])->name('destroy.user'); 
+            // Vista create group
+            Route::get('/create/group', [CreateGroupController::class, 'create_group'])->name('create.group');
+            // Store Group
+            Route::post('/store/group', [CreateGroupController::class, 'store_group'])->name('store.group');
+            // Update Group
+            Route::put('/update/group', [CreateGroupController::class, 'update_group'])->name('update.group');
+            // Delete Group
+            Route::delete('/delete/group/{id}', [CreateGroupController::class, 'destroy_group'])->name('destroy.group');
         });
 
     });
