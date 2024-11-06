@@ -59,4 +59,22 @@ class Users_teacher extends Authenticatable
         return $this->belongsTo(State::class, 'id_state'); // 'id_state' es la llave foránea en users_teachers
     }
 
+    // Relación con  teachers_asignatures_groups
+    public function asignaturesGroups()
+    {
+        return $this->hasMany(Teachers_asignatures_group::class, 'id_teacher');
+    }
+
+    // Relación con asignatures (Con la tabla de teachers_signatures_groups)
+    public function asignatures_g()
+    {
+        return $this->belongsToMany(Asignature::class, 'teachers_asignatures_groups', 'id_teacher', 'id_asignature');
+    }
+
+    // Relación con groups (Con la tabla de teachers_signatures_groups)
+    public function groups_a()
+    {
+        return $this->belongsToMany(Group::class, 'teachers_asignatures_groups', 'id_teacher', 'id_group');
+    }
+
 }

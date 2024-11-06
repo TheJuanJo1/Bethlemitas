@@ -116,7 +116,14 @@
                     </div>
                     
                 </div>
+
             </div>
+
+            <!-- Contenedor para los diseños generados -->
+            <p id='description'></p>
+            <div id="selected-asignatures-container"></div>
+
+            <br>
 
             <button type="submit" class="btn">Crear usuario</button>
         </form>
@@ -124,5 +131,10 @@
 @endsection
 
 @section('JS')
+    <script>
+        // Definir la variable con los datos de la base de datos
+        const dbOptions = @json($groups);
+    </script>
+    
     <script src="{{ asset('scripts/createUser.js') }}"></script>
 @endsection

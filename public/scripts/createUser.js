@@ -35,3 +35,55 @@ document.getElementById('role').addEventListener('change', function() {
 
     } 
 });
+
+document.getElementById('subjects').addEventListener('change', function() {
+    const selectedAsignatures = Array.from(this.selectedOptions).map(option => ({
+        id: option.value,
+        name: option.text
+    }));
+
+    const container = document.getElementById('selected-asignatures-container');
+    container.innerHTML = ''; // Limpiar contenedor antes de agregar nuevos elementos
+    const description = document.getElementById('description');
+    description.innerHTML = '';
+    description.innerHTML = 'Para cada asignatura, es necesario asignar el grupo o los grupos en los que el docente llevará a cabo la instrucción correspondiente.';
+
+    selectedAsignatures.forEach(asignature => {
+        const asignatureDiv = document.createElement('div');
+        asignatureDiv.classList.add('asignature-item');
+        asignatureDiv.setAttribute('data-id', asignature.id);
+
+        // Crear input oculto para evaluar el id de la asignatura.
+        const hiddenInput = document.createElement('input');
+        hiddenInput.type = 'hidden';
+        hiddenInput.name = 'asignature_id[]';
+        hiddenInput.value = asignature.id;
+
+        // Mostrar el nombre de la asignatura
+        const nameSpan = document.createElement('input');
+        nameSpan.classList.add('title-asignature');
+        nameSpan.placeholder = asignature.name;
+        nameSpan.value = asignature.name;
+        nameSpan.disabled = true; 
+
+        // Crear un <select> adicional para opciones de la base de datos
+        const dbSelect = document.createElement('select');
+        dbSelect.classList.add('db-options');
+        dbSelect.name = `groups_asig[${asignature.id}][]`; // Agregar [] al name
+        dbSelect.multiple = true; // Establecer el select como múltiple
+
+        // Llenar el <select> con las opciones de la base de datos
+        dbOptions.forEach(group => {
+            const optionElement = document.createElement('option');
+            optionElement.value = group.id;
+            optionElement.text = group.group;
+            dbSelect.appendChild(optionElement);
+        });
+
+        // Agregar los elementos al contenedor de la asignatura
+        asignatureDiv.appendChild(hiddenInput);
+        asignatureDiv.appendChild(nameSpan);
+        asignatureDiv.appendChild(dbSelect);
+        container.appendChild(asignatureDiv);
+    });
+});

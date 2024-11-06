@@ -52,3 +52,26 @@
 .btn:hover {
     background-color: #5984d6;
 }
+
+.asignature-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 5px;
+    width: 50%;
+    background-color: #ffffff; /* O prueba con #F0F4FF */
+    border: 1px solid #CCCCCC;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 10px;
+}
+
+
+.title-asignature {
+    font-size: 1.4rem;
+}
+
+.db-options {
+    width: 250px;
+    background-color: #ededed;
+}
