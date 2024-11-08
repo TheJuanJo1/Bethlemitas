@@ -36,5 +36,71 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
+    // Funcion para mostrar los grupos en donde se imparten cada asignatura (Editar)
+
+    const container = document.getElementById('selected-asignatures-container');
+    container.innerHTML = ''; // Limpiar contenedor antes de agregar nuevos elementos
+    const description = document.getElementById('description');
+    description.innerHTML = '';
+    description.innerHTML = 'Para cada asignatura, es necesario asignar el grupo o los grupos en los que el docente llevará a cabo la instrucción correspondiente.';
+
+    function getSelectedAsignatures() {
+        selectedAsignatures.forEach(asignature => {
+            //Crear div para la asignatura
+            const asignatureDiv = document.createElement('div');
+            asignatureDiv.classList.add('asignature-item');
+
+            // Input oculto para guardar el ID de la asignatura.
+            const hiddenInput = document.createElement('input');
+            hiddenInput.type = 'hidden';
+            hiddenInput.name = 'asignature_id[]';
+            hiddenInput.value = asignature.id;
+
+            // Crear campo en donde se mostra en nombre de la asignatura
+            const nameSpan = document.createElement('input');
+            nameSpan.classList.add('title-asignature');
+            nameSpan.placeholder = asignature.name;
+            nameSpan.value = asignature.name;
+            nameSpan.disabled = true; 
+
+            // Crear un <select> adicional para opciones de la base de datos
+            const dbSelect = document.createElement('select');
+            dbSelect.classList.add('db-options');
+            dbSelect.name = `groups_asig[${asignature.id}][]`; // Agregar [] al name
+            dbSelect.multiple = true; // Establecer el select como múltiple
+
+            // Llenar el <select> con las opciones de la base de datos
+            dbOptionsGroups.forEach(group => {
+                const optionElement = document.createElement('option');
+                optionElement.value = group.id;
+                optionElement.text = group.group;
+
+                // Verificar si el grupo pertenece a esta asignatura
+                groupsForAsignature.forEach(groupsSubjects => {
+                    if (groupsSubjects.asignature_id === asignature.id) {
+                        // Si el grupo ya está asignado a la asignatura, marcarlo como seleccionado
+                        groupsSubjects.groups.forEach(groupAssigned => {
+                            if (groupAssigned.id === group.id) {
+                                optionElement.selected = true;
+                            }
+                        });
+                    }
+                });
+
+                dbSelect.appendChild(optionElement);
+
+            });
+
+            asignatureDiv.appendChild(hiddenInput);
+            asignatureDiv.appendChild(nameSpan);
+            asignatureDiv.appendChild(dbSelect);
+            container.appendChild(asignatureDiv);
+            
+        });
+    }
+    
+
     getSelectedRole();
+    getSelectedAsignatures();
+    
 });

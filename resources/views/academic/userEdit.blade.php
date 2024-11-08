@@ -69,7 +69,7 @@
                         <option value="">Seleccionar</option>
                         @foreach ($asignatures as $asignature)
                             <option value="{{ $asignature->id }}" 
-                                {{ in_array($asignature->id, $selectedAsignatures ?? [], true) ? 'selected' : '' }}>
+                                {{ in_array($asignature->id, array_column($selectedAsignatures ?? [], 'id'), true) ? 'selected' : '' }}>
                                 {{ $asignature->name_asignature }}
                             </option>
                         @endforeach
@@ -130,11 +130,21 @@
             </div>
         </div>
 
+        <!-- Contenedor para los diseños generados -->
+        <p id='description'></p>
+        <div id="selected-asignatures-container"></div>
+
         <button type="submit" class="btn">Editar usuario</button>
     </form>
 </div>
 @endsection
 
 @section('JS')
+    <script>
+        const dbOptionsGroups = @json($groups);
+        const selectedAsignatures = @json($selectedAsignatures);
+        const groupsForAsignature = @json($groupsForAsignature);
+    </script>
+
     <script src=" {{ asset('scripts/userEdit.js') }} "></script>
 @endsection
