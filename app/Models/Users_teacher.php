@@ -77,4 +77,11 @@ class Users_teacher extends Authenticatable
         return $this->belongsToMany(Group::class, 'teachers_asignatures_groups', 'id_teacher', 'id_group');
     }
 
+    // *** Relación para consultar los grupos relacionados con cada asignatura que imparte el docente en determinados grupos. ***/
+    // Paso como parametro el id de la asignatura con la que va a consultar la relación.
+    public function groupsForAsignature($asignatureId) {
+        // Relacion con la tabla teachers_asignatures_groups
+        return $this->belongsToMany(Group::class, 'teachers_asignatures_groups', 'id_teacher', 'id_group')->where('id_asignature', $asignatureId); // Filtra por asignatura
+    } 
+
 }
