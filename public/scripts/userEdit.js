@@ -39,14 +39,23 @@ document.addEventListener('DOMContentLoaded', function () {
     // Funcion para mostrar los grupos en donde se imparten cada asignatura (Editar)
 
     const container = document.getElementById('selected-asignatures-container');
-    container.innerHTML = ''; // Limpiar contenedor antes de agregar nuevos elementos
     const description = document.getElementById('description');
-    description.innerHTML = '';
+    const subjectsSelect = document.getElementById('subjects'); // Obtener el <select> de asignaturas
+
     description.innerHTML = 'Para cada asignatura, es necesario asignar el grupo o los grupos en los que el docente llevará a cabo la instrucción correspondiente.';
 
     function getSelectedAsignatures() {
-        selectedAsignatures.forEach(asignature => {
-            //Crear div para la asignatura
+        // Limpiar el contenedor antes de agregar nuevos elementos
+        container.innerHTML = '';
+        
+        // Obtener las asignaturas seleccionadas
+        const selectedAsignatureIds = Array.from(subjectsSelect.selectedOptions).map(option => ({
+            id: parseInt(option.value),
+            name: option.text
+        }));
+
+        selectedAsignatureIds.forEach(asignature => {
+            // Crear div para la asignatura
             const asignatureDiv = document.createElement('div');
             asignatureDiv.classList.add('asignature-item');
 
@@ -56,7 +65,7 @@ document.addEventListener('DOMContentLoaded', function () {
             hiddenInput.name = 'asignature_id[]';
             hiddenInput.value = asignature.id;
 
-            // Crear campo en donde se mostra en nombre de la asignatura
+            // Crear campo en donde se muestra el nombre de la asignatura
             const nameSpan = document.createElement('input');
             nameSpan.classList.add('title-asignature');
             nameSpan.placeholder = asignature.name;
@@ -78,7 +87,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 // Verificar si el grupo pertenece a esta asignatura
                 groupsForAsignature.forEach(groupsSubjects => {
                     if (groupsSubjects.asignature_id === asignature.id) {
-                        // Si el grupo ya está asignado a la asignatura, marcarlo como seleccionado
                         groupsSubjects.groups.forEach(groupAssigned => {
                             if (groupAssigned.id === group.id) {
                                 optionElement.selected = true;
@@ -88,19 +96,21 @@ document.addEventListener('DOMContentLoaded', function () {
                 });
 
                 dbSelect.appendChild(optionElement);
-
             });
 
+            // Añadir los elementos creados al div de asignaturas
             asignatureDiv.appendChild(hiddenInput);
             asignatureDiv.appendChild(nameSpan);
             asignatureDiv.appendChild(dbSelect);
             container.appendChild(asignatureDiv);
-            
         });
     }
-    
 
+    // Evento para actualizar campos cuando cambia la selección de asignaturas
+    subjectsSelect.addEventListener('change', getSelectedAsignatures);
+
+    // Llamar a la función inicialmente para cargar las asignaturas seleccionadas
     getSelectedRole();
     getSelectedAsignatures();
-    
+
 });

@@ -142,7 +142,6 @@
 @section('JS')
     <script>
         const dbOptionsGroups = @json($groups);
-        const selectedAsignatures = @json($selectedAsignatures);
         const groupsForAsignature = @json($groupsForAsignature);
     </script>
 
