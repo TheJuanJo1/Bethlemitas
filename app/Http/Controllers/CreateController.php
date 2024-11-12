@@ -6,6 +6,7 @@ use App\Models\Asignature;
 use App\Models\Degree;
 use App\Models\Group;
 use App\Models\State;
+use App\Models\Users_load_degree;
 use App\Models\Users_teacher;
 use App\Models\Teachers_asignatures_group;
 use Spatie\Permission\Models\Role;
@@ -62,6 +63,23 @@ class CreateController extends Controller
                     if (!in_array($group, $request->groups)) {
                         // Si encontramos un grupo no permitido, devolvemos error de inmediato
                         return redirect()->back()->with('error', 'No se ha podido guardar el registro, compruebe que los grupos designados a cada asignatura coincidan con los grupos a cargo del docente.');
+                    }
+                }
+            }
+
+            // Verificación aignaturas impartidas en grupos
+            // Verifica si ya se está impartiendo una asignatura en determinado grupo.
+            foreach ($request->asignature_id as $asignature_id) {
+                if (isset($request->groups_asig[$asignature_id])) {
+                    foreach ($request->groups_asig[$asignature_id] as $groupId) {
+                        $exists = Teachers_asignatures_group::where('id_asignature', $asignature_id)
+                                                            ->where('id_group', $groupId)
+                                                            ->exists();
+                        if ($exists) {
+                            $name_asignature = Asignature::find($asignature_id)->name_asignature;
+                            $name_group = Group::find($groupId)->group;
+                            return redirect()->back()->with('error', '¡Error! La asignatura de ' . $name_asignature . ' ya es impartida en el grupo ' .  $name_group .' por otro docente');
+                        }
                     }
                 }
             }
@@ -122,6 +140,13 @@ class CreateController extends Controller
                 'load_degree' => 'required|array',
                 'load_degree.*' => 'exists:asignatures,id',
             ]);
+
+            foreach ($request->load_degree as $degree) {
+                $exists = Users_load_degree::where('id_degree', $degree)->exists();
+                if ($exists) {
+                    return redirect()->back()->with('error', 'Existen grados que ya están asignados a otro/a psicoorientador/a.');
+                }
+            }
 
             //Guardar el registro de usuario
             $user = new Users_teacher();
@@ -242,7 +267,13 @@ class CreateController extends Controller
                 'subjects.*' => 'exists:asignatures,id',
                 'groups' =>'required|array',
                 'groups.*' => 'exists:groups,id',
-                'group_director' => 'nullable',
+                'group_director' => 'nullable|unique:users_teachers,group_director,' . $id,
+                // Esta parte de abajo de la validación es la que se esta añadiendo.
+                'asignature_id' => 'required|array',
+                'asignature_id.*' => 'exists:asignatures,id',
+                'groups_asig' => 'required|array',
+                'groups_asig.*' => 'required|array',
+                'groups_asig.*.*' => 'required|integer',
             ]);
 
             // Verificar si hubo cambios en los datos del usuario
@@ -262,20 +293,45 @@ class CreateController extends Controller
                 }
             }
 
-            // Obtener las asignaturas y grupos actuales
+            // Obtener las asignaturas actuales
             $asignaturas_actuales = DB::table('users_load_asignatures')
                 ->where('id_user_teacher', $id)
                 ->pluck('id_asignature')
                 ->toArray();
 
+            // Obtener los grupos actuales
             $grupos_actuales = DB::table('users_load_groups')
                 ->where('id_user_teacher', $id)
                 ->pluck('id_group')
                 ->toArray();
 
+            // Obtener los datos actuales del usuario en la tabla `teachers_asignatures_groups`
+            $datos_actuales_TAG = DB::table('teachers_asignatures_groups')
+            ->where('id_teacher', $id)
+            ->get()
+            ->map(function($item) {
+                return [
+                    'id_asignature' => $item->id_asignature,
+                    'id_group' => $item->id_group
+                ];
+            })
+            ->toArray();
+
             // Comparar asignaturas y grupos actuales con los nuevos
             $asignaturas_nuevas = $request->subjects;
             $grupos_nuevos = $request->groups;
+            // Organizar los nuevos datos del request para compararlos
+            $nuevos_datos_TAG = [];
+            foreach ($request->asignature_id as $asignatureId) {
+                if (isset($request->groups_asig[$asignatureId])) {
+                    foreach ($request->groups_asig[$asignatureId] as $groupId) {
+                        $nuevos_datos_TAG[] = [
+                            'id_asignature' => $asignatureId,
+                            'id_group' => $groupId
+                        ];
+                    }
+                }
+            }
 
             // Verificar si hay cambios en asignaturas
             if (array_diff($asignaturas_actuales, $asignaturas_nuevas) || array_diff($asignaturas_nuevas, $asignaturas_actuales)) {
@@ -287,14 +343,21 @@ class CreateController extends Controller
                 $huboCambios = true;
             }
 
+            if (array_diff_assoc($nuevos_datos_TAG, $datos_actuales_TAG) || array_diff_assoc($datos_actuales_TAG, $nuevos_datos_TAG)) {
+                $huboCambios = true;
+            }
+
             if ($huboCambios) {
                 try {
-                    DB::transaction(function () use ($id, $asignaturas_nuevas, $grupos_nuevos) {
+                    DB::transaction(function () use ($id, $asignaturas_nuevas, $grupos_nuevos, $nuevos_datos_TAG) {
                         // Eliminar las asignaturas actuales
                         DB::table('users_load_asignatures')->where('id_user_teacher', $id)->delete();
                         
                         // Eliminar los grupos actuales
                         DB::table('users_load_groups')->where('id_user_teacher', $id)->delete();
+
+                        // Eliminar datos de la tabla teachers_asignatures_groups
+                        DB::table('teachers_asignatures_groups')->where('id_teacher', $id)->delete();
             
                         // Insertar las nuevas asignaturas
                         foreach ($asignaturas_nuevas as $subject) {
@@ -311,6 +374,15 @@ class CreateController extends Controller
                                 'id_group' => $group,
                             ]);
                         }
+
+                        // Insertar los nuevos datos a la tabla teachers_asignatures_groups
+                        foreach ($nuevos_datos_TAG as $new_date) {
+                            DB::table('teachers_asignatures_groups')->insert([
+                                'id_teacher' => $id,
+                                'id_asignature' => $new_date['id_asignature'],
+                                'id_group' => $new_date['id_group'],
+                            ]);
+                        };
                     });
 
                     // Actualizar los campos del usuario
@@ -405,6 +477,9 @@ class CreateController extends Controller
             'group_director' => null,
             'id_state' => $state->id, // Asegúrate de actualizar con el ID del estado      
         ]);
+
+        Teachers_asignatures_group::where('id_teacher', $id)->delete();
+        Users_load_degree::where('id_user', $id)->delete();
 
         return redirect()->back()->with('error', 'El usuario se ha eliminado exitosamente.');
     }

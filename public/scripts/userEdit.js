@@ -9,9 +9,9 @@ document.addEventListener('DOMContentLoaded', function () {
     let subjects = document.getElementById('subjects');
     let groups = document.getElementById('groups');
     let group_director = document.getElementById('group_director');
-
+    const selectedRoleText = roleSelect.options[roleSelect.selectedIndex].text; // Obtiene el texto del rol seleccionado
     function getSelectedRole() {
-        const selectedRoleText = roleSelect.options[roleSelect.selectedIndex].text; // Obtiene el texto del rol seleccionado
+        
 
         if (selectedRoleText == 'docente') {
             group_asignatures.style.display = 'block'; // Mostrar el div
@@ -41,9 +41,9 @@ document.addEventListener('DOMContentLoaded', function () {
     const container = document.getElementById('selected-asignatures-container');
     const description = document.getElementById('description');
     const subjectsSelect = document.getElementById('subjects'); // Obtener el <select> de asignaturas
-
+    if (selectedRoleText == 'docente') {
     description.innerHTML = 'Para cada asignatura, es necesario asignar el grupo o los grupos en los que el docente llevará a cabo la instrucción correspondiente.';
-
+    }
     function getSelectedAsignatures() {
         // Limpiar el contenedor antes de agregar nuevos elementos
         container.innerHTML = '';
