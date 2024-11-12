@@ -107,7 +107,7 @@
                         @endforeach
                     </select>
                     @error('group_director')
-                        <p class="mt-2 text-sm text-red-600 dark:text-red-500"><span class="font-medium">¡Error! Campo vacío</span></p>
+                        <p class="mt-2 text-sm text-red-600 dark:text-red-500"><span class="font-medium">¡Error! El grupo ya cuenta con un director de grupo.</span></p>
                     @enderror
                 </div>
 
