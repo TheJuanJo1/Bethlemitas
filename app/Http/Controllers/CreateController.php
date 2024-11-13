@@ -252,10 +252,10 @@ class CreateController extends Controller
         $user = Users_teacher::findOrFail($id);
         $datos_actuales = $user->toArray();
         $huboCambios = false;
-
+    
         $role_user = $user->roles->first();
         $role_actual = $role_user ? $role_user->name : null;
-
+    
         if ($role_actual == 'docente') {
             // Validar los datos de la solicitud
             $request->validate([
@@ -268,14 +268,13 @@ class CreateController extends Controller
                 'groups' =>'required|array',
                 'groups.*' => 'exists:groups,id',
                 'group_director' => 'nullable|unique:users_teachers,group_director,' . $id,
-                // Esta parte de abajo de la validación es la que se esta añadiendo.
                 'asignature_id' => 'required|array',
                 'asignature_id.*' => 'exists:asignatures,id',
                 'groups_asig' => 'required|array',
                 'groups_asig.*' => 'required|array',
                 'groups_asig.*.*' => 'required|integer',
             ]);
-
+    
             // Verificar si hubo cambios en los datos del usuario
             $nuevos_datos = [
                 'number_documment' => $request->number_documment,
@@ -284,7 +283,7 @@ class CreateController extends Controller
                 'email' => $request->email,
                 'group_director' => $request->group_director,
             ];
-
+    
             // Comparar los datos actuales con los nuevos
             foreach ($nuevos_datos as $key => $value) {
                 if ($datos_actuales[$key] != $value) {
@@ -292,19 +291,19 @@ class CreateController extends Controller
                     break; 
                 }
             }
-
+    
             // Obtener las asignaturas actuales
             $asignaturas_actuales = DB::table('users_load_asignatures')
                 ->where('id_user_teacher', $id)
                 ->pluck('id_asignature')
                 ->toArray();
-
+    
             // Obtener los grupos actuales
             $grupos_actuales = DB::table('users_load_groups')
                 ->where('id_user_teacher', $id)
                 ->pluck('id_group')
                 ->toArray();
-
+    
             // Obtener los datos actuales del usuario en la tabla `teachers_asignatures_groups`
             $datos_actuales_TAG = DB::table('teachers_asignatures_groups')
             ->where('id_teacher', $id)
@@ -316,7 +315,7 @@ class CreateController extends Controller
                 ];
             })
             ->toArray();
-
+    
             // Comparar asignaturas y grupos actuales con los nuevos
             $asignaturas_nuevas = $request->subjects;
             $grupos_nuevos = $request->groups;
@@ -332,21 +331,31 @@ class CreateController extends Controller
                     }
                 }
             }
-
+    
+            // Aplanar los arrays antes de hacer la comparación
+            $nuevos_datos_TAG_flat = array_map(function ($item) {
+                return $item['id_asignature'] . '-' . $item['id_group'];  // Combinar id_asignature y id_group en un solo valor
+            }, $nuevos_datos_TAG);
+    
+            $datos_actuales_TAG_flat = array_map(function ($item) {
+                return $item['id_asignature'] . '-' . $item['id_group'];  // Combinar id_asignature y id_group en un solo valor
+            }, $datos_actuales_TAG);
+    
             // Verificar si hay cambios en asignaturas
             if (array_diff($asignaturas_actuales, $asignaturas_nuevas) || array_diff($asignaturas_nuevas, $asignaturas_actuales)) {
                 $huboCambios = true;
             }
-
+    
             // Verificar si hay cambios en grupos
             if (array_diff($grupos_actuales, $grupos_nuevos) || array_diff($grupos_nuevos, $grupos_actuales)) {
                 $huboCambios = true;
             }
-
-            if (array_diff_assoc($nuevos_datos_TAG, $datos_actuales_TAG) || array_diff_assoc($datos_actuales_TAG, $nuevos_datos_TAG)) {
+    
+            // Comparar los datos de asignaturas y grupos de teachers_asignatures_groups
+            if (array_diff($nuevos_datos_TAG_flat, $datos_actuales_TAG_flat) || array_diff($datos_actuales_TAG_flat, $nuevos_datos_TAG_flat)) {
                 $huboCambios = true;
             }
-
+    
             if ($huboCambios) {
                 try {
                     DB::transaction(function () use ($id, $asignaturas_nuevas, $grupos_nuevos, $nuevos_datos_TAG) {
@@ -355,7 +364,7 @@ class CreateController extends Controller
                         
                         // Eliminar los grupos actuales
                         DB::table('users_load_groups')->where('id_user_teacher', $id)->delete();
-
+    
                         // Eliminar datos de la tabla teachers_asignatures_groups
                         DB::table('teachers_asignatures_groups')->where('id_teacher', $id)->delete();
             
@@ -374,17 +383,17 @@ class CreateController extends Controller
                                 'id_group' => $group,
                             ]);
                         }
-
+    
                         // Insertar los nuevos datos a la tabla teachers_asignatures_groups
-                        foreach ($nuevos_datos_TAG as $new_date) {
+                        foreach ($nuevos_datos_TAG as $new_data) {
                             DB::table('teachers_asignatures_groups')->insert([
                                 'id_teacher' => $id,
-                                'id_asignature' => $new_date['id_asignature'],
-                                'id_group' => $new_date['id_group'],
+                                'id_asignature' => $new_data['id_asignature'],
+                                'id_group' => $new_data['id_group'],
                             ]);
                         };
                     });
-
+    
                     // Actualizar los campos del usuario
                     $user->update($nuevos_datos);
             
@@ -397,6 +406,7 @@ class CreateController extends Controller
                 return redirect()->back()->with('info', 'No hubo cambios en la actualización del usuario.');
             }
         }
+    
 
         if ($role_actual == 'psicoorientador') {
             // Validación
