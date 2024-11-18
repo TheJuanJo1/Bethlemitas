@@ -175,38 +175,38 @@ class CreateController extends Controller
 
     // Listar usuarios (docentes y psicoorientadores).
     public function index_users(Request $request) {
-
         $query = Users_teacher::whereHas('roles', function($q) {
             $q->whereIn('name', ['docente', 'psicoorientador']);
         })
         ->whereHas('states', function($q) {
             $q->where('state', 'activo');
         });
-
-        if ($request->has('search')) {
+    
+        if ($request->filled('search')) {
             $searchTerm = $request->input('search');
             $query->where(function ($q) use ($searchTerm) {
                 $q->where('name', 'LIKE', '%' . $searchTerm . '%')
                   ->orWhere('last_name', 'LIKE', '%' . $searchTerm . '%')
                   ->orWhere('number_documment', 'LIKE', '%' . $searchTerm . '%')
-                  ->orWhereRaw("CONCAT(name, ' ', last_name) LIKE ?", ['%' . $searchTerm . '%']);
+                  ->orWhereRaw("CONCAT(name, ' ', last_name) LIKE ?", ['%' . $searchTerm . '%'])
+                  ->orWhereHas('asignatures', function ($q) use ($searchTerm) {
+                    $q->where('name_asignature', 'LIKE', '%' . $searchTerm . '%');
+                });
             });
         }
-
-        $users = $query->with(['groups', 'asignatures'])
+    
+        $users = $query->with(['groups', 'asignatures', 'roles'])
                 ->orderBy('name', 'asc')
                 ->orderBy('last_name', 'asc')
                 ->paginate(15);
-
-        $userRoles = [];
-
-        foreach ($users as $user) {
-            $roles = $user->roles ? $user->roles->pluck('name') : collect();
-            $userRoles[$user->id] = $roles->all(); 
-        }
-
+    
+        $userRoles = $users->mapWithKeys(function ($user) {
+            return [$user->id => $user->roles->pluck('name')->all()];
+        });
+    
         return view('academic.userList', compact('users', 'userRoles'));
     }
+    
 
     // Vista de editar usuario (docentes y psicoorientadores).
     public function edit_user(string $id) {
@@ -328,6 +328,35 @@ class CreateController extends Controller
                             'id_asignature' => $asignatureId,
                             'id_group' => $groupId
                         ];
+                    }
+                }
+            }
+
+            // Verificar si cada grupo en groups_asig está también en groups
+            foreach ($request->groups_asig as $asignature_id => $assigned_groups) {
+                foreach ($assigned_groups as $group) {
+                    // Verificamos si el grupo está en la lista de `groups` seleccionada
+                    if (!in_array($group, $request->groups)) {
+                        // Si encontramos un grupo no permitido, devolvemos error de inmediato
+                        return redirect()->back()->with('error', 'No se ha podido actualizar el registro, compruebe que los grupos designados a cada asignatura coincidan con los grupos a cargo del docente.');
+                    }
+                }
+            }
+
+            // Verificación aignaturas impartidas en grupos
+            // Verifica si ya se está impartiendo una asignatura en determinado grupo.
+            foreach ($request->asignature_id as $asignature_id) {
+                if (isset($request->groups_asig[$asignature_id])) {
+                    foreach ($request->groups_asig[$asignature_id] as $groupId) {
+                        $exists = Teachers_asignatures_group::where('id_asignature', $asignature_id)
+                                                            ->where('id_group', $groupId)
+                                                            ->where('id_teacher', '!=', $id)
+                                                            ->exists();
+                        if ($exists) {
+                            $name_asignature = Asignature::find($asignature_id)->name_asignature;
+                            $name_group = Group::find($groupId)->group;
+                            return redirect()->back()->with('error', '¡Error! La asignatura de ' . $name_asignature . ' ya es impartida en el grupo ' .  $name_group .' por otro docente');
+                        }
                     }
                 }
             }
