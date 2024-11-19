@@ -138,7 +138,7 @@ class CreateController extends Controller
                 'last_name' => 'required',
                 'email' => 'required|unique:users_teachers',
                 'load_degree' => 'required|array',
-                'load_degree.*' => 'exists:asignatures,id',
+                'load_degree.*' => 'exists:degrees,id',
             ]);
 
             foreach ($request->load_degree as $degree) {
@@ -445,7 +445,7 @@ class CreateController extends Controller
                 'last_name' => 'required',
                 'email' => 'required|unique:users_teachers,email,' . $id,
                 'load_degree' => 'required|array',
-                'load_degree.*' => 'exists:asignatures,id',
+                'load_degree.*' => 'exists:degrees,id',
             ]);
 
             // verificar si hubo cambios

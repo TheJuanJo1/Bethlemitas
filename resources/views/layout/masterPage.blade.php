@@ -132,30 +132,13 @@
                                  </div>
 
                                  <!-- Grados -->
-                                 <div x-data="{ isOpen: false}">
-                                    <a @click="isOpen = !isOpen" class="flex items-center px-5 py-2 mt-4 hover:bg-[#95A5A6] hover:text-gray-900 hover:rounded-lg font-medium cursor-pointer">
+                                 <div>
+                                    <a href="{{ route('create.degree') }}" class="flex items-center px-5 py-2 mt-4 hover:bg-[#95A5A6] hover:text-gray-900 hover:rounded-lg font-medium cursor-pointer">
                                        <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                           <line x1="3" y1="16" x2="21" y2="16"></line>
                                       </svg>
                                       <span class="mx-3">Grados</span>
-                                      <svg class="w-6 h-6 ml-auto" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                       <polygon points="12 16, 6 8, 18 8" />
-                                   </svg>
                                     </a>
-
-                                    <div x-show="isOpen" class="ml-10">
-                                       <a href="#"
-                                       class="flex items-center px-3  mt-2 hover:bg-[#95A5A6] hover:text-gray-900 hover:rounded-lg font-medium">
-                                             <!-- Icono si es necesario -->
-                                             <span class="mx-3">• Crear grado</span>
-                                       </a>
-
-                                       <a href="#"
-                                       class="flex items-center px-3  mt-2 hover:bg-[#95A5A6] hover:text-gray-900 hover:rounded-lg font-medium">
-                                          <!-- Icono si es necesario -->
-                                          <span class="mx-3">• Listar grados</span>
-                                       </a>
-                                    </div>
                                  </div>
 
                                  <!-- Grupos -->
@@ -289,7 +272,7 @@
                         popup: 'colored-toast',
                      },
                      showConfirmButton: false,
-                     timer: 2500,
+                     timer: 3500,
                      timerProgressBar: true,
                });
                Toast.fire({

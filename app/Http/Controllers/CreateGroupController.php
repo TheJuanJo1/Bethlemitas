@@ -68,7 +68,7 @@ class CreateGroupController extends Controller
             'asignaturas_edit.*' => 'exists:asignatures,id',
         ]);
 
-        //Verificar si hubo cambios
+        // Verificar si hubo cambios
         $new_group = $request->grupo_edit;
 
         // Comparar los datos actuales con los nuevos

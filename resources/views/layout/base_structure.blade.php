@@ -27,4 +27,5 @@
 
 @section('JS')
     <script src="{{ asset('scripts/group.js') }}"></script>
+    <script src="{{ asset('scripts/degree.js') }}"></script>
 @endsection

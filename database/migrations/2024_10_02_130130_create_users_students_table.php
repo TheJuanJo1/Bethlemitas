@@ -19,8 +19,8 @@ return new class extends Migration
             $table->tinyInteger('age');
 
             //Grado
-            $table->unsignedBigInteger('id_degree');
-            $table->foreign('id_degree')->references('id')->on('degrees');
+            $table->unsignedBigInteger('id_degree')->nullable();
+            $table->foreign('id_degree')->references('id')->on('degrees')->onDelete('set null');
             //Grupo
             $table->unsignedBigInteger('id_group')->nullable();
             $table->foreign('id_group')->references('id')->on('groups')->onDelete('set null');

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\CreateController;
+use App\Http\Controllers\CreateDegreeController;
 use App\Http\Controllers\CreateGroupController;
 use App\Http\Middleware\PreventBackHistoryMiddleware;
 use App\Http\Middleware\RoleMiddleware;
@@ -43,6 +44,14 @@ Route::middleware([PreventBackHistoryMiddleware::class])->group(function() {
             Route::put('/update/group', [CreateGroupController::class, 'update_group'])->name('update.group');
             // Delete Group
             Route::delete('/delete/group/{id}', [CreateGroupController::class, 'destroy_group'])->name('destroy.group');
+            // Vista create degree
+            Route::get('/create/degree', [CreateDegreeController::class, 'create_degree'])->name('create.degree');
+            // Store Degree
+            Route::post('/store/degree', [CreateDegreeController::class, 'store_degree'])->name('store.degree');
+            // Update Degree
+            Route::put('/update/degree', [CreateDegreeController::class, 'update_degree'])->name('update.degree');
+            // Delete Degree
+            Route::delete('/delete/degree/{id}', [CreateDegreeController::class, 'destroy_degree'])->name('delete.degree');
         });
 
     });
