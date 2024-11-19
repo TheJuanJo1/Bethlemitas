@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CreateAsignatureController;
 use App\Http\Controllers\CreateController;
 use App\Http\Controllers\CreateDegreeController;
 use App\Http\Controllers\CreateGroupController;
@@ -52,6 +53,14 @@ Route::middleware([PreventBackHistoryMiddleware::class])->group(function() {
             Route::put('/update/degree', [CreateDegreeController::class, 'update_degree'])->name('update.degree');
             // Delete Degree
             Route::delete('/delete/degree/{id}', [CreateDegreeController::class, 'destroy_degree'])->name('delete.degree');
+            // Vista create Asignature
+            Route::get('/create/asignature', [CreateAsignatureController::class, 'create_asignature'])->name('create.asignature');
+            // Store Asignature
+            Route::post('/store/asignature', [CreateAsignatureController::class, 'store_asignature'])->name('store.asignature');
+            // Update Asignature
+            Route::put('/update/asignature', [CreateAsignatureController::class, 'update_asignature'])->name('update.asignature');
+            // Delete Asignature
+            Route::delete('/delete/asignature/{id}', [CreateAsignatureController::class, 'destroy_asignature'])->name('delete.asignature');
         });
 
     });

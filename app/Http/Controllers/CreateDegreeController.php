@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 
 class CreateDegreeController extends Controller
 {
+    // Vista de Create degree, se ve toda la lista de grados, incluye todo el CRUD
     public function create_degree(Request $request)
     {
         // Inicializa el query base
@@ -27,6 +28,7 @@ class CreateDegreeController extends Controller
         return view('academic.createDegree', compact('list_degrees'));
     }
 
+    // Create Degree, logica para crear un grado
     public function store_degree(Request $request) {
         $request->validate([
             'degree' => 'required|string|unique:degrees',
@@ -39,6 +41,7 @@ class CreateDegreeController extends Controller
         return redirect()->back()->with('success', 'Grado creado exitosamente.');
     }
 
+    // Udate Degree, actualizar los datos del grado
     public function update_degree(Request $request)
     {
         // ID del grado 
@@ -74,6 +77,7 @@ class CreateDegreeController extends Controller
         return redirect()->back()->with('info', 'No hubo cambios en la actualización del grado.');
     }
 
+    // Delete Degree, eliminar grado.
     public function destroy_degree(string $id) {
         $degree = Degree::find($id);
 
