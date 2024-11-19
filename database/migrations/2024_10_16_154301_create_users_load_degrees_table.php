@@ -19,7 +19,7 @@ return new class extends Migration
             $table->foreign('id_user')->references('id')->on('users_teachers');
             //Grado
             $table->unsignedBigInteger('id_degree');
-            $table->foreign('id_degree')->references('id')->on('degrees');
+            $table->foreign('id_degree')->references('id')->on('degrees')->onDelete('cascade');
 
             $table->timestamps();
         });
