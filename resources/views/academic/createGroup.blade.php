@@ -47,7 +47,7 @@
             <thead class="bg-gray-200">
                 <tr class="text-left">
                     <th class="px-4 py-2">Grupo</th>
-                    <th class="px-4 py-2">Asignaturas</th>
+                    <th class="px-4 py-2">Asignaturas asignadas al grupo</th>
                     <th class="px-4 py-2">Acciones</th>
                 </tr>
             </thead>

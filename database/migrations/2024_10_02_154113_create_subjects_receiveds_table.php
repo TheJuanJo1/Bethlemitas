@@ -19,7 +19,7 @@ return new class extends Migration
             $table->foreign('id_group')->references('id')->on('groups')->onDelete('cascade');
             //Asignatura
             $table->unsignedBigInteger('id_asignature');
-            $table->foreign('id_asignature')->references('id')->on('asignatures');
+            $table->foreign('id_asignature')->references('id')->on('asignatures')->onDelete('cascade');
 
             $table->timestamps();
         });
