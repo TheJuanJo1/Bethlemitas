@@ -6,7 +6,9 @@ use App\Models\Asignature;
 use App\Models\Degree;
 use App\Models\Group;
 use App\Models\State;
+use App\Models\Users_load_asignature;
 use App\Models\Users_load_degree;
+use App\Models\Users_load_group;
 use App\Models\Users_teacher;
 use App\Models\Teachers_asignatures_group;
 use Spatie\Permission\Models\Role;
@@ -36,138 +38,260 @@ class CreateController extends Controller
 
         $role = $request->role;
         $role_name = Role::where('id', $role)->first()->name;
+        $number_documment = $request->input('number_documment');
+        $exist_user = Users_teacher::where('number_documment', $number_documment)->first();
+        // Obtener el estado 'activo'
+        $state = State::where('state', 'activo')->firstOrFail();
 
         // Crear usuario si el rol es docente
         if ($role_name == 'docente') {
-            $request->validate([
-                'number_documment' => 'required|digits_between:1,20|unique:users_teachers',
-                'name' => 'required',
-                'last_name' => 'required',
-                'email' => 'required|unique:users_teachers',
-                'subjects' => 'required|array',
-                'subjects.*' => 'exists:asignatures,id',
-                'groups' =>'required|array',
-                'groups.*' => 'exists:groups,id',
-                'group_director' => 'nullable||unique:users_teachers',
-                'asignature_id' => 'required|array',
-                'asignature_id.*' => 'exists:asignatures,id',
-                'groups_asig' => 'required|array',
-                'groups_asig.*' => 'required|array',
-                'groups_asig.*.*' => 'required|integer',
-            ]);
 
-            // Verificar si cada grupo en groups_asig está también en groups
-            foreach ($request->groups_asig as $asignature_id => $assigned_groups) {
-                foreach ($assigned_groups as $group) {
-                    // Verificamos si el grupo está en la lista de `groups` seleccionada
-                    if (!in_array($group, $request->groups)) {
-                        // Si encontramos un grupo no permitido, devolvemos error de inmediato
-                        return redirect()->back()->with('error', 'No se ha podido guardar el registro, compruebe que los grupos designados a cada asignatura coincidan con los grupos a cargo del docente.');
-                    }
-                }
-            }
+            if ($exist_user) {
+                $request->validate([
+                    'email' => 'required|unique:users_teachers,email,' . $exist_user->id,
+                    'subjects' => 'required|array',
+                    'subjects.*' => 'exists:asignatures,id',
+                    'groups' =>'required|array',
+                    'groups.*' => 'exists:groups,id',
+                    'group_director' => 'nullable||unique:users_teachers',
+                    'asignature_id' => 'required|array',
+                    'asignature_id.*' => 'exists:asignatures,id',
+                    'groups_asig' => 'required|array',
+                    'groups_asig.*' => 'required|array',
+                    'groups_asig.*.*' => 'required|integer',
+                ]);
 
-            // Verificación aignaturas impartidas en grupos
-            // Verifica si ya se está impartiendo una asignatura en determinado grupo.
-            foreach ($request->asignature_id as $asignature_id) {
-                if (isset($request->groups_asig[$asignature_id])) {
-                    foreach ($request->groups_asig[$asignature_id] as $groupId) {
-                        $exists = Teachers_asignatures_group::where('id_asignature', $asignature_id)
-                                                            ->where('id_group', $groupId)
-                                                            ->exists();
-                        if ($exists) {
-                            $name_asignature = Asignature::find($asignature_id)->name_asignature;
-                            $name_group = Group::find($groupId)->group;
-                            return redirect()->back()->with('error', '¡Error! La asignatura de ' . $name_asignature . ' ya es impartida en el grupo ' .  $name_group .' por otro docente');
+                $exist_user->update([
+                    'group_director' => $request->group_director,  // Actualizar el campo group_director
+                    'id_state' => $state->id,  // Actualizar estado a 'bloqueado'
+                    'email' => $request->email, // Actualizar email
+                ]);
+
+                // Verificar si cada grupo en groups_asig está también en groups
+                foreach ($request->groups_asig as $asignature_id => $assigned_groups) {
+                    foreach ($assigned_groups as $group) {
+                        // Verificamos si el grupo está en la lista de `groups` seleccionada
+                        if (!in_array($group, $request->groups)) {
+                            // Si encontramos un grupo no permitido, devolvemos error de inmediato
+                            return redirect()->back()->with('error', 'No se ha podido guardar el registro, compruebe que los grupos designados a cada asignatura coincidan con los grupos a cargo del docente.');
                         }
                     }
                 }
-            }
-            
-            //Guardar el registro de usuario
-            $user = new Users_teacher();
-            $user->number_documment = $request->input('number_documment');
-            $user->name = $request->input('name');
-            $user->last_name = $request->input('last_name');
-            $user->email = $request->input('email');
-            $user->group_director = $request->input('group_director');
-            $user->id_state = 2;
-            $user->password = bcrypt($request->input('number_documment'));
-            $user->assignRole($role_name);
-            $user->save();
 
-            // Guardar las asignaturas seleccionadas
-            foreach ($request->subjects as $subject) {
-                DB::table('users_load_asignatures')->insert([
-                    'id_user_teacher' => $user->id,
-                    'id_asignature' => $subject,
-                ]);
-            }
-
-            // Guardar los grupos seleccionados en la tabla users_load_groups
-            foreach ($request->groups as $group) {
-                DB::table('users_load_groups')->insert([
-                    'id_user_teacher' => $user->id,
-                    'id_group' => $group,
-                ]);
-            }
-
-            // ************* Guardar los datos en la tabla teachers_asignatures_groups **************/
-            // Iterar sobre cada asignatura y sus respectivos grupos
-            foreach ($request->asignature_id as $asignatureId) {
-                if (isset($request->groups_asig[$asignatureId])) {
-                    foreach ($request->groups_asig[$asignatureId] as $groupId) {
-                        //Guardar en la base de datos
-                        DB::table('teachers_asignatures_groups')->insert([
-                            'id_teacher' => $user->id,
-                            'id_asignature' => $asignatureId,
-                            'id_group' => $groupId,
-                        ]);
+                // Verificación asignaturas impartidas en grupos
+                // Verifica si ya se está impartiendo una asignatura en determinado grupo.
+                foreach ($request->asignature_id as $asignature_id) {
+                    if (isset($request->groups_asig[$asignature_id])) {
+                        foreach ($request->groups_asig[$asignature_id] as $groupId) {
+                            $exists = Teachers_asignatures_group::where('id_asignature', $asignature_id)
+                                                                ->where('id_group', $groupId)
+                                                                ->exists();
+                            if ($exists) {
+                                $name_asignature = Asignature::find($asignature_id)->name_asignature;
+                                $name_group = Group::find($groupId)->group;
+                                return redirect()->back()->with('error', '¡Error! La asignatura de ' . $name_asignature . ' ya es impartida en el grupo ' .  $name_group .' por otro docente');
+                            }
+                        }
                     }
                 }
-            }
 
-            return redirect()->back()->with('success', 'Usuario creado correctamente.');                          
+                // Guardar las asignaturas seleccionadas
+                foreach ($request->subjects as $subject) {
+                    DB::table('users_load_asignatures')->insert([
+                        'id_user_teacher' => $exist_user->id,
+                        'id_asignature' => $subject,
+                    ]);
+                }
+
+                // Guardar los grupos seleccionados en la tabla users_load_groups
+                foreach ($request->groups as $group) {
+                    DB::table('users_load_groups')->insert([
+                        'id_user_teacher' => $exist_user->id,
+                        'id_group' => $group,
+                    ]);
+                }
+
+                // ************* Guardar los datos en la tabla teachers_asignatures_groups **************/
+                // Iterar sobre cada asignatura y sus respectivos grupos
+                foreach ($request->asignature_id as $asignatureId) {
+                    if (isset($request->groups_asig[$asignatureId])) {
+                        foreach ($request->groups_asig[$asignatureId] as $groupId) {
+                            //Guardar en la base de datos
+                            DB::table('teachers_asignatures_groups')->insert([
+                                'id_teacher' => $exist_user->id,
+                                'id_asignature' => $asignatureId,
+                                'id_group' => $groupId,
+                            ]);
+                        }
+                    }
+                }
+
+                return redirect()->back()->with('success', 'Usuario creado correctamente.');  
+
+
+            }else{
+                $request->validate([
+                    'number_documment' => 'required|digits_between:1,20|unique:users_teachers',
+                    'name' => 'required',
+                    'last_name' => 'required',
+                    'email' => 'required|unique:users_teachers',
+                    'subjects' => 'required|array',
+                    'subjects.*' => 'exists:asignatures,id',
+                    'groups' =>'required|array',
+                    'groups.*' => 'exists:groups,id',
+                    'group_director' => 'nullable||unique:users_teachers',
+                    'asignature_id' => 'required|array',
+                    'asignature_id.*' => 'exists:asignatures,id',
+                    'groups_asig' => 'required|array',
+                    'groups_asig.*' => 'required|array',
+                    'groups_asig.*.*' => 'required|integer',
+                ]);
+
+                // Verificar si cada grupo en groups_asig está también en groups
+                foreach ($request->groups_asig as $asignature_id => $assigned_groups) {
+                    foreach ($assigned_groups as $group) {
+                        // Verificamos si el grupo está en la lista de `groups` seleccionada
+                        if (!in_array($group, $request->groups)) {
+                            // Si encontramos un grupo no permitido, devolvemos error de inmediato
+                            return redirect()->back()->with('error', 'No se ha podido guardar el registro, compruebe que los grupos designados a cada asignatura coincidan con los grupos a cargo del docente.');
+                        }
+                    }
+                }
+
+                // Verificación asignaturas impartidas en grupos
+                // Verifica si ya se está impartiendo una asignatura en determinado grupo.
+                foreach ($request->asignature_id as $asignature_id) {
+                    if (isset($request->groups_asig[$asignature_id])) {
+                        foreach ($request->groups_asig[$asignature_id] as $groupId) {
+                            $exists = Teachers_asignatures_group::where('id_asignature', $asignature_id)
+                                                                ->where('id_group', $groupId)
+                                                                ->exists();
+                            if ($exists) {
+                                $name_asignature = Asignature::find($asignature_id)->name_asignature;
+                                $name_group = Group::find($groupId)->group;
+                                return redirect()->back()->with('error', '¡Error! La asignatura de ' . $name_asignature . ' ya es impartida en el grupo ' .  $name_group .' por otro docente');
+                            }
+                        }
+                    }
+                }
+                
+                //Guardar el registro de usuario
+                $user = new Users_teacher();
+                $user->number_documment = $request->input('number_documment');
+                $user->name = $request->input('name');
+                $user->last_name = $request->input('last_name');
+                $user->email = $request->input('email');
+                $user->group_director = $request->input('group_director');
+                $user->id_state = $state->id;
+                $user->password = bcrypt($request->input('number_documment'));
+                $user->assignRole($role_name);
+                $user->save();
+
+                // Guardar las asignaturas seleccionadas
+                foreach ($request->subjects as $subject) {
+                    DB::table('users_load_asignatures')->insert([
+                        'id_user_teacher' => $user->id,
+                        'id_asignature' => $subject,
+                    ]);
+                }
+
+                // Guardar los grupos seleccionados en la tabla users_load_groups
+                foreach ($request->groups as $group) {
+                    DB::table('users_load_groups')->insert([
+                        'id_user_teacher' => $user->id,
+                        'id_group' => $group,
+                    ]);
+                }
+
+                // ************* Guardar los datos en la tabla teachers_asignatures_groups **************/
+                // Iterar sobre cada asignatura y sus respectivos grupos
+                foreach ($request->asignature_id as $asignatureId) {
+                    if (isset($request->groups_asig[$asignatureId])) {
+                        foreach ($request->groups_asig[$asignatureId] as $groupId) {
+                            //Guardar en la base de datos
+                            DB::table('teachers_asignatures_groups')->insert([
+                                'id_teacher' => $user->id,
+                                'id_asignature' => $asignatureId,
+                                'id_group' => $groupId,
+                            ]);
+                        }
+                    }
+                }
+
+                return redirect()->back()->with('success', 'Usuario creado correctamente.');  
+            }                        
         }
 
         //crear usuario si el rol es psicoorientador
         if ($role_name == 'psicoorientador') {
-            $request->validate([
-                'number_documment' => 'required|digits_between:1,20|unique:users_teachers',
-                'name' => 'required',
-                'last_name' => 'required',
-                'email' => 'required|unique:users_teachers',
-                'load_degree' => 'required|array',
-                'load_degree.*' => 'exists:degrees,id',
-            ]);
 
-            foreach ($request->load_degree as $degree) {
-                $exists = Users_load_degree::where('id_degree', $degree)->exists();
-                if ($exists) {
-                    return redirect()->back()->with('error', 'Existen grados que ya están asignados a otro/a psicoorientador/a.');
-                }
-            }
-
-            //Guardar el registro de usuario
-            $user = new Users_teacher();
-            $user->number_documment = $request->input('number_documment');
-            $user->name = $request->input('name');
-            $user->last_name = $request->input('last_name');
-            $user->email = $request->input('email');
-            $user->id_state = 2;
-            $user->password = bcrypt($request->input('number_documment'));
-            $user->assignRole($role_name);
-            $user->save();
-
-            // Guardar los grados seleccionados
-            foreach ($request->load_degree as $load_degree) {
-                DB::table('users_load_degrees')->insert([
-                    'id_user' => $user->id,
-                    'id_degree' => $load_degree,
+            if ($exist_user) {
+                $request->validate([
+                    'email' => 'required|unique:users_teachers,email,' . $exist_user->id,
+                    'load_degree' => 'required|array',
+                    'load_degree.*' => 'exists:degrees,id',
                 ]);
-            }
 
-            return redirect()->back()->with('success', 'Usuario creado correctamente.');
+                $exist_user->update([
+                    'id_state' => $state->id,  // Actualizar estado a 'bloqueado'
+                    'email' => $request->email, // Actualizar email
+                ]);
+
+                foreach ($request->load_degree as $degree) {
+                    $exists = Users_load_degree::where('id_degree', $degree)->exists();
+                    if ($exists) {
+                        return redirect()->back()->with('error', 'Existen grados que ya están asignados a otro/a psicoorientador/a.');
+                    }
+                }
+
+                // Guardar los grados seleccionados
+                foreach ($request->load_degree as $load_degree) {
+                    DB::table('users_load_degrees')->insert([
+                        'id_user' => $exist_user->id,
+                        'id_degree' => $load_degree,
+                    ]);
+                }
+
+                return redirect()->back()->with('success', 'Usuario creado correctamente.');
+
+            }else {
+                $request->validate([
+                    'number_documment' => 'required|digits_between:1,20|unique:users_teachers',
+                    'name' => 'required',
+                    'last_name' => 'required',
+                    'email' => 'required|unique:users_teachers',
+                    'load_degree' => 'required|array',
+                    'load_degree.*' => 'exists:degrees,id',
+                ]);
+
+                foreach ($request->load_degree as $degree) {
+                    $exists = Users_load_degree::where('id_degree', $degree)->exists();
+                    if ($exists) {
+                        return redirect()->back()->with('error', 'Existen grados que ya están asignados a otro/a psicoorientador/a.');
+                    }
+                }
+
+                //Guardar el registro de usuario
+                $user = new Users_teacher();
+                $user->number_documment = $request->input('number_documment');
+                $user->name = $request->input('name');
+                $user->last_name = $request->input('last_name');
+                $user->email = $request->input('email');
+                $user->id_state = 2;
+                $user->password = bcrypt($request->input('number_documment'));
+                $user->assignRole($role_name);
+                $user->save();
+
+                // Guardar los grados seleccionados
+                foreach ($request->load_degree as $load_degree) {
+                    DB::table('users_load_degrees')->insert([
+                        'id_user' => $user->id,
+                        'id_degree' => $load_degree,
+                    ]);
+                }
+
+                return redirect()->back()->with('success', 'Usuario creado correctamente.');
+            }
         } 
         // Log::info('valor de ID Role: ' . json_encode($role));
         // return response()->json(['Role' => $role]);
@@ -507,20 +631,27 @@ class CreateController extends Controller
     public function destroy_user(string $id) {
         // Obtener el usuario por ID
         $user = Users_teacher::findOrFail($id);
-
+    
         // Obtener el estado 'bloqueado'
         $state = State::where('state', 'bloqueado')->firstOrFail();
-
-        // Actualizar el estado del usuario
-        $user->update([
-            'group_director' => null,
-            'id_state' => $state->id, // Asegúrate de actualizar con el ID del estado      
-        ]);
-
-        Teachers_asignatures_group::where('id_teacher', $id)->delete();
-        Users_load_degree::where('id_user', $id)->delete();
-
-        return redirect()->back()->with('error', 'El usuario se ha eliminado exitosamente.');
+    
+        // Iniciar una transacción para garantizar integridad de los datos
+        DB::transaction(function () use ($user, $state, $id) {
+            // Actualizar el estado del usuario
+            $user->update([
+                'group_director' => null,  // Eliminar la relación de director de grupo
+                'id_state' => $state->id,  // Actualizar estado a 'bloqueado'
+            ]);
+    
+            // Eliminar relaciones en las tablas pivote
+            Teachers_asignatures_group::where('id_teacher', $id)->delete();
+            Users_load_asignature::where('id_user_teacher', $id)->delete();
+            Users_load_group::where('id_user_teacher', $id)->delete();
+            Users_load_degree::where('id_user', $id)->delete();
+        });
+    
+        // Redirigir con mensaje de éxito
+        return redirect()->back()->with('success', 'El usuario se ha eliminado exitosamente.');
     }
 
 }
