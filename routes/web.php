@@ -4,7 +4,9 @@ use App\Http\Controllers\CreateAsignatureController;
 use App\Http\Controllers\CreateController;
 use App\Http\Controllers\CreateDegreeController;
 use App\Http\Controllers\CreateGroupController;
+use App\Http\Controllers\CreateReferralController;
 use App\Http\Middleware\PreventBackHistoryMiddleware;
+use App\Http\Middleware\RoleDocenteMiddleware;
 use App\Http\Middleware\RoleMiddleware;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\auth\AuthController;
@@ -61,6 +63,15 @@ Route::middleware([PreventBackHistoryMiddleware::class])->group(function() {
             Route::put('/update/asignature', [CreateAsignatureController::class, 'update_asignature'])->name('update.asignature');
             // Delete Asignature
             Route::delete('/delete/asignature/{id}', [CreateAsignatureController::class, 'destroy_asignature'])->name('delete.asignature');
+        });
+
+        // Middleware rol docente
+        Route::middleware([RoleDocenteMiddleware::class])->group(function() {
+
+            // Vista de remision de estudiante
+            Route::get('/create/referral', [CreateReferralController::class, 'create_referral'])->name('create.referral');
+            // Store Referral, aquí tambien se crear al estudiante.
+            Route::post('/store/referral', [CreateReferralController::class, 'store_referral'])->name('store.referral');
         });
 
     });

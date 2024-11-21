@@ -18,6 +18,7 @@ class StateSeeder extends Seeder
         $bloqueado->state = 'bloqueado';
         $bloqueado->save();
 
+        // El estado activo se utilizará tanto para los docentes y psicoorientadores como para los estudiantes, en los estudiantes hará enfasís de que el ha sido remitido.
         $activo = new State;
         $activo->state = 'activo';
         $activo->save();
