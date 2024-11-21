@@ -24,7 +24,7 @@ return new class extends Migration
             $table->text('reason');
             $table->text('observation');
             $table->text('strategies');
-            $table->date('submission_date');
+            $table->string('course', 20);
             $table->timestamps();
         });
     }

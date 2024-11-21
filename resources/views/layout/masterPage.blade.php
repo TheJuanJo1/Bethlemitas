@@ -102,6 +102,7 @@
                                  <span class="mx-3">Página Principal</span>
                               </a>
 
+                              <!-- Opciones de interfaz para el rol coordinador -->
                               @if (Auth::user()->hasRole('coordinador'))
                                  <!-- Usuarios -->
                                  <div x-data="{ isOpen: false}">
@@ -176,63 +177,69 @@
                                  </div>
                               @endif
                               
-                              
-                              {{-- <div x-data="{ isOpen: false }">
-                                 <a @click="isOpen = !isOpen" class="flex items-center px-5 py-2 mt-4 hover:bg-[#95A5A6] hover:text-gray-900 hover:rounded-lg font-medium cursor-pointer" >
-                                 <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M12 5v14m-7-7h14" />
-                                 </svg>
-                                    <span class="mx-3">Panel de creación</span>
-                                 </a>
-
-                                 <div x-show="isOpen" class="ml-10">
-                                    <a href="#"
-                                    class="flex items-center px-3  mt-2 hover:bg-[#95A5A6] hover:text-gray-900 hover:rounded-lg font-medium">
-                                          <!-- Icono si es necesario -->
-                                          <span class="mx-3">• Añadir nueva Editorial</span>
+                              <!-- Opciones de interfaz para el rol docente -->
+                              @if (Auth::user()->hasRole('docente'))
+                                 <!-- Remitir estudiante -->
+                                 <div>
+                                    <a href="{{ route('create.referral') }}" class="flex items-center px-5 py-2 mt-4 hover:bg-[#95A5A6] hover:text-gray-900 hover:rounded-lg font-medium cursor-pointer">
+                                       <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                          <path d="M9 17l-5-5 5-5"></path>
+                                          <path d="M22 12H4"></path>
+                                          <circle cx="16" cy="12" r="2"></circle>
+                                        </svg>
+                                      <span class="mx-3">Remitir estudiante</span>
                                     </a>
-
-                                    <a href="#"
-                                    class="flex items-center px-3  mt-2 hover:bg-[#95A5A6] hover:text-gray-900 hover:rounded-lg font-medium">
-                                       <!-- Icono si es necesario -->
-                                       <span class="mx-3">• Añadir nuevo Autor</span>
-                                    </a>
-                                    <a href="#"
-                                       class="flex items-center px-3  mt-4 hover:bg-[#95A5A6] hover:text-gray-900 hover:rounded-lg font-medium">
-                                       <!-- Icono si es necesario -->
-                                       <span class="mx-3">• Añadir nueva clasificación </span>
-                                    </a>
-                                    <!-- Puedes agregar más sub-enlaces aquí si es necesario -->
                                  </div>
-                              </div>
-                     
-                              <a class="flex items-center px-5 py-2 mt-4 hover:bg-[#95A5A6] hover:text-gray-900 hover:rounded-lg font-medium" href="#">
-                              <svg class="w-6 h-6 "  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round">  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />  <polyline points="14 2 14 8 20 8" />  <line x1="12" y1="18" x2="12" y2="12" />  <line x1="9" y1="15" x2="15" y2="15" /></svg>
-                                 <span class="mx-3">Crear Registro</span>
-                              </a>
 
+                                 <!-- Listar estudiantes -->
+                                 <div x-data="{ isOpen: false}">
+                                    <a @click="isOpen = !isOpen" class="flex items-center px-5 py-2 mt-4 hover:bg-[#95A5A6] hover:text-gray-900 hover:rounded-lg font-medium cursor-pointer">
+                                       <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                          <!-- Persona central -->
+                                          <circle cx="12" cy="8" r="3"></circle>
+                                          <path d="M10 16c0-2 2-3 2-3s2 1 2 3"></path>
+                                      
+                                          <!-- Persona izquierda -->
+                                          <circle cx="6" cy="9" r="2"></circle>
+                                          <path d="M4.5 16c0-1.5 1.5-2.5 1.5-2.5s1.5 1 1.5 2.5"></path>
+                                      
+                                          <!-- Persona derecha -->
+                                          <circle cx="18" cy="9" r="2"></circle>
+                                          <path d="M16.5 16c0-1.5 1.5-2.5 1.5-2.5s1.5 1 1.5 2.5"></path>
+                                      </svg>
+                                      <span class="mx-3">Listar estudiantes</span>
+                                      <svg class="w-6 h-6 ml-auto" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                       <polygon points="12 16, 6 8, 18 8" />
+                                   </svg>
+                                    </a>
 
-                              <a class="flex items-center px-5 py-2 mt-4 hover:bg-[#95A5A6] hover:text-gray-900 hover:rounded-lg font-medium" href="#">
-                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: rgba(0, 0, 0, 1); transform: ; msFilter:;">
-                                    <rect x="2" y="4" width="20" height="16" rx="2" ry="2"></rect>
-                                    <path d="M8 2 L8 6 M16 2 L16 6"></path>
-                                    <path d="M2 8 L22 8 M2 12 L22 12"></path>
-                                    <path d="M8 14 L8 18 M16 14 L16 18"></path>
-                                 </svg>
-                                 <span class="mx-3">Inventario</span>
-                              </a>
+                                    <div x-show="isOpen" class="ml-10">
+                                       <a href="#"
+                                       class="flex items-center px-3  mt-2 hover:bg-[#95A5A6] hover:text-gray-900 hover:rounded-lg font-medium">
+                                             <!-- Icono si es necesario -->
+                                             <span class="mx-3">• Remitidos</span>
+                                       </a>
 
+                                       <a href="#"
+                                       class="flex items-center px-3  mt-2 hover:bg-[#95A5A6] hover:text-gray-900 hover:rounded-lg font-medium">
+                                          <!-- Icono si es necesario -->
+                                          <span class="mx-3">• En Piar</span>
+                                       </a>
+                                    </div>
+                                 </div>
 
-                              <a class="flex items-center px-5 py-2 mt-4 hover:bg-[#95A5A6] hover:text-gray-900 hover:rounded-lg font-medium" href="#">
-                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" style="fill: rgba(0, 0, 0, 1);transform: ;msFilter:;"><path d="M6.012 18H21V4c0-1.103-.897-2-2-2H6c-1.206 0-3 .799-3 3v14c0 2.201 1.794 3 3 3h15v-2H6.012C5.55 19.988 5 19.806 5 19s.55-.988 1.012-1zM8 9h3V6h2v3h3v2h-3v3h-2v-3H8V9z"></path></svg>
-                                 <span class="mx-3">Donaciones</span>
-                              </a>
-
-                              <a class="flex items-center px-5 py-2 mt-4 hover:bg-[#95A5A6] hover:text-gray-900 hover:rounded-lg font-medium" href="#">
-                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" style="fill: rgba(0, 0, 0, 1);transform: ;msFilter:; "><path d="m21.484 11.125-9.022-5a1 1 0 0 0-.968-.001l-8.978 4.96a1 1 0 0 0-.003 1.749l9.022 5.04a.995.995 0 0 0 .973.001l8.978-5a1 1 0 0 0-.002-1.749z"></path><path d="M20.515 15.126 12 19.856l-8.515-4.73-.971 1.748 9 5a1 1 0 0 0 .971 0l9-5-.97-1.748zM16 4h6v2h-6z"></path></svg>
-                                    <span class="mx-3">Descartes</span>
-                              </a> --}}
-                           
+                                 <div>
+                                    <a href="#" class="flex items-center px-5 py-2 mt-4 hover:bg-[#95A5A6] hover:text-gray-900 hover:rounded-lg font-medium cursor-pointer">
+                                       <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                          <path d="M8 2h8a2 2 0 0 1 2 2v16a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z"></path>
+                                          <line x1="12" y1="8" x2="12" y2="16"></line>
+                                          <line x1="8" y1="12" x2="16" y2="12"></line>
+                                        </svg>
+                                      <span class="mx-3">Añadir acta</span>
+                                    </a>
+                                 </div>
+                              @endif
+                              
                            </li>
                         </div>
                      </div>

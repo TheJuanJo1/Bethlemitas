@@ -15,7 +15,7 @@ class Referral extends Model
         'reason',
         'observation',
         'strategies',
-        'submission_date',
+        'course',
     ];
 
     //Relacion con la tabla de estudiantes

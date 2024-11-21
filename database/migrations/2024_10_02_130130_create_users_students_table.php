@@ -31,7 +31,7 @@ return new class extends Migration
             $table->unsignedBigInteger('id_state');
             $table->foreign('id_state')->references('id')->on('states');
             //Periodo
-            $table->unsignedBigInteger('activation_period');
+            $table->unsignedBigInteger('activation_period')->nullable();
             $table->foreign('activation_period')->references('id')->on('periods');
             
             $table->timestamps();
