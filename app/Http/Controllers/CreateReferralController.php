@@ -32,7 +32,7 @@ class CreateReferralController extends Controller
         $state = State::where('state', 'activo')->firstOrFail(); // Obtener el estado 'activo'
     
         $request->validate([
-            'number_documment' => 'required|digits_between:1,20|unique:users_students,number_documment',
+            'number_documment' => 'required|digits_between:1,20',
             'name' => 'required',
             'last_name' => 'required',
             'degree' => 'required',
@@ -42,6 +42,9 @@ class CreateReferralController extends Controller
             'observation' => 'required|string',
             'strategies' => 'required|string',
         ]);
+
+        $input_number_documment = $request->number_documment;
+        $exist_student = Users_student::where('number_documment', $input_number_documment)->first();
 
         $degreeLoad = Users_load_degree::where('id_degree', $request->input('degree'))->first();
 
@@ -53,6 +56,53 @@ class CreateReferralController extends Controller
         $id_psico = $degreeLoad->id_user;
 
         $psico_date = Users_teacher::where('id', $id_psico)->first();
+
+        if ($exist_student) {
+
+            $current_state = $exist_student->id_state;
+            // Obtener los datos del estado actual
+            $state_info = State::where('id', $current_state)->firstOrFail();
+            if (in_array($state_info->state, ['activo', 'en espera'])) {
+                return redirect()->back()->with('info', 'El estudiante ya está remitido, pero aún no ha ingresado al proceso PIAR.');
+            } elseif ($state_info->state === 'en PIAR') {
+                return redirect()->back()->with('info', 'El estudiante ya está en proceso PIAR.');
+            } elseif ($state_info->state === 'descartado') {
+
+                DB::beginTransaction();
+
+                try {
+                    $exist_student->update([
+                        'age' => $request->age, // Actualizar datos de la edad
+                        'id_degree' => $request->degree, // Actualizar datos del grado
+                        'id_group' => $request->group, // Actualizar datos del grupo
+                        'sent_by' => $id_teacher, // Actualizar el docente que lo remite
+                        'id_state' => $state->id,
+                    ]);
+
+                    // Obtener el nombre del grado usando la relación
+                    $degreeName = $exist_student->degree->degree;  // Esto obtiene el nombre del grado relacionado
+
+                    $referral = new Referral();
+                    $referral->id_user_student = $exist_student->id; // Se guarda el id del usuario que se crea anteriormente.
+                    $referral->id_user_teacher = $id_teacher;
+                    $referral->reason = $request->reason_referral;
+                    $referral->observation = $request->observation;
+                    $referral->strategies = $request->strategies;
+                    $referral->course = $degreeName;
+                    $referral->save();
+
+                    Mail::to($psico_date->email)->queue(new CreatedReferralMail($exist_student, $referral));
+
+                    DB::commit();
+
+                    return redirect()->back()->with('success', 'Estudiante remitido exitosamente.');
+                }catch (\Exception $e) {
+                    DB::rollback();
+                    // Registra o muestra el error para depuración
+                    return redirect()->back()->with('error', 'Hubo problemas en el proceso. Intentelo nuevamente.');
+                }
+            }
+        }
     
         DB::beginTransaction();
     
@@ -91,5 +141,7 @@ class CreateReferralController extends Controller
             return redirect()->back()->with('error', 'Hubo problemas en el proceso, intentelo nuevamente.');
         }
     }
+
+    
     
 }

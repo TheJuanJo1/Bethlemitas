@@ -16,7 +16,7 @@ return new class extends Migration
             $table->integer('number_documment')->unique();
             $table->string('name');
             $table->string('last_name');
-            $table->tinyInteger('age');
+            $table->tinyInteger('age')->nullable();
 
             //Grado
             $table->unsignedBigInteger('id_degree')->nullable();
@@ -25,7 +25,7 @@ return new class extends Migration
             $table->unsignedBigInteger('id_group')->nullable();
             $table->foreign('id_group')->references('id')->on('groups')->onDelete('set null');
             //Docente
-            $table->unsignedBigInteger('sent_by');
+            $table->unsignedBigInteger('sent_by')->nullable();
             $table->foreign('sent_by')->references('id')->on('users_teachers');
             //Estado
             $table->unsignedBigInteger('id_state');
