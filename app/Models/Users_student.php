@@ -41,4 +41,9 @@ class Users_student extends Model
     {
         return $this->hasMany(Referral::class, 'id_user_student');
     }
+      
+    // Relación con el modelo State
+    public function states() {
+        return $this->belongsTo(State::class, 'id_state'); // 'id_state' es la llave foránea en users_teachers
+    }
 }

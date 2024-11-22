@@ -142,6 +142,33 @@ class CreateReferralController extends Controller
         }
     }
 
-    
+    // Listar estudiantes remitidos
+    public function index_student_remitted(Request $request)
+    {
+        // Obtener los estudiantes cuyo id_state está en los estados obtenidos
+        $query = Users_student::whereHas('states', function ($q) {
+            $q->whereIn('state', ['activo', 'en espera']);
+        });
+
+        // Filtrar por búsqueda
+        if ($request->filled('search')) {
+            $searchTerm = $request->input('search');
+            $query->where(function ($q) use ($searchTerm) {
+                $q->where('name', 'LIKE', '%' . $searchTerm . '%')
+                ->orWhere('last_name', 'LIKE', '%' . $searchTerm . '%')
+                ->orWhere('number_documment', 'LIKE', '%' . $searchTerm . '%')
+                ->orWhereRaw("CONCAT(name, ' ', last_name) LIKE ?", ['%' . $searchTerm . '%']);
+            });
+        }
+
+        // Ordenar y paginar resultados
+        $students = $query->orderBy('name', 'asc')
+                        ->orderBy('last_name', 'asc')
+                        ->paginate(15);
+
+        // Retornar vista
+        return view('teacher.studentListRemitted', compact('students'));
+    }
+
     
 }
