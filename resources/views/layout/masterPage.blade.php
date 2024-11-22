@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,81 +10,81 @@
     @yield('css')
     <title>@yield('title')</title>
 </head>
-<body class="bg-[#D5DBDB]">
-   <div>
-      <nav class="bg-[#D5DBDB]  border-b border-gray-200 fixed z-30 w-full">
-         <div class="px-3 py-3 lg:px-5 lg:pl-3">
-            <div class="flex items-center justify-between">
-               <div class="flex items-center justify-start">
+<body class="bg-[#D5DBDB] ">
+         <div>
+            <nav class="bg-[#D5DBDB]  border-b border-gray-200 fixed z-30 w-full">
+               <div class="px-3 py-3 lg:px-5 lg:pl-3">
+                  <div class="flex items-center justify-between">
+                     <div class="flex items-center justify-start">
 
-                  <button id="toggleSidebarMobile" aria-expanded="true" aria-controls="sidebar" class="p-2 mr-2 text-gray-600 rounded cursor-pointer lg:hidden hover:text-gray-900 hover:bg-gray-100 focus:bg-gray-100 focus:ring-2 focus:ring-gray-100">
-                     <svg id="toggleSidebarMobileHamburger" class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                        <path fill-rule="evenodd" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h6a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"></path>
-                     </svg>
-                     <svg id="toggleSidebarMobileClose" class="hidden w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                        <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
-                     </svg>
-                  </button>
+                        <button id="toggleSidebarMobile" aria-expanded="true" aria-controls="sidebar" class="p-2 mr-2 text-gray-600 rounded cursor-pointer lg:hidden hover:text-gray-900 hover:bg-gray-100 focus:bg-gray-100 focus:ring-2 focus:ring-gray-100">
+                           <svg id="toggleSidebarMobileHamburger" class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                              <path fill-rule="evenodd" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h6a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"></path>
+                           </svg>
+                           <svg id="toggleSidebarMobileClose" class="hidden w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                              <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+                           </svg>
+                        </button>
 
-                  <a href="#" class="text-xl font-bold flex items-center lg:ml-2.5">
-                     <img src="{{asset('img/R.png')}}" class="w-16 h-16 mr-2" alt="Windster Logo">
-                     <span class="self-center whitespace-nowrap"> <em>Bethlemitas - PiarManager</em></span>
-                  </a>
-               
-                  <div class="flex items-center" style="display:none">
-                     <button id="toggleSidebarMobileSearch" type="button" class="p-2 text-gray-500 rounded-lg lg:hidden hover:text-gray-900 hover:bg-gray-100">
-                        <span class="sr-only">Search</span>
-                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                        <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"></path>
-                        </svg>
-                     </button>
-                  </div>
-
-               </div>
-               <div class="flex items-center">
-                  <div class="flex items-center space-x-3 md:order-2 md:space-x-0 rtl:space-x-reverse">
-                     <span class="self-center mr-4 text-2xl whitespace-nowrap"><em>{{Auth::user()->name}} {{Auth::user()->last_name}}</em></span>
-                     <button type="button" class="flex text-sm rounded-full md:me-0 focus:ring-4 focus:ring-gray-300  id="user-menu-button" aria-expanded="false" data-dropdown-toggle="user-dropdown" data-dropdown-placement="bottom">
-                        <span class="sr-only">Open user menu</span>
-                        <img class="w-10 h-10 rounded-full" src="{{ asset('img/icono-perfil.jpg')}}" alt="user photo">
-                     </button>
-                     <!-- Dropdown menu -->
-                     <div class="z-50 hidden my-4 text-base list-none bg-[#D5DBDB] divide-y divide-gray-100 rounded-lg shadow dark:divide-gray-600" id="user-dropdown">
-                        <div class="px-4 py-3">
-                           <span class="block text-sm italic font-bold text-black-800">{{Auth::user()->name}} {{Auth::user()->last_name}}</span>
-                           <span class="block text-sm truncate text-black-800 dark:text-gray-400">{{Auth::user()->email}}</span>
+                        <a href="#" class="text-xl font-bold flex items-center lg:ml-2.5">
+                           <img src="{{asset('img/R.png')}}" class="w-16 h-16 mr-2" alt="Windster Logo">
+                           <span class="self-center whitespace-nowrap"> <em>Bethlemitas - PiarManager</em></span>
+                        </a>
+                     
+                        <div class="flex items-center" style="display:none">
+                           <button id="toggleSidebarMobileSearch" type="button" class="p-2 text-gray-500 rounded-lg lg:hidden hover:text-gray-900 hover:bg-gray-100">
+                              <span class="sr-only">Search</span>
+                              <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                              <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"></path>
+                              </svg>
+                           </button>
                         </div>
-                        <ul class="py-2" aria-labelledby="user-menu-button ">
 
-                           <li class="flex items-center hover:bg-[#95A5A6]">
-                              <a href="#" class="flex items-center px-4 py-2 text-sm text-black-800 ">
-                                 <svg class="w-6 mr-2 6"  fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
-                                 </svg>
-                                 <span>Mi perfil</span>
-                              </a>
-                           </li>
-
-                           <li class="flex items-center hover:bg-[#95A5A6]">
-                              <a href="{{ route('logout')}}" class="flex items-center px-4 py-2 text-sm text-black-800">
-                                 <svg class="w-6 h-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                          d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
-                                 </svg>
-                                 <span>Cerrar sesión</span>
-                              </a>
-                           </li>
-
-                        </ul>
                      </div>
+                     <div class="flex items-center">
+                        <div class="flex items-center space-x-3 md:order-2 md:space-x-0 rtl:space-x-reverse">
+                           <span class="self-center mr-4 text-2xl whitespace-nowrap"><em>{{Auth::user()->name}} {{Auth::user()->last_name}}</em></span>
+                           <button type="button" class="flex text-sm rounded-full md:me-0 focus:ring-4 focus:ring-gray-300  id="user-menu-button" aria-expanded="false" data-dropdown-toggle="user-dropdown" data-dropdown-placement="bottom">
+                              <span class="sr-only">Open user menu</span>
+                              <img class="w-10 h-10 rounded-full" src="{{ asset('img/icono-perfil.jpg')}}" alt="user photo">
+                           </button>
+                           <!-- Dropdown menu -->
+                           <div class="z-50 hidden my-4 text-base list-none bg-[#D5DBDB] divide-y divide-gray-100 rounded-lg shadow dark:divide-gray-600" id="user-dropdown">
+                              <div class="px-4 py-3">
+                                 <span class="block text-sm italic font-bold text-black-800">{{Auth::user()->name}} {{Auth::user()->last_name}}</span>
+                                 <span class="block text-sm truncate text-black-800 dark:text-gray-400">{{Auth::user()->email}}</span>
+                              </div>
+                              <ul class="py-2" aria-labelledby="user-menu-button ">
+
+                                 <li class="flex items-center hover:bg-[#95A5A6]">
+                                    <a href="#" class="flex items-center px-4 py-2 text-sm text-black-800 ">
+                                       <svg class="w-6 mr-2 6"  fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                                       </svg>
+                                       <span>Mi perfil</span>
+                                    </a>
+                                 </li>
+
+                                 <li class="flex items-center hover:bg-[#95A5A6]">
+                                    <a href="{{ route('logout')}}" class="flex items-center px-4 py-2 text-sm text-black-800">
+                                       <svg class="w-6 h-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
+                                       </svg>
+                                       <span>Cerrar sesión</span>
+                                    </a>
+                                 </li>
+
+                              </ul>
+                           </div>
+                        </div>
+                     </div>
+
+                  </div>
                   </div>
                </div>
-
-            </div>
-            </div>
-         </div>
-      </nav>
-            <aside id="sidebar" class="fixed top-0 left-0 z-20 flex-col flex-shrink-0 hidden w-64 h-full pt-16 duration-75 lg:flex transition-width " aria-label="Sidebar">
+            </nav>
+            <aside id="sidebar" class="fixed top-0 left-0 z-20 flex-col flex-shrink-0 hidden w-64 h-full pt-16 duration-75 lg:flex transition-width" aria-label="Sidebar">
                <div class="relative flex-1 flex flex-col min-h-0 border-r border-gray-200 bg-[#D5DBDB]  pt-0">
                   <div class="flex flex-col flex-1 pt-5 pb-4 overflow-y-auto">
                      <div class="flex-1 px-3 bg-[#D5DBDB] divide-y space-y-1">
@@ -214,7 +214,7 @@
                                     </a>
 
                                     <div x-show="isOpen" class="ml-10">
-                                       <a href="#"
+                                       <a href="{{ route('index.student.remitted') }}"
                                        class="flex items-center px-3  mt-2 hover:bg-[#95A5A6] hover:text-gray-900 hover:rounded-lg font-medium">
                                              <!-- Icono si es necesario -->
                                              <span class="mx-3">• Remitidos</span>
@@ -245,10 +245,10 @@
                      </div>
                   </div>
                </div>
-           </aside>
-           <div id="main-content" class="bg-[#D5DBDB] relative overflow-y-auto lg:ml-64" style="width:85%; position:absolute; top:5rem">
+            </aside>
+            <div id="main-content" class="bg-[#D5DBDB] relative overflow-y-auto lg:ml-64 w-[100%] lg:w-[85%]" style="position:absolute; top:5rem">
                <main>
-                  <div class="max-w-full max-h-full my-3 px-9" >
+                  <div class="max-w-full max-h-full px-6 my-3" >
                      @yield('content')
                   </div>
                </main>

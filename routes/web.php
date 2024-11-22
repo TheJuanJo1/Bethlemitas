@@ -72,6 +72,8 @@ Route::middleware([PreventBackHistoryMiddleware::class])->group(function() {
             Route::get('/create/referral', [CreateReferralController::class, 'create_referral'])->name('create.referral');
             // Store Referral, aquí tambien se crear al estudiante.
             Route::post('/store/referral', [CreateReferralController::class, 'store_referral'])->name('store.referral');
+            // Index Students Remitted, Listar a los estudiantes remitidos.
+            Route::get('/index/students/remitted', [CreateReferralController::class, 'index_student_remitted'])->name('index.student.remitted');
         });
 
     });
