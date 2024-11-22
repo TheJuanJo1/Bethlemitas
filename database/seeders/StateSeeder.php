@@ -14,6 +14,8 @@ class StateSeeder extends Seeder
     public function run(): void
     {
 
+        // Los estados se estan manejando con estos nombres, si se cambia alguno toca cambiarlo tambien en donde se esté llamando.
+
         $bloqueado = new State;
         $bloqueado->state = 'bloqueado';
         $bloqueado->save();
