@@ -131,7 +131,7 @@ class CreateController extends Controller
 
             }else{
                 $request->validate([
-                    'number_documment' => 'required|digits_between:1,20|unique:users_teachers',
+                    'number_documment' => 'required|digits_between:1,11|unique:users_teachers',
                     'name' => 'required',
                     'last_name' => 'required',
                     'email' => 'required|unique:users_teachers',
@@ -256,7 +256,7 @@ class CreateController extends Controller
 
             }else {
                 $request->validate([
-                    'number_documment' => 'required|digits_between:1,20|unique:users_teachers',
+                    'number_documment' => 'required|digits_between:1,11|unique:users_teachers',
                     'name' => 'required',
                     'last_name' => 'required',
                     'email' => 'required|unique:users_teachers',
