@@ -37,9 +37,9 @@
                 <table class="w-full border-collapse table-auto">
                     <thead>
                         <tr class="text-sm text-gray-600 uppercase bg-gray-200">
-                            <th class="px-4 py-2 border">Grado</th>
                             <th class="px-4 py-2 border">Nombre completo</th>
                             <th class="px-4 py-2 border">Número de documento</th>
+                            <th class="px-4 py-2 border">Grado</th>
                             <th class="px-4 py-2 border">Grupo</th>
                             <th class="px-4 py-2 border">Edad</th>
                             <th class="px-4 py-2 border">Acciones</th>
@@ -48,13 +48,13 @@
                     <tbody class="text-gray-700">
                         @foreach ($students as $student)
                             <tr class="hover:bg-gray-100">
-                                    <td class="px-4 py-2 text-center border">{{ $student->degree->degree }}</td>
                                     <td class="px-4 py-2 border">{{ $student->name }} {{ $student->last_name }}</td>
                                     <td class="px-4 py-2 text-center border">{{ $student->number_documment }}</td>
+                                    <td class="px-4 py-2 text-center border">{{ $student->degree->degree }}</td>
                                     <td class="px-4 py-2 text-center border">{{ $student->group->group }}</td>
                                     <td class="px-4 py-2 text-center border">{{ $student->age }}</td>
                                     <td class="px-4 py-2 text-center border">
-                                        <a href="#" class="text-red-500 hover:underline">Editar</a>
+                                        <a href="{{ route('edit.student', $student->id) }}" class="text-red-500 hover:underline">Editar</a>
                                     </td>
                             </tr>
                         @endforeach

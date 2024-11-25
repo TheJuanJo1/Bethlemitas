@@ -74,6 +74,10 @@ Route::middleware([PreventBackHistoryMiddleware::class])->group(function() {
             Route::post('/store/referral', [CreateReferralController::class, 'store_referral'])->name('store.referral');
             // Index Students Remitted, Listar a los estudiantes remitidos.
             Route::get('/index/students/remitted', [CreateReferralController::class, 'index_student_remitted'])->name('index.student.remitted');
+            // Vista de editar estudiante
+            Route::get('/edit/student/{id}', [CreateReferralController::class, 'edit_student'])->name('edit.student');
+            // Update student
+            Route::put('/update/student/{id}', [CreateReferralController::class, 'update_student'])->name('update.student');
         });
 
     });

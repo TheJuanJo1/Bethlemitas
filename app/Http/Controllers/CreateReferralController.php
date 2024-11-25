@@ -170,5 +170,63 @@ class CreateReferralController extends Controller
         return view('teacher.studentListRemitted', compact('students'));
     }
 
-    
+    // Vista de editar estudiante
+    public function edit_student(string $id) {
+
+        $student = Users_student::find($id);
+        $groups = Group::orderByRaw('CAST(`group` AS UNSIGNED), `group`')->get();
+        $degrees = Degree::orderByRaw('CAST(`degree` AS UNSIGNED), `degree`')->get();
+
+        return view('teacher.studentEdit', compact('student', 'degrees', 'groups'));
+    }
+
+    // Update student 
+    public function update_student(Request $request, string $id){
+        $request->validate([
+            'number_documment' => 'required|digits_between:1,20|unique:users_students,number_documment,' . $id,
+            'name' => 'required|string',
+            'last_name' => 'required|string',
+            'degree' => 'required',
+            'group' => 'required',
+            'age' => 'nullable|integer|min:0',  // Validación de edad si se ingresa
+        ]);
+
+        $student = Users_student::find($id);
+        $datos_actuales = $student->toArray();
+        $huboCambios = false;
+
+        $nuevos_datos = [
+            'number_documment' => $request->number_documment, 
+            'name' => $request->name,
+            'last_name' => $request->last_name,
+            'id_degree' => $request->degree,
+            'id_group' => $request->group,
+            'age' => $request->age,
+        ];
+
+        // Comparar los datos actuales con los nuevos
+        foreach ($nuevos_datos as $key => $value) {
+            if ($datos_actuales[$key] != $value) {
+                $huboCambios = true;
+                break; 
+            }
+        }
+
+        $degreeLoad = Users_load_degree::where('id_degree', $request->input('degree'))->first();
+
+        if (!$degreeLoad) {
+            // Manejar el caso donde no se encuentra el grado en Users_load_degree
+            return redirect()->back()->with('error', 'No se encontró un psicoorientador asignado para el grado seleccionado, comunicate con cordinación académica para que asigne a un psicoorientador.');
+        }
+
+        if ($huboCambios) {
+
+            $student->update($nuevos_datos);
+
+            return redirect()->back()->with('success', 'Usuario editado correctamente.');
+        } else {
+            return redirect()->back()->with('info', 'No hubo cambios en el usuario.');
+        }
+    }
+
 }
