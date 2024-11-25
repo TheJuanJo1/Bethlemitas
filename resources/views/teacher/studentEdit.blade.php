@@ -8,9 +8,11 @@
 
 @section('content')
     <div class="p-8 mx-auto bg-[#D5DBDB]">
-        <h1 class="mb-6 text-2xl font-bold text-gray-700">Remisión de estudiantes</h1>
-        <form action="{{ route('store.referral') }}" method="POST">
+        <a href=" {{ route('index.student.remitted')}} "><i class="bi bi-arrow-left" style="font-size: 2rem;"></i></a>
+        <h1 class="mb-6 text-2xl font-bold text-gray-700">Editar estudiante</h1>
+        <form action="{{ route('update.student', $student->id) }}" method="POST">
             @csrf
+            @method('PUT')
             <!-- Nombres, Apellidos y Documento -->
             <div class="grid grid-cols-1 gap-4 mb-6 sm:grid-cols-3">
                 <div>
@@ -19,7 +21,7 @@
                     type="text"
                     id="name"
                     name="name"
-                    value="{{ old('name') }}"
+                    value="{{ $student->name }}"
                     class="block w-full p-2 mt-1 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
                     maxlength="50"
                     placeholder="Nombres"
@@ -32,7 +34,7 @@
                     type="text"
                     id="last_name"
                     name="last_name"
-                    value="{{ old('last_name') }}"
+                    value="{{ $student->last_name }}"
                     class="block w-full p-2 mt-1 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
                     placeholder="Apellidos"
                     required
@@ -44,7 +46,7 @@
                     type="number"
                     id="number_documment"
                     name="number_documment"
-                    value="{{ old('number_documment') }}"
+                    value="{{ $student->number_documment }}"
                     class="block w-full p-2 mt-1 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
                     placeholder="N° documento"
                     min="1"
@@ -69,7 +71,7 @@
                     >
                         <option value="">Seleccionar</option>
                         @foreach ($degrees as $degree)
-                            <option value="{{ $degree->id }}" {{ old('degree') == $degree->id ? 'selected' : '' }} >{{ $degree->degree }}</option>
+                            <option value="{{ $degree->id }}" {{ $student->id_degree == $degree->id ? 'selected' : '' }} >{{ $degree->degree }}</option>
                         @endforeach
                     </select>
                 </div>
@@ -83,7 +85,7 @@
                     >
                         <option value="">Seleccionar</option>
                         @foreach ($groups as $group)
-                            <option value="{{ $group->id }}" {{ old('group') == $group->id ? 'selected' : '' }} >{{ $group->group }}</option>
+                            <option value="{{ $group->id }}" {{ $student->id_group == $group->id ? 'selected' : '' }} >{{ $group->group }}</option>
                         @endforeach
                     </select>
                 </div>
@@ -93,63 +95,21 @@
                         type="number"
                         id="age"
                         name="age"
-                        value="{{ old('age') }}"
+                        value="{{ $student->age }}"
                         class="block w-full p-2 mt-1 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
                         min="1"
                         placeholder="Edad"
                     />
                 </div>
             </div>
-        
-            <!-- Motivo -->
-            <div class="mb-6">
-                <label for="reason_referral" class="block text-sm font-medium text-gray-700">Motivo *</label>
-                <textarea
-                id="reason_referral"
-                name="reason_referral"
-                value="{{ old('reason_referral') }}"
-                rows="3"
-                class="block w-full p-2 mt-1 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
-                placeholder="Motivo de la remisión..."
-                required
-                ></textarea>
-            </div>
-        
-            <!-- Observaciones -->
-            <div class="mb-6">
-                <label for="observation" class="block text-sm font-medium text-gray-700">Observaciones *</label>
-                <textarea
-                id="observation"
-                name="observation"
-                value="{{ old('observation') }}"
-                rows="3"
-                class="block w-full p-2 mt-1 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
-                placeholder="Aspectos familiares, sociales, cognitivos, afectivos, comportamientos especiales del estudiante..."
-                required
-                ></textarea>
-            </div>
-        
-            <!-- Estrategias -->
-            <div class="mb-6">
-                <label for="strategies" class="block text-sm font-medium text-gray-700">Estrategias *</label>
-                <textarea
-                id="strategies"
-                name="strategies"
-                value="{{ old('strategies') }}"
-                rows="3"
-                class="block w-full p-2 mt-1 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
-                placeholder="Estrategias aplicadas para ayudar al estudiante..."
-                required
-                ></textarea>
-            </div>
-        
+
             <!-- Botón de envío -->
             <div class="text-left">
                 <button
                 type="submit"
                 class="px-4 py-2 font-semibold text-white bg-blue-500 rounded-md shadow-sm hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                 >
-                Enviar remisión
+                Editar
                 </button>
             </div>
         </form>
