@@ -8,9 +8,9 @@
 
 @section('content')
 
-    <div class="flex justify-center p-4">
-        <div class="w-[110%] px-4 bg-white rounded-lg shadow-md h-[45rem]">
-            <div class="p-4 border-b">
+    <div class="flex justify-center p-[2px]">
+        <div class="w-[100%] px-4 bg-white rounded-lg shadow-md h-[45rem] overflow-auto">
+            <div class="p-4 border-b bg-[white] z-10 sticky top-0 shadow-md w-full ">
                 <h1 class="text-3xl font-bold text-gray-700">Estudiantes remitidos</h1>
                 <div class="flex items-center mt-2">
                     <form action="{{ route('index.student.remitted') }}">
@@ -63,6 +63,7 @@
             </div>
         </div>
     </div>
+    {{ $students->links() }} <!-- Para la paginación -->
   
 
 @endsection

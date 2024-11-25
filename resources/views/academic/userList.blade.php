@@ -8,7 +8,7 @@
 
 <div class="p-4">
     <!-- Encabezado de la tabla -->
-    <div class="flex items-center justify-between mb-4">
+    <div class="sticky top-0 flex flex-col mb-4 lg:flex-row lg:items-center lg:justify-between">
         <h2 class="text-xl font-semibold">Lista de usuarios</h2>
         <div class="relative">
             <form action="{{ route('index.users') }}">

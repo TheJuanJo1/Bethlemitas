@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('users_students', function (Blueprint $table) {
             $table->id();
-            $table->integer('number_documment')->unique();
+            $table->bigInteger('number_documment')->unique();
             $table->string('name');
             $table->string('last_name');
             $table->tinyInteger('age')->nullable();

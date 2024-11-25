@@ -27,7 +27,7 @@
                         <label for="number_documment">Número de documento *</label>
                         <input type="text" id="number_documment" name="number_documment" value="{{ old('number_documment')}}" placeholder="Número de documento" required>
                         @error('number_documment')
-                            <p class="mt-2 text-sm text-red-600 dark:text-red-500"><span class="font-medium">El número de documento ya se encuentra registrado</span></p>
+                            <p class="mt-2 text-sm text-red-600 dark:text-red-500"><span class="font-medium">El número de documento ya se encuentra registrado o no tiene la longitud requerida (max 11)</span></p>
                         @enderror
                     </div>
                     
