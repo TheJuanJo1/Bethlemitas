@@ -78,6 +78,8 @@ Route::middleware([PreventBackHistoryMiddleware::class])->group(function() {
             Route::get('/edit/student/{id}', [CreateReferralController::class, 'edit_student'])->name('edit.student');
             // Update student
             Route::put('/update/student/{id}', [CreateReferralController::class, 'update_student'])->name('update.student');
+            // addMinutes, Visualiza a los estudiantes en piar pero tienen mas acciones.
+            Route::get('/addMinutes', [CreateReferralController::class, 'addMinutes'])->name('addMinutes');
         });
 
     });

@@ -145,10 +145,12 @@ class CreateReferralController extends Controller
     // Listar estudiantes remitidos
     public function index_student_remitted(Request $request)
     {
+        $id_teacher = Auth::id(); // Se obtiene el id del docente autentificado.
+
         // Obtener los estudiantes cuyo id_state está en los estados obtenidos
         $query = Users_student::whereHas('states', function ($q) {
             $q->whereIn('state', ['activo', 'en espera']);
-        });
+        })->where('sent_by', $id_teacher);
 
         // Filtrar por búsqueda
         if ($request->filled('search')) {
@@ -227,6 +229,33 @@ class CreateReferralController extends Controller
         } else {
             return redirect()->back()->with('info', 'No hubo cambios en el usuario.');
         }
+    }
+
+    // Añadir acta, aqui se lista los estudiantes en Piar pero se podran selecionar para añadir un acta.
+    public function addMinutes(Request $request) {
+
+        // Obtener los estudiantes cuyo id_state está en los estados obtenidos
+        $query = Users_student::whereHas('states', function ($q) {
+            $q->whereIn('state', ['en PIAR']);
+        });
+
+        // Filtrar por búsqueda
+        if ($request->filled('search')) {
+            $searchTerm = $request->input('search');
+            $query->where(function ($q) use ($searchTerm) {
+                $q->where('name', 'LIKE', '%' . $searchTerm . '%')
+                ->orWhere('last_name', 'LIKE', '%' . $searchTerm . '%')
+                ->orWhere('number_documment', 'LIKE', '%' . $searchTerm . '%')
+                ->orWhereRaw("CONCAT(name, ' ', last_name) LIKE ?", ['%' . $searchTerm . '%']);
+            });
+        }
+
+        // Ordenar y paginar resultados
+        $students = $query->orderBy('name', 'asc')
+                        ->orderBy('last_name', 'asc')
+                        ->paginate(15);
+
+        return view('teacher.addMinutes', compact('students'));
     }
 
 }
