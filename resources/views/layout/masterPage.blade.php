@@ -192,8 +192,8 @@
                                  </div>
 
                                  <!-- Listar estudiantes -->
-                                 <div x-data="{ isOpen: false}">
-                                    <a @click="isOpen = !isOpen" class="flex items-center px-5 py-2 mt-4 hover:bg-[#95A5A6] hover:text-gray-900 hover:rounded-lg font-medium cursor-pointer">
+                                 <div>
+                                    <a href="{{ route('index.student.remitted') }}" class="flex items-center px-5 py-2 mt-4 hover:bg-[#95A5A6] hover:text-gray-900 hover:rounded-lg font-medium cursor-pointer">
                                        <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                           <!-- Persona central -->
                                           <circle cx="12" cy="8" r="3"></circle>
@@ -206,30 +206,13 @@
                                           <!-- Persona derecha -->
                                           <circle cx="18" cy="9" r="2"></circle>
                                           <path d="M16.5 16c0-1.5 1.5-2.5 1.5-2.5s1.5 1 1.5 2.5"></path>
-                                      </svg>
-                                      <span class="mx-3">Listar estudiantes</span>
-                                      <svg class="w-6 h-6 ml-auto" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                       <polygon points="12 16, 6 8, 18 8" />
-                                   </svg>
+                                       </svg>
+                                      <span class="mx-3">Listar estudiantes remitidos</span>
                                     </a>
-
-                                    <div x-show="isOpen" class="ml-10">
-                                       <a href="{{ route('index.student.remitted') }}"
-                                       class="flex items-center px-3  mt-2 hover:bg-[#95A5A6] hover:text-gray-900 hover:rounded-lg font-medium">
-                                             <!-- Icono si es necesario -->
-                                             <span class="mx-3">• Remitidos</span>
-                                       </a>
-
-                                       <a href="#"
-                                       class="flex items-center px-3  mt-2 hover:bg-[#95A5A6] hover:text-gray-900 hover:rounded-lg font-medium">
-                                          <!-- Icono si es necesario -->
-                                          <span class="mx-3">• En Piar</span>
-                                       </a>
-                                    </div>
                                  </div>
-
+                                 <!-- Aqui se van a listar los estudiantes que ya se encuentran en proceso PIAR para añadirles un acta -->
                                  <div>
-                                    <a href="#" class="flex items-center px-5 py-2 mt-4 hover:bg-[#95A5A6] hover:text-gray-900 hover:rounded-lg font-medium cursor-pointer">
+                                    <a href="{{ route('addMinutes') }}" class="flex items-center px-5 py-2 mt-4 hover:bg-[#95A5A6] hover:text-gray-900 hover:rounded-lg font-medium cursor-pointer">
                                        <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                           <path d="M8 2h8a2 2 0 0 1 2 2v16a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z"></path>
                                           <line x1="12" y1="8" x2="12" y2="16"></line>
