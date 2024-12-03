@@ -4,7 +4,7 @@
     <link rel="stylesheet" type="text/css" href="{{ asset('css/createUser.css') }}">
 @endsection
 
-@section('title', 'Create user')
+@section('title', 'Crear Usuario')
 
 @section('content')
     <div class="container">

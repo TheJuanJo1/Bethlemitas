@@ -4,7 +4,7 @@
     <link rel="stylesheet" type="text/css" href="#">
 @endsection
 
-@section('title', 'Remisión')
+@section('title', 'Añadir Acta')
 
 @section('content')
 <div class="flex justify-center p-[2px]">

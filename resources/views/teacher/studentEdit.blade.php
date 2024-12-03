@@ -4,7 +4,7 @@
     <link rel="stylesheet" type="text/css" href="#">
 @endsection
 
-@section('title', 'Remisión')
+@section('title', 'Editar Estudiante')
 
 @section('content')
     <div class="p-8 mx-auto bg-[#D5DBDB]">

@@ -1,6 +1,6 @@
 @extends('layout.masterPage')
     
-@section('title', 'User list')
+@section('title', 'Lista de Usuarios')
 
 @section('content')
 

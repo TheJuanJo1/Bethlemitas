@@ -5,9 +5,11 @@ use App\Http\Controllers\CreateController;
 use App\Http\Controllers\CreateDegreeController;
 use App\Http\Controllers\CreateGroupController;
 use App\Http\Controllers\CreateReferralController;
+use App\Http\Controllers\PsicoController;
 use App\Http\Middleware\PreventBackHistoryMiddleware;
 use App\Http\Middleware\RoleDocenteMiddleware;
 use App\Http\Middleware\RoleMiddleware;
+use App\Http\Middleware\RolePsicoorientadorMiddleware;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\auth\AuthController;
 
@@ -24,7 +26,7 @@ Route::middleware([PreventBackHistoryMiddleware::class])->group(function() {
             return view('layout.homePage');
         })->name('dashboard');
 
-        //Middleware Rol coordinador.
+        // ***************** Middleware Rol coordinador. *************************************
         Route::middleware([RoleMiddleware::class])->group(function() { 
             
             //Vista create user
@@ -65,7 +67,7 @@ Route::middleware([PreventBackHistoryMiddleware::class])->group(function() {
             Route::delete('/delete/asignature/{id}', [CreateAsignatureController::class, 'destroy_asignature'])->name('delete.asignature');
         });
 
-        // Middleware rol docente
+        // ***************************** Middleware rol docente **********************************
         Route::middleware([RoleDocenteMiddleware::class])->group(function() {
 
             // Vista de remision de estudiante
@@ -80,6 +82,11 @@ Route::middleware([PreventBackHistoryMiddleware::class])->group(function() {
             Route::put('/update/student/{id}', [CreateReferralController::class, 'update_student'])->name('update.student');
             // addMinutes, Visualiza a los estudiantes en piar pero tienen mas acciones.
             Route::get('/addMinutes', [CreateReferralController::class, 'addMinutes'])->name('addMinutes');
+        });
+
+        // ******************************* Middleware rol Psicoorientador **************************
+        Route::middleware([RolePsicoorientadorMiddleware::class])->group(function(){
+            Route::get('/index/students/remitted/psico', [PsicoController::class, 'index_student_remitted_psico'])->name('index.student.remitted.psico');
         });
 
     });
