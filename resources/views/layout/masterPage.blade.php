@@ -222,6 +222,61 @@
                                     </a>
                                  </div>
                               @endif
+
+                              <!-- Opciones de interfaz para el rol psicoorientador -->
+                              @if (Auth::user()->hasRole('psicoorientador'))
+                                  <!-- Remitir estudiante -->
+                                  <div>
+                                    <a href="#" class="flex items-center px-5 py-2 mt-4 hover:bg-[#95A5A6] hover:text-gray-900 hover:rounded-lg font-medium cursor-pointer">
+                                       <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                          <path d="M9 17l-5-5 5-5"></path>
+                                          <path d="M22 12H4"></path>
+                                          <circle cx="16" cy="12" r="2"></circle>
+                                        </svg>
+                                      <span class="mx-3">Remitir estudiante</span>
+                                    </a>
+                                 </div>
+
+                                 <!-- Listar Estudiantes -->
+                                 <div x-data="{ isOpen: false}">
+                                    <a @click="isOpen = !isOpen" class="flex items-center px-5 py-2 mt-4 hover:bg-[#95A5A6] hover:text-gray-900 hover:rounded-lg font-medium cursor-pointer">
+                                       <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                          <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4z"></path>
+                                          <path d="M6 18c0-2.21 3.58-4 6-4s6 1.79 6 4"></path>
+                                      </svg>
+                                      <span class="mx-3">Listar estudiantes</span>
+                                      <svg class="w-6 h-6 ml-auto" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                       <polygon points="12 16, 6 8, 18 8" />
+                                   </svg>
+                                    </a>
+
+                                    <div x-show="isOpen" class="ml-10">
+                                       <a href="{{ route('index.student.remitted.psico') }}"
+                                       class="flex items-center px-3  mt-2 hover:bg-[#95A5A6] hover:text-gray-900 hover:rounded-lg font-medium">
+                                             <!-- Icono si es necesario -->
+                                             <span class="mx-3">• Remitidos</span>
+                                       </a>
+
+                                       <a href="#"
+                                       class="flex items-center px-3  mt-2 hover:bg-[#95A5A6] hover:text-gray-900 hover:rounded-lg font-medium">
+                                          <!-- Icono si es necesario -->
+                                          <span class="mx-3">• En PIAR</span>
+                                       </a>
+
+                                       <a href="#"
+                                       class="flex items-center px-3  mt-2 hover:bg-[#95A5A6] hover:text-gray-900 hover:rounded-lg font-medium">
+                                          <!-- Icono si es necesario -->
+                                          <span class="mx-3">• En espera</span>
+                                       </a>
+
+                                       <a href="#"
+                                       class="flex items-center px-3  mt-2 hover:bg-[#95A5A6] hover:text-gray-900 hover:rounded-lg font-medium">
+                                          <!-- Icono si es necesario -->
+                                          <span class="mx-3">• Descartados</span>
+                                       </a>
+                                    </div>
+                                 </div>
+                              @endif
                               
                            </li>
                         </div>

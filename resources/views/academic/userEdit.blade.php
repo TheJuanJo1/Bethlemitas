@@ -4,7 +4,7 @@
     <link rel="stylesheet" type="text/css" href="{{ asset('css/createUser.css') }}">   
 @endsection
 
-@section('title', 'User edit')
+@section('title', 'Editar Usuario')
 
 @section('content')
 

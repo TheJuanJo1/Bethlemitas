@@ -13,7 +13,7 @@
             <div class="p-4 border-b bg-[white] z-10 sticky top-0 shadow-md w-full ">
                 <h1 class="text-3xl font-bold text-gray-700">Estudiantes remitidos</h1>
                 <div class="flex items-center mt-2">
-                    <form action="{{ route('index.student.remitted') }}">
+                    <form action="#">
                         <input
                             type="search" 
                             name="search"
@@ -42,6 +42,10 @@
                             <th class="px-4 py-2 border">Grado</th>
                             <th class="px-4 py-2 border">Grupo</th>
                             <th class="px-4 py-2 border">Edad</th>
+                            <th class="px-4 py-2 border">Docente que remite</th>
+                            <th class="px-4 py-2 border">Fecha de remisión</th>
+                            <th class="px-4 py-2 border">Detalles</th>
+                            <th class="px-4 py-2 border">Historial</th>
                             <th class="px-4 py-2 border">Acciones</th>
                         </tr>
                     </thead>
@@ -53,8 +57,16 @@
                                     <td class="px-4 py-2 text-center border">{{ $student->degree->degree }}</td>
                                     <td class="px-4 py-2 text-center border">{{ $student->group->group }}</td>
                                     <td class="px-4 py-2 text-center border">{{ $student->age }}</td>
+                                    <td class="px-4 py-2 text-center border">{{ $student->teacher->name }} {{ $student->teacher->last_name }}</td>
+                                    <td class="px-4 py-2 text-center border">{{ $student->updated_at->format('Y-m-d') }}</td>
                                     <td class="px-4 py-2 text-center border">
-                                        <a href="{{ route('edit.student', $student->id) }}" class="text-red-500 hover:underline">Editar</a>
+                                        <a href="#" class="text-blue-500 hover:underline">Ver +</a>
+                                    </td>
+                                    <td class="px-4 py-2 text-center border">
+                                        <a href="#" class="text-blue-500 hover:underline">Ver historial</a>
+                                    </td>
+                                    <td class="px-4 py-2 text-center border">
+                                        <a href="#" class="text-blue-500 hover:underline">Añadir informe</a>
                                     </td>
                             </tr>
                         @endforeach

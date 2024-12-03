@@ -24,6 +24,12 @@ class Users_student extends Model
         'activation_period',
     ];
 
+    // Relación con el modelo Users_teacher
+    public function teacher()
+    {
+        return $this->belongsTo(Users_teacher::class, 'sent_by');
+    }
+
     // Relación con el modelo Degree
     public function degree()
     {
