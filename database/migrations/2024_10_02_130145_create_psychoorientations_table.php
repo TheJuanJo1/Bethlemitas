@@ -24,7 +24,6 @@ return new class extends Migration
             $table->string('title_report');
             $table->text('reason_inquiry');
             $table->text('recomendations');
-            $table->date('date');
             $table->timestamps();
         });
     }
