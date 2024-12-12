@@ -86,7 +86,12 @@ Route::middleware([PreventBackHistoryMiddleware::class])->group(function() {
 
         // ******************************* Middleware rol Psicoorientador **************************
         Route::middleware([RolePsicoorientadorMiddleware::class])->group(function(){
+            // Ruta para listar los estudiantes remitidos desde la interfaz de la psicologa
             Route::get('/index/students/remitted/psico', [PsicoController::class, 'index_student_remitted_psico'])->name('index.student.remitted.psico');
+            // Ruta para visualizar el formulario para editar el motivo de la remisión
+            Route::get('/details/referral/{id}', [PsicoController::class, 'detailsReferral'])->name('details.referral');
+            // Ruta para editar/actualizar el estudiante y el motivo de remisión.
+            Route::put('/edit/details/referral/{id}', [PsicoController::class, 'update_details_referral'])->name('update.details.referral');
         });
 
     });
