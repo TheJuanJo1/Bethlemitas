@@ -66,7 +66,7 @@
                                         <a href="#" class="text-blue-500 hover:underline">Ver historial</a>
                                     </td>
                                     <td class="px-4 py-2 text-center border">
-                                        <a href="#" class="text-blue-500 hover:underline">Añadir informe</a>
+                                        <a href="{{ route('report.student', $student->id) }}" class="text-blue-500 hover:underline">Añadir informe</a>
                                     </td>
                             </tr>
                         @endforeach

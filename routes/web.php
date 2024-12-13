@@ -92,6 +92,10 @@ Route::middleware([PreventBackHistoryMiddleware::class])->group(function() {
             Route::get('/details/referral/{id}', [PsicoController::class, 'detailsReferral'])->name('details.referral');
             // Ruta para editar/actualizar el estudiante y el motivo de remisión.
             Route::put('/edit/details/referral/{id}', [PsicoController::class, 'update_details_referral'])->name('update.details.referral');
+            // Ruta para la vista de añadir informe(Motivo de la consulta)
+            Route::get('/report/student/{id}', [PsicoController::class, 'report_student'])->name('report.student');
+            // Ruta para agregar o crear el motivo de la consulta, a parte editara datos del estudiante si hace falta.
+            Route::post('/store/report/student/{id}', [PsicoController::class, 'store_report_student'])->name('store.report.student');
         });
 
     });

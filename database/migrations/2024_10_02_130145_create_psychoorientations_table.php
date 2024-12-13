@@ -21,6 +21,9 @@ return new class extends Migration
             $table->unsignedBigInteger('id_user_student');
             $table->foreign('id_user_student')->references('id')->on('users_students');
 
+            $table->tinyInteger('age_student');
+            $table->string('group_student', 50);
+            $table->string('director_group_student');
             $table->string('title_report');
             $table->text('reason_inquiry');
             $table->text('recomendations');

@@ -4,11 +4,15 @@ namespace App\Http\Controllers;
 
 use App\Models\Degree;
 use App\Models\Group;
+use App\Models\Psychoorientation;
 use App\Models\Referral;
+use App\Models\State;
 use App\Models\Users_load_degree;
 use App\Models\Users_student;
+use App\Models\Users_teacher;
 use Auth;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class PsicoController extends Controller
 {
@@ -139,6 +143,95 @@ class PsicoController extends Controller
         } else {
             return redirect()->back()->with('info', 'No hubo cambios en la remisión.');
         }
-    }    
+    }
+    
+    // Visualizar la vista donde se creara el informe por parte de la psicoorientadora.
+    public function report_student(string $id) {
+        $groups = Group::orderByRaw('CAST(`group` AS UNSIGNED), `group`')->get();
+        $degrees = Degree::orderByRaw('CAST(`degree` AS UNSIGNED), `degree`')->get();
+        $states = State::whereIn('state', ['en espera', 'descartado'])->get();
+        $info_student = Users_student::find($id);
+
+        return view('psycho.addReportStudent', compact('groups', 'degrees', 'states', 'info_student'));
+    }
+
+    // Crear el informe por parte de la psicoorientadora y editar datos del estudiante si hace falta.
+    public function store_report_student(Request $request, string $id) {
+        $request->validate([
+            'number_documment' => 'required|digits_between:1,20|unique:users_students,number_documment,' . $id,
+            'name' => 'required|string',
+            'last_name' => 'required|string',
+            'degree' => 'required|exists:degrees,id',
+            'group' => 'required|exists:groups,id',
+            'age' => 'required',
+            'state' => 'required|exists:states,id',
+            'title_report' => 'required|string',
+            'reason_inquiry' => 'required',
+            'recomendations' => 'required',
+        ]);
+
+        // Datos actuales del estudiate
+        $current_dates_student = Users_student::find($id);
+
+        // Nuevos datos del estudiante
+        $new_dates_student = [
+            'number_documment' => $request->number_documment,
+            'name' => $request->name,
+            'last_name' => $request->last_name,
+            'id_degree' => $request->degree,
+            'id_group' => $request->group,
+            'age' => $request->age,
+            'id_state' => $request->state,
+        ];
+
+        // Verificar cambios en el estudiante
+        $huboCambiosStudent = collect($new_dates_student)->diffAssoc($current_dates_student->toArray())->isNotEmpty();
+
+        DB::beginTransaction();
+
+        try {
+            if ($huboCambiosStudent) {
+                // Verificar cambios en el grado o grupo del estudiante
+                $gradoActual = $current_dates_student->id_degree;
+                $nuevoGrado = $request->degree; // Obtén el nuevo grado del request
+                $huboCambioGrado = $gradoActual != $nuevoGrado;
+
+                if ($huboCambioGrado) {
+                    $referral = Referral::where('id_user_student', $id)->orderBy('created_at', 'desc')->first();
+                    $nombreGrado = Degree::find($request->degree)?->degree ?? null;
+                    if ($referral && $nombreGrado) {
+                        $referral->update(['course' => $nombreGrado]);
+                    }
+                }
+
+                $current_dates_student->update($new_dates_student);
+            }
+
+            $id_psico = Auth::id(); // Obtengo el id del psicologo que realiza el informe, osea el que esta autenticado.
+            $id_group_student = Users_student::where('id', $id)->value('id_group'); // Obtengo el id del grupo al que pertenece el estudiante.
+            $fullname_director_group = Users_teacher::where('group_director', $id_group_student)->first(); // Con el id del grupo obtenido anteriormente obtengo el registro del director del grupo.
+            $director_name = $fullname_director_group ? $fullname_director_group->name . ' ' . $fullname_director_group->last_name : 'N/A'; // Obtengo el nombre y el apellido del director del grupo.
+            $group = Group::find($request->group); // Obtengo el Grupo se esta dejando en el input del formulario.
+
+            $report = new Psychoorientation();
+            $report->psychologist_writes = $id_psico;
+            $report->id_user_student = $id;
+            $report->age_student = $request->age;
+            $report->group_student = $group->group; // Gracias a lña relacion que he hecho puedo guardar el nombre del grupo directamente.
+            $report->director_group_student = $director_name;
+            $report->title_report = $request->title_report;
+            $report->reason_inquiry = $request->reason_inquiry;
+            $report->recomendations = $request->recomendations;
+            $report->save();
+
+            DB::commit();
+            return redirect()->route('index.student.remitted.psico')->with('success', 'Informe agregado correctamente.');
+        }catch (\Exception $e) {
+            DB::rollback();
+            // Registra o muestra el error para depuración
+            return redirect()->back()->with('error', 'Hubo problemas en el proceso. Intentelo nuevamente.');
+        }
+
+    }
     
 }
