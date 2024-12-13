@@ -67,8 +67,8 @@ class PsicoController extends Controller
             'number_documment' => 'required|digits_between:1,20|unique:users_students,number_documment,' . $id,
             'name' => 'required|string',
             'last_name' => 'required|string',
-            'degree' => 'required',
-            'group' => 'required',
+            'degree' => 'required|exists:degrees,id',
+            'group' => 'required|exists:groups,id',
             'age' => 'required|integer|min:0',
             'reason_referral' => 'required|string',
             'observation' => 'required|string',
@@ -232,6 +232,18 @@ class PsicoController extends Controller
             return redirect()->back()->with('error', 'Hubo problemas en el proceso. Intentelo nuevamente.');
         }
 
+    }
+
+    public function show_student_history(string $id) {
+        $referrals = Referral::where('id_user_student', $id)
+                            ->orderBy('created_at', 'desc')
+                            ->paginate(15);
+
+        $reports = Psychoorientation::where('id_user_student', $id)
+                                    ->orderBy('created_at', 'desc')
+                                    ->paginate(15);
+
+        return view('psycho.studentHistory', compact('referrals', 'reports'));
     }
     
 }

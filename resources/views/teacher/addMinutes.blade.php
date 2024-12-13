@@ -45,7 +45,7 @@
                     </tr>
                 </thead>
                 <tbody class="text-gray-700">
-                    @foreach ($students as $student)
+                    @forelse ($students as $student)
                         <tr class="hover:bg-gray-100">
                             <td class="px-4 py-2 border">{{ $student->name }} {{ $student->last_name }}</td>
                             <td class="px-4 py-2 text-center border">{{ $student->number_documment }}</td>
@@ -56,7 +56,11 @@
                                 <a href="#" class="text-blue-500 hover:underline">Seleccionar</a>
                             </td>
                         </tr>
-                    @endforeach
+                    @empty
+                        <tr>
+                            <td colspan="5" class="px-4 py-2 text-center border">No se encontraron registros</td>
+                        </tr>
+                    @endforelse
                 </tbody>
             </table>
         </div>

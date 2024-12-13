@@ -96,6 +96,8 @@ Route::middleware([PreventBackHistoryMiddleware::class])->group(function() {
             Route::get('/report/student/{id}', [PsicoController::class, 'report_student'])->name('report.student');
             // Ruta para agregar o crear el motivo de la consulta, a parte editara datos del estudiante si hace falta.
             Route::post('/store/report/student/{id}', [PsicoController::class, 'store_report_student'])->name('store.report.student');
+            // Ruta para visualizar el historial del estudiante remitido. (Todas las remisiones e informes)
+            Route::get('/student/history/{id}', [PsicoController::class, 'show_student_history'])->name('show.student.history');
         });
 
     });

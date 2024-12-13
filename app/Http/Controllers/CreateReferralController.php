@@ -164,7 +164,8 @@ class CreateReferralController extends Controller
         }
 
         // Ordenar y paginar resultados
-        $students = $query->orderBy('name', 'asc')
+        $students = $query->with('latestReferral')
+                        ->orderBy('name', 'asc')
                         ->orderBy('last_name', 'asc')
                         ->paginate(15);
 
