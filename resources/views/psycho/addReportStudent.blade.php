@@ -4,16 +4,14 @@
     <link rel="stylesheet" type="text/css" href="#">
 @endsection
 
-@section('title', 'Detalles de remisión')
+@section('title', 'Añadir informe')
 
 @section('content')
-
     <div class="p-8 mx-auto bg-[#D5DBDB]">
-        <a href=" {{ route('index.student.remitted.psico')}} "><i class="bi bi-arrow-left" style="font-size: 2rem;"></i></a>
-        <h1 class="mb-6 text-2xl font-bold text-gray-700">Motivo de remisión del estudiante</h1>
-        <form action="{{ route('update.details.referral', $info_student->id) }}" method="POST">
+        <a href="{{ route('index.student.remitted.psico') }}"><i class="bi bi-arrow-left" style="font-size: 2rem;"></i></a>
+        <h1 class="mb-6 text-2xl font-bold text-gray-700">Informe de la consulta</h1>
+        <form action="{{ route('store.report.student', $info_student->id) }}" method="POST">
             @csrf
-            @method('PUT')
             <!-- Nombres, Apellidos y Documento -->
             <div class="grid grid-cols-1 gap-4 mb-6 sm:grid-cols-3">
                 <div>
@@ -104,56 +102,72 @@
                     />
                 </div>
             </div>
-        
-            <!-- Motivo -->
-            <div class="mb-6">
-                <label for="reason_referral" class="block text-sm font-medium text-gray-700">Motivo *</label>
-                <textarea
-                id="reason_referral"
-                name="reason_referral"
-                rows="3"
-                class="block w-full p-2 mt-1 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
-                placeholder="Motivo de la remisión..."
-                required
-                >{{ old('reason_referral', $info_referral->reason) }}</textarea>
+
+            <!-- Estado y título de informe -->
+            <div class="grid grid-cols-1 gap-4 mb-6 sm:grid-cols-3">
+                <div>
+                    <label for="state" class="block text-sm font-medium text-gray-700">Estado *</label>
+                    <select
+                        id="state"
+                        name="state"
+                        class="block w-full p-2 mt-1 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                        required
+                    >
+                        <option value="">Seleccionar</option>
+                        @foreach ($states as $state)
+                            <option value="{{ $state->id }}">{{ $state->state }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div>
+                    <label for="title_report" class="block text-sm font-medium text-gray-700">Título de informe *</label>
+                    <input
+                        type="text"
+                        id="title_report"
+                        name="title_report"
+                        value=""
+                        class="block w-full p-2 mt-1 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                        placeholder="Título de informe"
+                        required
+                    />
+                </div>
             </div>
         
-            <!-- Observaciones -->
+            <!-- Motivo de consulta -->
             <div class="mb-6">
-                <label for="observation" class="block text-sm font-medium text-gray-700">Observaciones *</label>
+                <label for="reason_inquiry" class="block text-sm font-medium text-gray-700">Motivo *</label>
                 <textarea
-                id="observation"
-                name="observation"
+                id="reason_inquiry"
+                name="reason_inquiry"
                 rows="3"
                 class="block w-full p-2 mt-1 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
-                placeholder="Aspectos familiares, sociales, cognitivos, afectivos, comportamientos especiales del estudiante..."
+                placeholder="Motivo de la consulta..."
                 required
-                >{{ old('observation', $info_referral->observation) }}</textarea>
+                ></textarea>
             </div>
         
-            <!-- Estrategias -->
+            <!-- Recomendaciones -->
             <div class="mb-6">
-                <label for="strategies" class="block text-sm font-medium text-gray-700">Estrategias *</label>
+                <label for="recommendations" class="block text-sm font-medium text-gray-700">Recomendaciones *</label>
                 <textarea
-                id="strategies"
-                name="strategies"
+                id="recommendations"
+                name="recomendations"
                 rows="3"
                 class="block w-full p-2 mt-1 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
-                placeholder="Estrategias aplicadas para ayudar al estudiante..."
+                placeholder="Recomendaciones para el estudiante..."
                 required
-                >{{ old('strategies', $info_referral->strategies) }}</textarea>
+                ></textarea>
             </div>
         
-            <!-- Botón de editar -->
+            <!-- Botón de guardar -->
             <div class="text-left">
                 <button
                 type="submit"
                 class="px-4 py-2 font-semibold text-white bg-blue-500 rounded-md shadow-sm hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                 >
-                Editar remisión
+                Guardar
                 </button>
             </div>
         </form>
     </div>
-
 @endsection
