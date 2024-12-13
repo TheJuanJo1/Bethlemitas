@@ -17,12 +17,10 @@ class PreventBackHistoryMiddleware
     {
         $response = $next($request);
 
-        if ($response instanceof BinaryFileResponse) {
-            // Configurar cabeceras para BinaryFileResponse
-            $response->headers->set('Cache-Control', 'nocache, no-store, max-age=0, must-revalidate');
-            $response->headers->set('Pragma', 'no-cache');
-            $response->headers->set('Expires', 'Fri, 01 Jan 1990 00:00:00 GMT');
-        }
+        // Aplicar cabeceras de no-caché para todas las respuestas
+        $response->headers->set('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0');
+        $response->headers->set('Pragma', 'no-cache');
+        $response->headers->set('Expires', 'Fri, 01 Jan 1990 00:00:00 GMT');
 
         return $response;
     }

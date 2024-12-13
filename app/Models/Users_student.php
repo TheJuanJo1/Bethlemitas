@@ -52,4 +52,9 @@ class Users_student extends Model
     public function states() {
         return $this->belongsTo(State::class, 'id_state'); // 'id_state' es la llave foránea en users_teachers
     }
+
+    // obtener el registro más reciente de referrals asociado a cada estudiante.
+    public function latestReferral(){
+        return $this->hasOne(Referral::class, 'id_user_student')->latestOfMany();
+    }
 }

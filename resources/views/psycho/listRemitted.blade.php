@@ -58,12 +58,12 @@
                                     <td class="px-4 py-2 text-center border">{{ $student->group->group }}</td>
                                     <td class="px-4 py-2 text-center border">{{ $student->age }}</td>
                                     <td class="px-4 py-2 text-center border">{{ $student->teacher->name }} {{ $student->teacher->last_name }}</td>
-                                    <td class="px-4 py-2 text-center border">{{ $student->updated_at->format('Y-m-d') }}</td>
+                                    <td class="px-4 py-2 text-center border">{{ $student->latestReferral->created_at->format('Y-m-d') }}</td>
                                     <td class="px-4 py-2 text-center border">
                                         <a href="{{ route('details.referral', $student->id) }}" class="text-blue-500 hover:underline">Ver +</a>
                                     </td>
                                     <td class="px-4 py-2 text-center border">
-                                        <a href="#" class="text-blue-500 hover:underline">Ver historial</a>
+                                        <a href="{{ route('show.student.history', $student->id) }}" class="text-blue-500 hover:underline">Ver historial</a>
                                     </td>
                                     <td class="px-4 py-2 text-center border">
                                         <a href="{{ route('report.student', $student->id) }}" class="text-blue-500 hover:underline">Añadir informe</a>
