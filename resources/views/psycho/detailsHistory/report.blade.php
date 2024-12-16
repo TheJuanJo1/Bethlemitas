@@ -9,7 +9,7 @@
 @section('content')
     <div class="p-8 mx-auto bg-[#D5DBDB]">
         <h1 class="mb-6 text-2xl font-bold text-gray-700">Informe de la consulta</h1>
-        <form action="#" method="POST">
+        <form action="{{ route('update.history.details.report', $report->id) }}" method="POST">
             @csrf
             @method('PUT')
             <!-- Nombres, Apellidos y Documento -->
@@ -165,7 +165,7 @@
                 type="submit"
                 class="px-4 py-2 font-semibold text-white bg-blue-500 rounded-md shadow-sm hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                 >
-                Guardar
+                Editar informe
                 </button>
             </div>
         </form>
