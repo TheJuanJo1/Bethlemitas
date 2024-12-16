@@ -102,6 +102,10 @@ Route::middleware([PreventBackHistoryMiddleware::class])->group(function() {
             Route::get('/history/details/referral/{id}', [PsicoController::class, 'history_details_referral'])->name('history.details.referral');
             // Ruta para visualizar los detalles del historial del informe del estudiante.
             Route::get('/history/details/report/{id}', [PsicoController::class, 'history_details_report'])->name('history.details.report');
+            // Ruta para editar la remisión seleccionada en el historial.
+            Route::put('/edit/history/details/referral/{id}', [PsicoController::class, 'update_history_details_referral'])->name('update.history.details.referral');
+            // Ruta para editar el informe seleccionado en el historial.
+            Route::put('/edit/history/details/report/{id}', [PsicoController::class, 'update_history_details_report'])->name('update.history.details.report');
         });
 
     });

@@ -262,5 +262,39 @@ class PsicoController extends Controller
 
         return view('psycho.detailsHistory.report', compact('report', 'student'));
     }
+
+    public function update_history_details_referral(Request $request, string $id){
+        $request->validate([
+            'reason_referral' => 'required|string',
+            'observation' => 'required|string',
+            'strategies' => 'required|string',
+        ]);
+
+        $referral = Referral::find($id);
+
+        $referral->update([
+            'reason' => $request->reason_referral,
+            'observation' => $request->observation,
+            'strategies' => $request->strategies,
+        ]);
+
+        return redirect()->back()->with('success', 'Remisón actualizada correctamente.');
+    }
+
+    public function update_history_details_report(Request $request, string $id){
+        $request->validate([
+            'reason_inquiry' => 'required|string',
+            'recomendations' => 'required|string',
+        ]);
+
+        $report = Psychoorientation::find($id);
+
+        $report->update([
+            'reason_inquiry' => $request->reason_inquiry,
+            'recomendations' => $request->recomendations,
+        ]);
+
+        return redirect()->back()->with('success', 'Informe actualizado correctamente.');
+    }
     
 }

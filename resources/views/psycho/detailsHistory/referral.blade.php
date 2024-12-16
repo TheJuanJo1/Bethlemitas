@@ -10,7 +10,7 @@
 
     <div class="p-8 mx-auto bg-[#D5DBDB]">
         <h1 class="mb-6 text-2xl font-bold text-gray-700">Motivo de remisión del estudiante</h1>
-        <form action="#" method="POST">
+        <form action="{{ route('update.history.details.referral', $referral->id ) }}" method="POST">
             @csrf
             @method('PUT')
             <!-- Nombres, Apellidos y Documento -->
@@ -62,7 +62,7 @@
             <!-- Grado, Grupo y Edad -->
             <div class="grid grid-cols-1 gap-4 mb-6 sm:grid-cols-3">
                 <div>
-                    <label for="degree" class="block text-sm font-medium text-gray-700">N° documento *</label>
+                    <label for="degree" class="block text-sm font-medium text-gray-700">Grado *</label>
                     <input
                         type="degree"
                         id="degree"
@@ -76,7 +76,7 @@
                     />
                 </div>
                 <div>
-                    <label for="group" class="block text-sm font-medium text-gray-700">N° documento *</label>
+                    <label for="group" class="block text-sm font-medium text-gray-700">Grupo *</label>
                     <input
                         type="group"
                         id="group"
@@ -116,6 +116,9 @@
                 placeholder="Motivo de la remisión..."
                 required
                 >{{ old('reason_referral', $referral->reason) }}</textarea>
+                @error('reason_referral')
+                    <p class="mt-2 text-sm text-red-600 dark:text-red-500"><span class="font-medium">¡Error! Campo vacío.</span></p>
+                @enderror
             </div>
         
             <!-- Observaciones -->
@@ -129,6 +132,9 @@
                 placeholder="Aspectos familiares, sociales, cognitivos, afectivos, comportamientos especiales del estudiante..."
                 required
                 >{{ old('observation', $referral->observation) }}</textarea>
+                @error('observation')
+                    <p class="mt-2 text-sm text-red-600 dark:text-red-500"><span class="font-medium">¡Error! Campo vacío.</span></p>
+                @enderror
             </div>
         
             <!-- Estrategias -->
@@ -142,6 +148,9 @@
                 placeholder="Estrategias aplicadas para ayudar al estudiante..."
                 required
                 >{{ old('strategies', $referral->strategies) }}</textarea>
+                @error('strategies')
+                    <p class="mt-2 text-sm text-red-600 dark:text-red-500"><span class="font-medium">¡Error! Campo vacío.</span></p>
+                @enderror
             </div>
         
             <!-- Botón de editar -->
