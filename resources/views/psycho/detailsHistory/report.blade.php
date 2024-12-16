@@ -144,6 +144,9 @@
                 placeholder="Motivo de la consulta..."
                 required
                 >{{ $report->reason_inquiry }}</textarea>
+                @error('reason_inquiry')
+                    <p class="mt-2 text-sm text-red-600 dark:text-red-500"><span class="font-medium">¡Error! Campo vacío.</span></p>
+                @enderror
             </div>
         
             <!-- Recomendaciones -->
@@ -157,6 +160,9 @@
                 placeholder="Recomendaciones para el estudiante..."
                 required
                 >{{ $report->recomendations }}</textarea>
+                @error('recomendations')
+                    <p class="mt-2 text-sm text-red-600 dark:text-red-500"><span class="font-medium">¡Error! Campo vacío.</span></p>
+                @enderror
             </div>
         
             <!-- Botón de guardar -->
