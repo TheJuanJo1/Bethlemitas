@@ -4,7 +4,7 @@
     <link rel="stylesheet" type="text/css" href="#">
 @endsection
 
-@section('title', 'Añadir informe')
+@section('title', 'Historial')
 
 @section('content')
     {{-- Tabla de remisiones --}}
@@ -12,32 +12,12 @@
         <div class="w-[100%] px-4 bg-white rounded-lg shadow-md h-[45rem] overflow-auto">
             <div class="p-4 border-b bg-[white] z-10 sticky top-0 shadow-md w-full ">
                 <h1 class="text-3xl font-bold text-gray-700">Remisiones</h1>
-                <div class="flex items-center mt-2">
-                    <form action="#">
-                        <input
-                            type="search" 
-                            name="search"
-                            placeholder="Buscar..."
-                            class="p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-blue-200"
-                        />
-                        <button type="submit" class="px-4 py-2 ml-2 text-white bg-blue-500 rounded-lg hover:bg-blue-600 focus:outline-none">
-                            <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    stroke-width="2"
-                                    d="M21 21l-4.35-4.35M16.65 16.65a7 7 0 111.414-1.414l4.35 4.35-1.414 1.414z"
-                                />
-                            </svg>
-                        </button>
-                    </form>
-                </div>
             </div>
             <div class="overflow-x-auto">
                 <table class="w-full border-collapse table-auto">
                     <thead>
                         <tr class="text-sm text-gray-600 uppercase bg-gray-200">
-                            <th class="px-4 py-2 border">Fecha</th>
+                            <th class="px-4 py-2 border">Fecha de remisión</th>
                             <th class="px-4 py-2 border">Nombre de quién remite</th>
                             <th class="px-4 py-2 border">Última edición</th>
                             <th class="px-4 py-2 border">Detalles</th>
@@ -50,7 +30,7 @@
                                     <td class="px-4 py-2 text-center border">{{ $referral->user_teacher->name }} {{ $referral->user_teacher->last_name }}</td>
                                     <td class="px-4 py-2 text-center border">{{ $referral->updated_at->format('Y-m-d') }}</td>
                                     <td class="px-4 py-2 text-center border">
-                                        <a href="#" class="text-blue-500 hover:underline">Ver +</a>
+                                        <a href="{{ route('history.details.referral', $referral->id) }}" class="text-blue-500 hover:underline">Ver +</a>
                                     </td>
                             </tr>
                         @empty
@@ -72,32 +52,12 @@
         <div class="w-[100%] px-4 bg-white rounded-lg shadow-md h-[45rem] overflow-auto">
             <div class="p-4 border-b bg-[white] z-10 sticky top-0 shadow-md w-full ">
                 <h1 class="text-3xl font-bold text-gray-700">Informes</h1>
-                <div class="flex items-center mt-2">
-                    <form action="#">
-                        <input
-                            type="search" 
-                            name="search"
-                            placeholder="Buscar..."
-                            class="p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-blue-200"
-                        />
-                        <button type="submit" class="px-4 py-2 ml-2 text-white bg-blue-500 rounded-lg hover:bg-blue-600 focus:outline-none">
-                            <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    stroke-width="2"
-                                    d="M21 21l-4.35-4.35M16.65 16.65a7 7 0 111.414-1.414l4.35 4.35-1.414 1.414z"
-                                />
-                            </svg>
-                        </button>
-                    </form>
-                </div>
             </div>
             <div class="overflow-x-auto">
                 <table class="w-full border-collapse table-auto">
                     <thead>
                         <tr class="text-sm text-gray-600 uppercase bg-gray-200">
-                            <th class="px-4 py-2 border">Fecha</th>
+                            <th class="px-4 py-2 border">Fecha de informe</th>
                             <th class="px-4 py-2 border">Título</th>
                             <th class="px-4 py-2 border">Nombre de quién redacta el informe</th>
                             <th class="px-4 py-2 border">Última edición</th>
@@ -114,7 +74,7 @@
                                 </td>
                                 <td class="px-4 py-2 text-center border">{{ optional($report->updated_at)->format('Y-m-d') }}</td>
                                 <td class="px-4 py-2 text-center border">
-                                    <a href="#" class="text-blue-500 hover:underline">Ver +</a>
+                                    <a href="{{ route('history.details.report', $report->id) }}" class="text-blue-500 hover:underline">Ver +</a>
                                 </td>
                             </tr>
                         @empty

@@ -245,5 +245,22 @@ class PsicoController extends Controller
 
         return view('psycho.studentHistory', compact('referrals', 'reports'));
     }
+
+    public function history_details_referral(string $id) {
+
+        $referral = Referral::find($id);
+        $id_student = $referral->id_user_student;
+        $student = Users_student::find($id_student);
+
+        return view('psycho.detailsHistory.referral', compact('referral', 'student'));
+    }
+
+    public function history_details_report(string $id) {
+        $report = Psychoorientation::find($id);
+        $id_student = $report->id_user_student;
+        $student = Users_student::find($id_student);
+
+        return view('psycho.detailsHistory.report', compact('report', 'student'));
+    }
     
 }

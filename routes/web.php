@@ -98,6 +98,10 @@ Route::middleware([PreventBackHistoryMiddleware::class])->group(function() {
             Route::post('/store/report/student/{id}', [PsicoController::class, 'store_report_student'])->name('store.report.student');
             // Ruta para visualizar el historial del estudiante remitido. (Todas las remisiones e informes)
             Route::get('/student/history/{id}', [PsicoController::class, 'show_student_history'])->name('show.student.history');
+            // Ruta para visualizar los detalles del historial de la remision del estudiante.
+            Route::get('/history/details/referral/{id}', [PsicoController::class, 'history_details_referral'])->name('history.details.referral');
+            // Ruta para visualizar los detalles del historial del informe del estudiante.
+            Route::get('/history/details/report/{id}', [PsicoController::class, 'history_details_report'])->name('history.details.report');
         });
 
     });
