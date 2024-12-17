@@ -9,6 +9,7 @@ use App\Http\Controllers\PsicoController;
 use App\Http\Middleware\PreventBackHistoryMiddleware;
 use App\Http\Middleware\RoleDocenteMiddleware;
 use App\Http\Middleware\RoleMiddleware;
+use App\Http\Middleware\RolePsicoorientadorAndDocenteMiddleware;
 use App\Http\Middleware\RolePsicoorientadorMiddleware;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\auth\AuthController;
@@ -76,13 +77,18 @@ Route::middleware([PreventBackHistoryMiddleware::class])->group(function() {
             Route::post('/store/referral', [CreateReferralController::class, 'store_referral'])->name('store.referral');
             // Index Students Remitted, Listar a los estudiantes remitidos.
             Route::get('/index/students/remitted', [CreateReferralController::class, 'index_student_remitted'])->name('index.student.remitted');
+            // addMinutes, Visualiza a los estudiantes en piar pero tienen mas acciones.
+            Route::get('/addMinutes', [CreateReferralController::class, 'addMinutes'])->name('addMinutes');
+        });
+
+        // ************** Middleware rol Docente y Psicoorientador, para desarrolar acciones que ambos tienen en común ***************
+        Route::middleware([RolePsicoorientadorAndDocenteMiddleware::class])->group(function() {
             // Vista de editar estudiante
             Route::get('/edit/student/{id}', [CreateReferralController::class, 'edit_student'])->name('edit.student');
             // Update student
             Route::put('/update/student/{id}', [CreateReferralController::class, 'update_student'])->name('update.student');
-            // addMinutes, Visualiza a los estudiantes en piar pero tienen mas acciones.
-            Route::get('/addMinutes', [CreateReferralController::class, 'addMinutes'])->name('addMinutes');
         });
+
 
         // ******************************* Middleware rol Psicoorientador **************************
         Route::middleware([RolePsicoorientadorMiddleware::class])->group(function(){
@@ -106,6 +112,12 @@ Route::middleware([PreventBackHistoryMiddleware::class])->group(function() {
             Route::put('/edit/history/details/referral/{id}', [PsicoController::class, 'update_history_details_referral'])->name('update.history.details.referral');
             // Ruta para editar el informe seleccionado en el historial.
             Route::put('/edit/history/details/report/{id}', [PsicoController::class, 'update_history_details_report'])->name('update.history.details.report');
+            // Ruta para visualizar a los estudiantes en estado de espera. (Lo dirige a la vista.)
+            Route::get('/waiting/students', [PsicoController::class, 'waiting_students'])->name('waiting.students');
+            // Ruta para aceptar al estudiante en proceso PIAR
+            Route::put('/accept/student', [PsicoController::class, 'accept_student_to_piar'])->name('accept.student.to.piar');
+            // Ruta para descartar estudiante de proceso de espera. No es aceptado para el proceso PIAR.
+            Route::put('/discard/student/{id}', [PsicoController::class, 'discard_student'])->name('discard.student');
         });
 
     });

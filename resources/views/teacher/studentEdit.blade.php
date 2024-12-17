@@ -8,7 +8,11 @@
 
 @section('content')
     <div class="p-8 mx-auto bg-[#D5DBDB]">
-        <a href=" {{ route('index.student.remitted')}} "><i class="bi bi-arrow-left" style="font-size: 2rem;"></i></a>
+        @if (Auth::user()->hasRole('docente'))
+            <a href=" {{ route('index.student.remitted')}} "><i class="bi bi-arrow-left" style="font-size: 2rem;"></i></a>
+        @elseif (Auth::user()->hasRole('psicoorientador'))
+            <a href=" {{ route('waiting.students')}} "><i class="bi bi-arrow-left" style="font-size: 2rem;"></i></a>
+        @endif
         <h1 class="mb-6 text-2xl font-bold text-gray-700">Editar estudiante</h1>
         <form action="{{ route('update.student', $student->id) }}" method="POST">
             @csrf
