@@ -13,7 +13,7 @@
             <div class="p-4 border-b bg-[white] z-10 sticky top-0 shadow-md w-full ">
                 <h1 class="text-3xl font-bold text-gray-700">Estudiantes remitidos</h1>
                 <div class="flex items-center mt-2">
-                    <form action="#">
+                    <form action="{{ route('index.student.remitted.psico') }}">
                         <input
                             type="search" 
                             name="search"

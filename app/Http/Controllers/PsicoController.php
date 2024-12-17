@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Degree;
 use App\Models\Group;
+use App\Models\Period;
 use App\Models\Psychoorientation;
 use App\Models\Referral;
 use App\Models\State;
@@ -106,7 +107,7 @@ class PsicoController extends Controller
         // Verificar cambios en la remisión
         $huboCambiosReferral = $referral ? collect($new_dates_referral)->diffAssoc($referral->toArray())->isNotEmpty() : false;
     
-        // Verificar cambios en el grado o grupo del estudiante
+        // Verificar cambios en el grado del estudiante
         $gradoActual = $student->id_degree;
         $nuevoGrado = $request->degree; // Obtén el nuevo grado del request
         $huboCambioGrado = $gradoActual != $nuevoGrado;
@@ -234,6 +235,7 @@ class PsicoController extends Controller
 
     }
 
+    // Visualizar historial del estudiante.
     public function show_student_history(string $id) {
         $referrals = Referral::where('id_user_student', $id)
                             ->orderBy('created_at', 'desc')
@@ -246,6 +248,7 @@ class PsicoController extends Controller
         return view('psycho.studentHistory', compact('referrals', 'reports'));
     }
 
+    // Visualizar detalles de la remision seleccionada en el historial del estudiante
     public function history_details_referral(string $id) {
 
         $referral = Referral::find($id);
@@ -255,6 +258,7 @@ class PsicoController extends Controller
         return view('psycho.detailsHistory.referral', compact('referral', 'student'));
     }
 
+    // Visualizar detalles del informe seleccionado en el historial del estudiante
     public function history_details_report(string $id) {
         $report = Psychoorientation::find($id);
         $id_student = $report->id_user_student;
@@ -263,6 +267,7 @@ class PsicoController extends Controller
         return view('psycho.detailsHistory.report', compact('report', 'student'));
     }
 
+    // Actualizar o editar informacion de la remision seleccionada en el historial del estudiante.
     public function update_history_details_referral(Request $request, string $id){
         $request->validate([
             'reason_referral' => 'required|string',
@@ -270,31 +275,136 @@ class PsicoController extends Controller
             'strategies' => 'required|string',
         ]);
 
-        $referral = Referral::find($id);
+        $current_referral = Referral::find($id);
 
-        $referral->update([
+        $new_referral = [
             'reason' => $request->reason_referral,
             'observation' => $request->observation,
             'strategies' => $request->strategies,
-        ]);
+        ];
 
-        return redirect()->back()->with('success', 'Remisón actualizada correctamente.');
+        // Verificar cambios en la remisión
+        $huboCambiosReferral = collect($new_referral)->diffAssoc($current_referral->toArray())->isNotEmpty();
+
+        if ($huboCambiosReferral) {
+            $current_referral->update($new_referral);
+            return redirect()->back()->with('success', 'Remisón actualizada correctamente.');
+        }else {
+            return redirect()->back()->with('info', 'No hubo cambios en la remisión.');
+        }
+           
     }
 
+    // Actualizar o editar informacion del informe seleccionado en el historial del estudiante.
     public function update_history_details_report(Request $request, string $id){
         $request->validate([
             'reason_inquiry' => 'required|string',
             'recomendations' => 'required|string',
         ]);
 
-        $report = Psychoorientation::find($id);
+        $current_report = Psychoorientation::find($id);
 
-        $report->update([
+        $new_report = [
             'reason_inquiry' => $request->reason_inquiry,
             'recomendations' => $request->recomendations,
-        ]);
+        ];
 
-        return redirect()->back()->with('success', 'Informe actualizado correctamente.');
+        $huboCambiosReport = collect($new_report)->diffAssoc($current_report->toArray())->isNotEmpty();
+
+        if ($huboCambiosReport) {
+            $current_report->update($new_report);
+            return redirect()->back()->with('success', 'Informe actualizado correctamente.');
+        }else {
+            return redirect()->back()->with('info', 'No hubo cambios en el informe.');
+        }
+        
     }
     
+    // Visualizar estudiantes en estado de espera.
+    public function waiting_students(Request $request) {
+        $id_psico = Auth::id(); // Obtengo el id de la psicoorientadora autentificada.
+        $load_degree = Users_load_degree::where('id_user', $id_psico)->pluck('id_degree')->toArray();
+
+        // Obtener los estudiantes cuyo id_state está en los estados obtenidos
+        $query = Users_student::whereHas('states', function ($q) {
+            $q->whereIn('state', ['en espera']);
+        })->whereIn('id_degree', $load_degree);
+
+         // Filtrar por búsqueda
+         if ($request->filled('search')) {
+            $searchTerm = $request->input('search');
+            $query->where(function ($q) use ($searchTerm) {
+                $q->where('name', 'LIKE', '%' . $searchTerm . '%')
+                ->orWhere('last_name', 'LIKE', '%' . $searchTerm . '%')
+                ->orWhere('number_documment', 'LIKE', '%' . $searchTerm . '%')
+                ->orWhereRaw("CONCAT(name, ' ', last_name) LIKE ?", ['%' . $searchTerm . '%']);
+            });
+        }
+
+        // Ordenar y paginar resultados
+        $students = $query->orderBy('name', 'asc')
+                        ->orderBy('last_name', 'asc')
+                        ->paginate(15);
+
+        $periods = Period::all();
+
+        return view('psycho.waitingStudent', compact('students', 'periods'));
+    }
+
+    // Aceptar estudiante para entarar en proceso PIAR
+    public function accept_student_to_piar(Request $request){
+        $request->validate([
+            'studentId' => 'required|int',
+            'activation_period' => 'required|exists:periods,id',
+        ]);
+
+        $id_student = $request->studentId;
+
+        // Buscar el estudiante
+        $student = Users_student::find($id_student);
+
+        if (!$student) {
+            return redirect()->back()->with('error', 'Estudiante no encontrado.');
+        }
+
+        // Buscar el estado "en PIAR"
+        $state = State::where('state', 'en PIAR')->value('id'); // Usa `value` para obtener un único valor
+
+        if (!$state) {
+            return redirect()->back()->with('error', 'Estado "en PIAR" no encontrado.');
+        }
+
+        // Actualizar el estado del estudiante
+        $student->update([
+            'id_state' => $state,
+            'activation_period' => $request->activation_period
+        ]);
+
+        return redirect()->back()->with('success', 'El estudiante ha sido aceptado para ingresar al proceso PIAR.');
+    }
+
+    // Desacrtar estudiante que esta en proceso, no es aceptado para el proceso PIAR.
+    public function discard_student(string $id){
+        // Buscar el estudiante
+        $student = Users_student::find($id);
+
+        if (!$student) {
+            return redirect()->back()->with('error', 'Estudiante no encontrado.');
+        }
+
+        // Buscar el estado "en PIAR"
+        $state = State::where('state', 'descartado')->value('id'); // Usa `value` para obtener un único valor
+
+        if (!$state) {
+            return redirect()->back()->with('error', 'Estado "descartado" no encontrado.');
+        }
+
+        // Actualizar el estado del estudiante
+        $student->update([
+            'id_state' => $state,
+        ]);
+
+        return redirect()->back()->with('info', 'El estudiante ha sido descartado.');
+    }
+
 }
