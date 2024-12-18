@@ -9,12 +9,11 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class AcceptStudentMail extends Mailable
+class DiscardStudentMail extends Mailable
 {
     use Queueable, SerializesModels;
 
-    public $student; // Hacer público para la vista
-
+    public $student;
     /**
      * Create a new message instance.
      */
@@ -29,7 +28,7 @@ class AcceptStudentMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Nuevo estudiante en proceso PIAR',
+            subject: 'Estudiante descartado para entrar a proceso PIAR.',
         );
     }
 
@@ -39,7 +38,7 @@ class AcceptStudentMail extends Mailable
     public function content(): Content
     {
         return new Content(
-            view: 'emails.acceptStudentMail',
+            view: 'emails.discardStudentMail',
             with: [
                 'student' => $this->student, // Pasar datos a la vista
             ],
