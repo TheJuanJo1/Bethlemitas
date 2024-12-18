@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Mail\AcceptStudentMail;
+use App\Mail\DiscardStudentMail;
 use App\Models\Degree;
 use App\Models\Group;
 use App\Models\Period;
@@ -191,24 +192,36 @@ class PsicoController extends Controller
         // Verificar cambios en el estudiante
         $huboCambiosStudent = collect($new_dates_student)->diffAssoc($current_dates_student->toArray())->isNotEmpty();
 
+        $id_state = $request->state; // Obtiene el ID del estado enviado
+        $state = State::find($id_state)?->state; // Encuentra el registro y obtiene el valor de `state`
+        $id_sent_by = $current_dates_student->sent_by;
+        $teacher = Users_teacher::find($id_sent_by);
+
         DB::beginTransaction();
 
         try {
             if ($huboCambiosStudent) {
-                // Verificar cambios en el grado o grupo del estudiante
-                $gradoActual = $current_dates_student->id_degree;
-                $nuevoGrado = $request->degree; // Obtén el nuevo grado del request
-                $huboCambioGrado = $gradoActual != $nuevoGrado;
 
-                if ($huboCambioGrado) {
-                    $referral = Referral::where('id_user_student', $id)->orderBy('created_at', 'desc')->first();
-                    $nombreGrado = Degree::find($request->degree)?->degree ?? null;
-                    if ($referral && $nombreGrado) {
-                        $referral->update(['course' => $nombreGrado]);
+                if ($state == 'descartado') {
+                    $current_dates_student->update($new_dates_student);
+                    Mail::to($teacher->email)->queue(new DiscardStudentMail($current_dates_student));
+                }else {
+                    // Verificar cambios en el grado o grupo del estudiante
+                    $gradoActual = $current_dates_student->id_degree;
+                    $nuevoGrado = $request->degree; // Obtén el nuevo grado del request
+                    $huboCambioGrado = $gradoActual != $nuevoGrado;
+
+                    if ($huboCambioGrado) {
+                        $referral = Referral::where('id_user_student', $id)->orderBy('created_at', 'desc')->first();
+                        $nombreGrado = Degree::find($request->degree)?->degree ?? null;
+                        if ($referral && $nombreGrado) {
+                            $referral->update(['course' => $nombreGrado]);
+                        }
                     }
-                }
 
-                $current_dates_student->update($new_dates_student);
+                    $current_dates_student->update($new_dates_student);
+                }
+                
             }
 
             $id_psico = Auth::id(); // Obtengo el id del psicologo que realiza el informe, osea el que esta autenticado.
@@ -391,10 +404,10 @@ class PsicoController extends Controller
         DB::beginTransaction();
         try {
             // Actualizar el estado del estudiante
-            // $student->update([
-            //     'id_state' => $state,
-            //     'activation_period' => $request->activation_period
-            // ]);
+            $student->update([
+                'id_state' => $state,
+                'activation_period' => $request->activation_period
+            ]);
 
             // Enviar correo a cada docente
             foreach ($teachers as $teacher) {
@@ -430,12 +443,28 @@ class PsicoController extends Controller
             return redirect()->back()->with('error', 'Estado "descartado" no encontrado.');
         }
 
-        // Actualizar el estado del estudiante
-        $student->update([
-            'id_state' => $state,
-        ]);
+        $id_sent_by = $student->sent_by;
+        $teacher = Users_teacher::find($id_sent_by);
 
-        return redirect()->back()->with('info', 'El estudiante ha sido descartado.');
+        DB::beginTransaction();
+
+        try {
+
+            // Actualizar el estado del estudiante
+            $student->update([
+                'id_state' => $state,
+            ]);
+
+            Mail::to($teacher->email)->queue(new DiscardStudentMail($student)); // Pasar $student al mail
+
+            DB::commit();
+
+            return redirect()->back()->with('info', 'El estudiante ha sido descartado.');
+
+        }catch (\Exception $e) {
+            DB::rollback();
+            return redirect()->back()->with('error', 'Hubo problemas en el proceso, intentelo nuevamente.');
+        } 
     }
 
 }
