@@ -110,6 +110,7 @@
                 
                 <button type="submit" class="px-4 py-2 text-white bg-blue-500 rounded-md hover:bg-blue-600">Aceptar</button>
                 <button 
+                    type="button"
                     id="closeButton" 
                     class="px-4 py-2 mt-4 text-white bg-red-500 rounded-lg hover:bg-red-600 focus:outline-none focus:ring focus:ring-red-300"
                 >

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\AcceptStudentMail;
 use App\Models\Degree;
 use App\Models\Group;
 use App\Models\Period;
@@ -9,11 +10,13 @@ use App\Models\Psychoorientation;
 use App\Models\Referral;
 use App\Models\State;
 use App\Models\Users_load_degree;
+use App\Models\Users_load_group;
 use App\Models\Users_student;
 use App\Models\Users_teacher;
 use Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 
 class PsicoController extends Controller
 {
@@ -352,7 +355,8 @@ class PsicoController extends Controller
     }
 
     // Aceptar estudiante para entarar en proceso PIAR
-    public function accept_student_to_piar(Request $request){
+    public function accept_student_to_piar(Request $request)
+    {
         $request->validate([
             'studentId' => 'required|int',
             'activation_period' => 'required|exists:periods,id',
@@ -361,7 +365,7 @@ class PsicoController extends Controller
         $id_student = $request->studentId;
 
         // Buscar el estudiante
-        $student = Users_student::find($id_student);
+        $student = Users_student::with(['degree', 'group'])->find($id_student);
 
         if (!$student) {
             return redirect()->back()->with('error', 'Estudiante no encontrado.');
@@ -374,14 +378,41 @@ class PsicoController extends Controller
             return redirect()->back()->with('error', 'Estado "en PIAR" no encontrado.');
         }
 
-        // Actualizar el estado del estudiante
-        $student->update([
-            'id_state' => $state,
-            'activation_period' => $request->activation_period
-        ]);
+        $id_group_student = $student->id_group;
 
-        return redirect()->back()->with('success', 'El estudiante ha sido aceptado para ingresar al proceso PIAR.');
+        // Obtener los IDs de los docentes relacionados con el grupo del estudiante
+        $id_teachers_teachers = Users_load_group::where('id_group', $id_group_student)
+            ->pluck('id_user_teacher') // Cambia 'id_teacher' al nombre correcto de la columna que contiene el ID del docente
+            ->toArray();
+
+        // Obtener los IDs de los usuarios docentes correspondientes
+        $teachers = Users_teacher::whereIn('id', $id_teachers_teachers)->get();
+
+        DB::beginTransaction();
+        try {
+            // Actualizar el estado del estudiante
+            // $student->update([
+            //     'id_state' => $state,
+            //     'activation_period' => $request->activation_period
+            // ]);
+
+            // Enviar correo a cada docente
+            foreach ($teachers as $teacher) {
+                if ($teacher->email) { // Verifica si el correo del docente existe
+                    Mail::to($teacher->email)->queue(new AcceptStudentMail($student)); // Pasar $student al mail
+                }
+            }
+
+            DB::commit();
+
+            return redirect()->back()->with('success', 'El estudiante ha sido aceptado para ingresar al proceso PIAR.');
+
+        } catch (\Exception $e) {
+            DB::rollback();
+            return redirect()->back()->with('error', 'Hubo problemas en el proceso, intentelo nuevamente.');
+        }
     }
+
 
     // Desacrtar estudiante que esta en proceso, no es aceptado para el proceso PIAR.
     public function discard_student(string $id){
