@@ -261,7 +261,9 @@ class PsicoController extends Controller
                                     ->orderBy('created_at', 'desc')
                                     ->paginate(15);
 
-        return view('psycho.studentHistory', compact('referrals', 'reports'));
+        $student = Users_student::find($id);
+
+        return view('psycho.studentHistory', compact('referrals', 'reports', 'student'));
     }
 
     // Visualizar detalles de la remision seleccionada en el historial del estudiante

@@ -8,6 +8,7 @@ use App\Models\Group;
 use App\Models\Referral;
 use App\Models\State;
 use App\Models\Users_load_degree;
+use App\Models\Users_load_group;
 use App\Models\Users_student;
 use App\Models\Users_teacher;
 use Auth;
@@ -235,10 +236,13 @@ class CreateReferralController extends Controller
     // Añadir acta, aqui se lista los estudiantes en Piar pero se podran selecionar para añadir un acta.
     public function addMinutes(Request $request) {
 
+        $id_teacher = Auth::id(); // Obtener el id del usuario autentificado
+        $id_load_groups = Users_load_group::where('id_user_teacher', $id_teacher)->pluck('id_group'); // Obtener todos los id de los grupos de los cuales el docente autentificado está a cargo o imparte clases.
+
         // Obtener los estudiantes cuyo id_state está en los estados obtenidos
         $query = Users_student::whereHas('states', function ($q) {
             $q->whereIn('state', ['en PIAR']);
-        });
+        })->whereIn('id_group', $id_load_groups);
 
         // Filtrar por búsqueda
         if ($request->filled('search')) {
