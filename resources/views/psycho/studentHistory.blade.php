@@ -7,6 +7,8 @@
 @section('title', 'Historial')
 
 @section('content')
+    <h1 class="p-2 text-3xl font-bold text-gray-700">{{ $student->name }} {{ $student->last_name }}</h1>
+    <br>
     {{-- Tabla de remisiones --}}
     <div class="flex justify-center p-[2px]">
         <div class="w-[100%] px-4 bg-white rounded-lg shadow-md h-[45rem] overflow-auto">
