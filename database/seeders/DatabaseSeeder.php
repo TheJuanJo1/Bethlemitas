@@ -2,11 +2,11 @@
 
 namespace Database\Seeders;
 
+use App\Models\Deparment;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Database\Seeders\RolSeeder;
-use Database\Seeders\AsignatureSeeder;
 use Database\Seeders\DegreeSeeder;
 use Database\Seeders\GroupSeeder;
 use Database\Seeders\PeriodSeeder;
@@ -28,12 +28,13 @@ class DatabaseSeeder extends Seeder
         // ]);
 
         $this->call(RolSeeder::class);
-        $this->call(AsignatureSeeder::class);
+        $this->call(AreasSeeder::class);
         $this->call(DegreeSeeder::class);
         $this->call(GroupSeeder::class);
         $this->call(PeriodSeeder::class);
         $this->call(StateSeeder::class);
         $this->call(UserSeeder::class);
+        $this->call(DeparmetSeeder::class);
 
     }
 }

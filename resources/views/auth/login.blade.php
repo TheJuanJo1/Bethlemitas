@@ -7,7 +7,7 @@
 
     <div class="flex flex-col justify-center px-6 py-12 lg:px-8 w-full max-w-md h-auto bg-[#747272a7] backdrop-filter backdrop-blur-[0.8px] rounded-lg" >
         <div class="sm:mx-auto sm:w-full sm:max-w-sm">
-          <h2 class="px-1 mt-10 text-3xl leading-9 tracking-tight text-center text-black font-small">Iniciar sesión</h2>
+          <h2 class="px-1 mt-10 text-3xl leading-9 tracking-tight text-center text-white font-small border-black">Iniciar sesión</h2>
         </div>
       
         <div class="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
@@ -20,7 +20,7 @@
                 </div>
             @endif
             <div>
-              <label for="number_documment" class="block text-sm font-medium leading-6 text-black">Número de documento</label>
+              <label for="number_documment" class="block text-sm font-medium leading-6 text-black border-white">Número de documento</label>
               <div class="mt-2">
                 <input id="number_documment" name="number_documment" type="number_documment" autocomplete="number_documment"  placeholder="Número de documento" required class="block w-full rounded-md border-0 px-2 py-1.5 text-black shadow-sm   placeholder:text-black sm:text-sm sm:leading-6" style="background-color: #0000004f">
               </div>
@@ -28,9 +28,13 @@
       
             <div>
               <div class="flex items-center justify-between">
-                <label for="password" class="block text-sm font-medium leading-6 text-black">Contraseña</label>
+                <label for="password" class="block text-sm font-medium leading-6 text-black border-white">Contraseña</label>
                 <div class="text-sm">
-                  <a href="#" class="font-semibold  text-[#2a56be] underline hover:text-[#0339fc]"">Olvidaste la contraseña?</a>
+                  <a href="{{ route('password.request') }}" 
+                    class="font-semibold text-[#2a56be] underline hover:text-[#0339fc]">
+                   ¿Olvidaste la contraseña?
+                  </a>
+
                 </div>
               </div>
               <div class="mt-2">

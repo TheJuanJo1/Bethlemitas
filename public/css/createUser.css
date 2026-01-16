@@ -53,7 +53,7 @@
     background-color: #5984d6;
 }
 
-.asignature-item {
+.area-item {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -67,7 +67,7 @@
 }
 
 
-.title-asignature {
+.title-area {
     font-size: 1.4rem;
 }
 

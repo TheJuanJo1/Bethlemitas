@@ -7,7 +7,7 @@
 @section('title', 'Remisión')
 
 @section('content')
-    <div class="p-8 mx-auto bg-[#D5DBDB]">
+    <div class="p-8 mx-auto bg-[#D5DBDB]"> 
         <h1 class="mb-6 text-2xl font-bold text-gray-700">Remisión de estudiantes</h1>
         <form action="{{ route('store.referral') }}" method="POST">
             @csrf

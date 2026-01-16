@@ -21,6 +21,11 @@ return new class extends Migration
             $table->unsignedBigInteger('group_director')->nullable();
             $table->foreign('group_director')->references('id')->on('groups')->onDelete('set null');
             
+
+            // Institucion
+            $table->unsignedBigInteger('id_institution')->nullable();
+            $table->foreign('id_institution')->references('id')->on('institution')->onDelete('set null');            
+
             // Estado
             $table->unsignedBigInteger('id_state');
             $table->foreign('id_state')->references('id')->on('states'); // Corrección en el nombre del campo

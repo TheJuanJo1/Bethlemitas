@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\CreateAsignatureController;
+use App\Http\Controllers\CreateAreaController;
 use App\Http\Controllers\CreateController;
 use App\Http\Controllers\CreateDegreeController;
 use App\Http\Controllers\CreateGroupController;
@@ -32,7 +32,7 @@ Route::middleware([PreventBackHistoryMiddleware::class])->group(function() {
             
             //Vista create user
             Route::get('/create/user', [CreateController::class, 'create_user'])->name('create.user');  
-            // Store user
+            // Store user 
             Route::post('/store/user', [CreateController::class, 'store_user'])->name('store.user');
             //Index Users (docentes y psicoorientadores)
             Route::get('/listing/users', [CreateController::class, 'index_users'])->name('index.users');  
@@ -58,23 +58,19 @@ Route::middleware([PreventBackHistoryMiddleware::class])->group(function() {
             Route::put('/update/degree', [CreateDegreeController::class, 'update_degree'])->name('update.degree');
             // Delete Degree
             Route::delete('/delete/degree/{id}', [CreateDegreeController::class, 'destroy_degree'])->name('delete.degree');
-            // Vista create Asignature
-            Route::get('/create/asignature', [CreateAsignatureController::class, 'create_asignature'])->name('create.asignature');
-            // Store Asignature
-            Route::post('/store/asignature', [CreateAsignatureController::class, 'store_asignature'])->name('store.asignature');
-            // Update Asignature
-            Route::put('/update/asignature', [CreateAsignatureController::class, 'update_asignature'])->name('update.asignature');
-            // Delete Asignature
-            Route::delete('/delete/asignature/{id}', [CreateAsignatureController::class, 'destroy_asignature'])->name('delete.asignature');
+            // Vista create area
+            Route::get('/create/area', [CreateAreaController::class, 'create_area'])->name('create.area');
+            // Store area
+            Route::post('/store/area', [CreateAreaController::class, 'store_area'])->name('store.area');
+            // Update area
+            Route::put('/update/area', [CreateAreaController::class, 'update_area'])->name('update.area');
+            // Delete area
+            Route::delete('/delete/area/{id}', [CreateAreaController::class, 'destroy_area'])->name('delete.area');
         });
 
         // ***************************** Middleware rol docente **********************************
         Route::middleware([RoleDocenteMiddleware::class])->group(function() {
 
-            // Vista de remision de estudiante
-            Route::get('/create/referral', [CreateReferralController::class, 'create_referral'])->name('create.referral');
-            // Store Referral, aquí tambien se crear al estudiante.
-            Route::post('/store/referral', [CreateReferralController::class, 'store_referral'])->name('store.referral');
             // Index Students Remitted, Listar a los estudiantes remitidos.
             Route::get('/index/students/remitted', [CreateReferralController::class, 'index_student_remitted'])->name('index.student.remitted');
             // addMinutes, Visualiza a los estudiantes en piar pero tienen mas acciones.
@@ -83,6 +79,12 @@ Route::middleware([PreventBackHistoryMiddleware::class])->group(function() {
 
         // ************** Middleware rol Docente y Psicoorientador, para desarrolar acciones que ambos tienen en común ***************
         Route::middleware([RolePsicoorientadorAndDocenteMiddleware::class])->group(function() {
+
+            // Vista de remision de estudiante
+            Route::get('/create/referral', [CreateReferralController::class, 'create_referral'])->name('create.referral');
+            // Store Referral, aquí tambien se crear al estudiante.
+
+            Route::post('/store/referral', [CreateReferralController::class, 'store_referral'])->name('store.referral');
             // Vista de editar estudiante
             Route::get('/edit/student/{id}', [CreateReferralController::class, 'edit_student'])->name('edit.student');
             // Update student
@@ -112,12 +114,8 @@ Route::middleware([PreventBackHistoryMiddleware::class])->group(function() {
             Route::put('/edit/history/details/referral/{id}', [PsicoController::class, 'update_history_details_referral'])->name('update.history.details.referral');
             // Ruta para editar el informe seleccionado en el historial.
             Route::put('/edit/history/details/report/{id}', [PsicoController::class, 'update_history_details_report'])->name('update.history.details.report');
-            // Ruta para visualizar a los estudiantes en estado de espera. (Lo dirige a la vista.)
-            Route::get('/waiting/students', [PsicoController::class, 'waiting_students'])->name('waiting.students');
             // Ruta para aceptar al estudiante en proceso PIAR
             Route::put('/accept/student', [PsicoController::class, 'accept_student_to_piar'])->name('accept.student.to.piar');
-            // Ruta para descartar estudiante de proceso de espera. No es aceptado para el proceso PIAR.
-            Route::put('/discard/student/{id}', [PsicoController::class, 'discard_student'])->name('discard.student');
         });
 
     });

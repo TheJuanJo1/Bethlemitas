@@ -22,7 +22,6 @@ use Illuminate\Support\Facades\Mail;
 class PsicoController extends Controller
 {
     // Remitir estudiantes por parte de la psicooriendora
-
     // Listar estudiantes remitidos
     public function index_student_remitted_psico(Request $request) {
         $id_psico = Auth::id(); // Obtengo el id de la psicoorientadora autentificada.
@@ -154,7 +153,7 @@ class PsicoController extends Controller
     public function report_student(string $id) {
         $groups = Group::orderByRaw('CAST(`group` AS UNSIGNED), `group`')->get();
         $degrees = Degree::orderByRaw('CAST(`degree` AS UNSIGNED), `degree`')->get();
-        $states = State::whereIn('state', ['en espera', 'descartado'])->get();
+        $states = State::whereIn('state', ['en PIAR', 'en DUA', 'activo'])->get();
         $info_student = Users_student::find($id);
 
         return view('psycho.addReportStudent', compact('groups', 'degrees', 'states', 'info_student'));
@@ -162,95 +161,95 @@ class PsicoController extends Controller
 
     // Crear el informe por parte de la psicoorientadora y editar datos del estudiante si hace falta.
     public function store_report_student(Request $request, string $id) {
-        $request->validate([
-            'number_documment' => 'required|digits_between:1,20|unique:users_students,number_documment,' . $id,
-            'name' => 'required|string',
-            'last_name' => 'required|string',
-            'degree' => 'required|exists:degrees,id',
-            'group' => 'required|exists:groups,id',
-            'age' => 'required',
-            'state' => 'required|exists:states,id',
-            'title_report' => 'required|string',
-            'reason_inquiry' => 'required',
-            'recomendations' => 'required',
-        ]);
+    $request->validate([
+        'number_documment' => 'required|digits_between:1,20|unique:users_students,number_documment,' . $id,
+        'name' => 'required|string',
+        'last_name' => 'required|string',
+        'degree' => 'required|exists:degrees,id',
+        'group' => 'required|exists:groups,id',
+        'age' => 'required',
+        'state' => 'required|exists:states,id',
+        'title_report' => 'required|string',
+        'reason_inquiry' => 'required',
+        'recomendations' => 'required',
+    ]);
 
-        // Datos actuales del estudiate
-        $current_dates_student = Users_student::find($id);
+    // Datos actuales del estudiante
+    $current_dates_student = Users_student::find($id);
 
-        // Nuevos datos del estudiante
-        $new_dates_student = [
-            'number_documment' => $request->number_documment,
-            'name' => $request->name,
-            'last_name' => $request->last_name,
-            'id_degree' => $request->degree,
-            'id_group' => $request->group,
-            'age' => $request->age,
-            'id_state' => $request->state,
-        ];
+    // Nuevos datos del estudiante
+    $new_dates_student = [
+        'number_documment' => $request->number_documment,
+        'name' => $request->name,
+        'last_name' => $request->last_name,
+        'id_degree' => $request->degree,
+        'id_group' => $request->group,
+        'age' => $request->age,
+        'id_state' => $request->state,
+    ];
 
-        // Verificar cambios en el estudiante
-        $huboCambiosStudent = collect($new_dates_student)->diffAssoc($current_dates_student->toArray())->isNotEmpty();
+    // Verificar cambios en el estudiante
+    $huboCambiosStudent = collect($new_dates_student)->diffAssoc($current_dates_student->toArray())->isNotEmpty();
 
-        $id_state = $request->state; // Obtiene el ID del estado enviado
-        $state = State::find($id_state)?->state; // Encuentra el registro y obtiene el valor de `state`
-        $id_sent_by = $current_dates_student->sent_by;
-        $teacher = Users_teacher::find($id_sent_by);
+    $id_state = $request->state; 
+    $state = State::find($id_state)?->state; 
+    $id_sent_by = $current_dates_student->sent_by;
+    $teacher = Users_teacher::find($id_sent_by);
 
-        DB::beginTransaction();
+    DB::beginTransaction();
 
-        try {
-            if ($huboCambiosStudent) {
-
-                if ($state == 'descartado') {
-                    $current_dates_student->update($new_dates_student);
-                    Mail::to($teacher->email)->queue(new DiscardStudentMail($current_dates_student));
-                }else {
-                    // Verificar cambios en el grado o grupo del estudiante
-                    $gradoActual = $current_dates_student->id_degree;
-                    $nuevoGrado = $request->degree; // Obtén el nuevo grado del request
-                    $huboCambioGrado = $gradoActual != $nuevoGrado;
-
-                    if ($huboCambioGrado) {
-                        $referral = Referral::where('id_user_student', $id)->orderBy('created_at', 'desc')->first();
-                        $nombreGrado = Degree::find($request->degree)?->degree ?? null;
-                        if ($referral && $nombreGrado) {
-                            $referral->update(['course' => $nombreGrado]);
-                        }
-                    }
-
-                    $current_dates_student->update($new_dates_student);
-                }
-                
+    try {
+        if ($huboCambiosStudent) {
+            if ($state == 'en PIAR') {
+                // Si entra a PIAR
+                $current_dates_student->update($new_dates_student);
+            } elseif ($state == 'en DUA') {
+                // Si entra a DUA
+                $current_dates_student->update($new_dates_student);
+            } else {
+                // Caso general: solo actualizamos los datos del estudiante
+                $current_dates_student->update($new_dates_student);
             }
 
-            $id_psico = Auth::id(); // Obtengo el id del psicologo que realiza el informe, osea el que esta autenticado.
-            $id_group_student = Users_student::where('id', $id)->value('id_group'); // Obtengo el id del grupo al que pertenece el estudiante.
-            $fullname_director_group = Users_teacher::where('group_director', $id_group_student)->first(); // Con el id del grupo obtenido anteriormente obtengo el registro del director del grupo.
-            $director_name = $fullname_director_group ? $fullname_director_group->name . ' ' . $fullname_director_group->last_name : 'N/A'; // Obtengo el nombre y el apellido del director del grupo.
-            $group = Group::find($request->group); // Obtengo el Grupo se esta dejando en el input del formulario.
+            // Verificar cambios en el grado para reflejarlo en la última remisión
+            $gradoActual = $current_dates_student->id_degree;
+            $nuevoGrado = $request->degree;
+            $huboCambioGrado = $gradoActual != $nuevoGrado;
 
-            $report = new Psychoorientation();
-            $report->psychologist_writes = $id_psico;
-            $report->id_user_student = $id;
-            $report->age_student = $request->age;
-            $report->group_student = $group->group; // Gracias a lña relacion que he hecho puedo guardar el nombre del grupo directamente.
-            $report->director_group_student = $director_name;
-            $report->title_report = $request->title_report;
-            $report->reason_inquiry = $request->reason_inquiry;
-            $report->recomendations = $request->recomendations;
-            $report->save();
-
-            DB::commit();
-            return redirect()->route('index.student.remitted.psico')->with('success', 'Informe agregado correctamente.');
-        }catch (\Exception $e) {
-            DB::rollback();
-            // Registra o muestra el error para depuración
-            return redirect()->back()->with('error', 'Hubo problemas en el proceso. Intentelo nuevamente.');
+            if ($huboCambioGrado) {
+                $referral = Referral::where('id_user_student', $id)->orderBy('created_at', 'desc')->first();
+                $nombreGrado = Degree::find($request->degree)?->degree ?? null;
+                if ($referral && $nombreGrado) {
+                    $referral->update(['course' => $nombreGrado]);
+                }
+            }
         }
 
-    }
+        // Crear el informe
+        $id_psico = Auth::id(); 
+        $id_group_student = Users_student::where('id', $id)->value('id_group'); 
+        $fullname_director_group = Users_teacher::where('group_director', $id_group_student)->first(); 
+        $director_name = $fullname_director_group ? $fullname_director_group->name . ' ' . $fullname_director_group->last_name : 'N/A'; 
+        $group = Group::find($request->group); 
 
+        $report = new Psychoorientation();
+        $report->psychologist_writes = $id_psico;
+        $report->id_user_student = $id;
+        $report->age_student = $request->age;
+        $report->group_student = $group->group;
+        $report->director_group_student = $director_name;
+        $report->title_report = $request->title_report;
+        $report->reason_inquiry = $request->reason_inquiry;
+        $report->recomendations = $request->recomendations;
+        $report->save();
+
+        DB::commit();
+        return redirect()->route('index.student.remitted.psico')->with('success', 'Informe agregado correctamente.');
+    } catch (\Exception $e) {
+        DB::rollback();
+        return redirect()->back()->with('error', 'Hubo problemas en el proceso. Intentelo nuevamente.');
+    }
+}
     // Visualizar historial del estudiante.
     public function show_student_history(string $id) {
         $referrals = Referral::where('id_user_student', $id)
@@ -339,35 +338,35 @@ class PsicoController extends Controller
     }
     
     // Visualizar estudiantes en estado de espera.
-    public function waiting_students(Request $request) {
-        $id_psico = Auth::id(); // Obtengo el id de la psicoorientadora autentificada.
-        $load_degree = Users_load_degree::where('id_user', $id_psico)->pluck('id_degree')->toArray();
+    // public function waiting_students(Request $request) {
+    //     $id_psico = Auth::id(); // Obtengo el id de la psicoorientadora autentificada.
+    //     $load_degree = Users_load_degree::where('id_user', $id_psico)->pluck('id_degree')->toArray();
 
-        // Obtener los estudiantes cuyo id_state está en los estados obtenidos
-        $query = Users_student::whereHas('states', function ($q) {
-            $q->whereIn('state', ['en espera']);
-        })->whereIn('id_degree', $load_degree);
+    //     // Obtener los estudiantes cuyo id_state está en los estados obtenidos
+    //     $query = Users_student::whereHas('states', function ($q) {
+    //         $q->whereIn('state', ['en espera']);
+    //     })->whereIn('id_degree', $load_degree);
 
-         // Filtrar por búsqueda
-         if ($request->filled('search')) {
-            $searchTerm = $request->input('search');
-            $query->where(function ($q) use ($searchTerm) {
-                $q->where('name', 'LIKE', '%' . $searchTerm . '%')
-                ->orWhere('last_name', 'LIKE', '%' . $searchTerm . '%')
-                ->orWhere('number_documment', 'LIKE', '%' . $searchTerm . '%')
-                ->orWhereRaw("CONCAT(name, ' ', last_name) LIKE ?", ['%' . $searchTerm . '%']);
-            });
-        }
+    //      // Filtrar por búsqueda
+    //      if ($request->filled('search')) {
+    //         $searchTerm = $request->input('search');
+    //         $query->where(function ($q) use ($searchTerm) {
+    //             $q->where('name', 'LIKE', '%' . $searchTerm . '%')
+    //             ->orWhere('last_name', 'LIKE', '%' . $searchTerm . '%')
+    //             ->orWhere('number_documment', 'LIKE', '%' . $searchTerm . '%')
+    //             ->orWhereRaw("CONCAT(name, ' ', last_name) LIKE ?", ['%' . $searchTerm . '%']);
+    //         });
+    //     }
 
-        // Ordenar y paginar resultados
-        $students = $query->orderBy('name', 'asc')
-                        ->orderBy('last_name', 'asc')
-                        ->paginate(15);
+    //     // Ordenar y paginar resultados
+    //     $students = $query->orderBy('name', 'asc')
+    //                     ->orderBy('last_name', 'asc')
+    //                     ->paginate(15);
 
-        $periods = Period::all();
+    //     $periods = Period::all();
 
-        return view('psycho.waitingStudent', compact('students', 'periods'));
-    }
+    //     return view('psycho.waitingStudent', compact('students', 'periods'));
+    // }
 
     // Aceptar estudiante para entarar en proceso PIAR
     public function accept_student_to_piar(Request $request)
@@ -383,7 +382,7 @@ class PsicoController extends Controller
         $student = Users_student::with(['degree', 'group'])->find($id_student);
 
         if (!$student) {
-            return redirect()->back()->with('error', 'Estudiante no encontrado.');
+            return redirect()->back()->with( 'error', 'Estudiante no encontrado.');
         }
 
         // Buscar el estado "en PIAR"
@@ -430,43 +429,43 @@ class PsicoController extends Controller
 
 
     // Desacrtar estudiante que esta en proceso, no es aceptado para el proceso PIAR.
-    public function discard_student(string $id){
-        // Buscar el estudiante
-        $student = Users_student::find($id);
+    // public function discard_student(string $id){
+    //     // Buscar el estudiante
+    //     $student = Users_student::find($id);
 
-        if (!$student) {
-            return redirect()->back()->with('error', 'Estudiante no encontrado.');
-        }
+    //     if (!$student) {
+    //         return redirect()->back()->with('error', 'Estudiante no encontrado.');
+    //     }
 
-        // Buscar el estado "en PIAR"
-        $state = State::where('state', 'descartado')->value('id'); // Usa `value` para obtener un único valor
+    //     // Buscar el estado "en PIAR"
+    //     $state = State::where('state', 'descartado')->value('id'); // Usa `value` para obtener un único valor
 
-        if (!$state) {
-            return redirect()->back()->with('error', 'Estado "descartado" no encontrado.');
-        }
+    //     if (!$state) {
+    //         return redirect()->back()->with('error', 'Estado "descartado" no encontrado.');
+    //     }
 
-        $id_sent_by = $student->sent_by;
-        $teacher = Users_teacher::find($id_sent_by);
+    //     $id_sent_by = $student->sent_by;
+    //     $teacher = Users_teacher::find($id_sent_by);
 
-        DB::beginTransaction();
+    //     DB::beginTransaction();
 
-        try {
+    //     try {
 
-            // Actualizar el estado del estudiante
-            $student->update([
-                'id_state' => $state,
-            ]);
+    //         // Actualizar el estado del estudiante
+    //         $student->update([
+    //             'id_state' => $state,
+    //         ]);
 
-            Mail::to($teacher->email)->queue(new DiscardStudentMail($student)); // Pasar $student al mail
+    //         Mail::to($teacher->email)->queue(new DiscardStudentMail($student)); // Pasar $student al mail
 
-            DB::commit();
+    //         DB::commit();
 
-            return redirect()->back()->with('info', 'El estudiante ha sido descartado.');
+    //         return redirect()->back()->with('info', 'El estudiante ha sido descartado.');
 
-        }catch (\Exception $e) {
-            DB::rollback();
-            return redirect()->back()->with('error', 'Hubo problemas en el proceso, intentelo nuevamente.');
-        } 
-    }
+    //     }catch (\Exception $e) {
+    //         DB::rollback();
+    //         return redirect()->back()->with('error', 'Hubo problemas en el proceso, intentelo nuevamente.');
+    //     } 
+    // }
 
 }

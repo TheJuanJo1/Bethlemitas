@@ -57,18 +57,18 @@
                 </div>
 
                 <div class="form-group" >       
-                    <div class="form-group-half" id="group_asignatures">
-                        <label for="subjects">Asignaturas * (manten presionada la tecla Ctrl y seleciona las asignaturas):</label>
-                        <select id="subjects" name="subjects[]" multiple disabled>
+                    <div class="form-group-half" id="group_areas">
+                        <label for="areas">Areas * (manten presionada la tecla Ctrl y seleciona las areas):</label>
+                        <select id="areas" name="areas[]" multiple disabled>
                             <option value="">Seleccionar</option>
-                            @foreach ($asignatures as $asignature)
-                                <option value="{{ $asignature->id }}" 
-                                    {{ in_array($asignature->id, old('subjects', [])) ? 'selected' : '' }}>
-                                    {{ $asignature->name_asignature }}
-                                </option>
+                            @foreach ($areas as $area)
+                            <option value="{{ $area->id }}" 
+                                {{ in_array($area->id, array_column($selectedAreas ?? [], 'id')) ? 'selected' : '' }}>
+                                {{ $area->name_area }}
+                            </option>
                             @endforeach
                         </select>
-                        @error('subjects')
+                        @error('areas')
                             <p class="mt-2 text-sm text-red-600 dark:text-red-500"><span class="font-medium">¡Error! Campo vacío</span></p>
                         @enderror
                     </div>
@@ -121,7 +121,7 @@
 
             <!-- Contenedor para los diseños generados -->
             <p id='description'></p>
-            <div id="selected-asignatures-container"></div>
+            <div id="selected-areas-container"></div>
 
             <br>
 

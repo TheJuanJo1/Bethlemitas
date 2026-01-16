@@ -4,7 +4,7 @@
     <link rel="stylesheet" type="text/css" href="#">
 @endsection
 
-@section('title', 'Estidiantes Remitidos')
+@section('title', 'Estudiantes Remitidos')
 
 @section('content')
 
@@ -51,7 +51,7 @@
                                     <td class="px-4 py-2 border">{{ $student->name }} {{ $student->last_name }}</td>
                                     <td class="px-4 py-2 text-center border">{{ $student->number_documment }}</td>
                                     <td class="px-4 py-2 text-center border">{{ $student->degree->degree }}</td>
-                                    <td class="px-4 py-2 text-center border">{{ $student->group->group }}</td>
+                                    <td class="px-4 py-2 text-center border">{{ $student->group->group ?? 'Sin grupo' }}</td> 
                                     <td class="px-4 py-2 text-center border">{{ $student->age }}</td>
                                     <td class="px-4 py-2 text-center border">
                                         <a href="{{ route('edit.student', $student->id) }}" class="text-red-500 hover:underline">Editar</a>

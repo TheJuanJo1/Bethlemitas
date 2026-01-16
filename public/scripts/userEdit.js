@@ -1,93 +1,95 @@
 document.addEventListener('DOMContentLoaded', function () {
     const roleSelect = document.getElementById('role');
 
-    let group_asignatures = document.getElementById('group_asignatures');
+    let group_areas = document.getElementById('group_areas');
     let group_load_group = document.getElementById('group_load_group');
     let group_group_director = document.getElementById('group_group_director');
-    let group_load_degree =  document.getElementById('group_load_degree');
+    let group_load_degree = document.getElementById('group_load_degree');
     let load_degree = document.getElementById('load_degree');
-    let subjects = document.getElementById('subjects');
+    let areas = document.getElementById('areas');
     let groups = document.getElementById('groups');
     let group_director = document.getElementById('group_director');
     const selectedRoleText = roleSelect.options[roleSelect.selectedIndex].text; // Obtiene el texto del rol seleccionado
     function getSelectedRole() {
-        
+
 
         if (selectedRoleText == 'docente') {
-            group_asignatures.style.display = 'block'; // Mostrar el div
+            group_areas.style.display = 'block'; // Mostrar el div
             group_load_group.style.display = 'block'; // Mostrar el div
             group_group_director.style.display = 'block'; // Mostrar el div
             group_load_degree.classList.add('hidden');
             load_degree.disabled = true; // Deshabilita el select de grados
-            subjects.disabled = false;
+            areas.disabled = false;
             groups.disabled = false;
             group_director.disabled = false;
         }
 
         if (selectedRoleText == 'psicoorientador') {
-            group_asignatures.style.display = 'none'; // Oculta el div
+            group_areas.style.display = 'none'; // Oculta el div
             group_load_group.style.display = 'none'; // Oculta el div
             group_group_director.style.display = 'none'; // Oculta el div
             group_load_degree.classList.remove('hidden');
             load_degree.disabled = false; // Habilita el select de grados
-            subjects.disabled = true;
+            areas.disabled = true;
             groups.disabled = true;
             group_director.disabled = true;
         }
     }
 
-    // Funcion para mostrar los grupos en donde se imparten cada asignatura (Editar)
 
-    const container = document.getElementById('selected-asignatures-container');
+
+    // Funcion para mostrar los grupos en donde se imparten cada area (Editar)
+
+    const container = document.getElementById('selected-areas-container');
     const description = document.getElementById('description');
-    const subjectsSelect = document.getElementById('subjects'); // Obtener el <select> de asignaturas
+    const areasSelect = document.getElementById('areas'); // Obtener el <select> de areas
     if (selectedRoleText == 'docente') {
-    description.innerHTML = 'Para cada asignatura, es necesario asignar el grupo o los grupos en los que el docente llevará a cabo la instrucción correspondiente.';
+        description.innerHTML = 'Para cada area, es necesario asignar el grupo o los grupos en los que el docente llevará a cabo la instrucción correspondiente.';
     }
-    function getSelectedAsignatures() {
+    function getSelectedAreas() {
         // Limpiar el contenedor antes de agregar nuevos elementos
         container.innerHTML = '';
-        
-        // Obtener las asignaturas seleccionadas
-        const selectedAsignatureIds = Array.from(subjectsSelect.selectedOptions).map(option => ({
+
+        // Obtener las áreas seleccionadas
+        const selectedAreaIds = Array.from(areasSelect.selectedOptions).map(option => ({
             id: parseInt(option.value),
             name: option.text
         }));
 
-        selectedAsignatureIds.forEach(asignature => {
-            // Crear div para la asignatura
-            const asignatureDiv = document.createElement('div');
-            asignatureDiv.classList.add('asignature-item');
+        selectedAreaIds.forEach(area => {
+            // Crear div para el área
+            const areaDiv = document.createElement('div');
+            areaDiv.classList.add('area-item');
 
-            // Input oculto para guardar el ID de la asignatura.
+            // Input oculto para guardar el ID del área.
             const hiddenInput = document.createElement('input');
             hiddenInput.type = 'hidden';
-            hiddenInput.name = 'asignature_id[]';
-            hiddenInput.value = asignature.id;
+            hiddenInput.name = 'area_id[]';
+            hiddenInput.value = area.id;
 
-            // Crear campo en donde se muestra el nombre de la asignatura
+            // Campo con el nombre del área (solo lectura)
             const nameSpan = document.createElement('input');
-            nameSpan.classList.add('title-asignature');
-            nameSpan.placeholder = asignature.name;
-            nameSpan.value = asignature.name;
-            nameSpan.disabled = true; 
+            nameSpan.classList.add('title-area');
+            nameSpan.placeholder = area.name;
+            nameSpan.value = area.name;
+            nameSpan.disabled = true;
 
-            // Crear un <select> adicional para opciones de la base de datos
+            // Crear un <select> para los grupos
             const dbSelect = document.createElement('select');
             dbSelect.classList.add('db-options');
-            dbSelect.name = `groups_asig[${asignature.id}][]`; // Agregar [] al name
-            dbSelect.multiple = true; // Establecer el select como múltiple
+            dbSelect.name = `groups_asig[${area.id}][]`;
+            dbSelect.multiple = true;
 
-            // Llenar el <select> con las opciones de la base de datos
+            // Llenar el <select> con los grupos
             dbOptionsGroups.forEach(group => {
                 const optionElement = document.createElement('option');
                 optionElement.value = group.id;
                 optionElement.text = group.group;
 
-                // Verificar si el grupo pertenece a esta asignatura
-                groupsForAsignature.forEach(groupsSubjects => {
-                    if (groupsSubjects.asignature_id === asignature.id) {
-                        groupsSubjects.groups.forEach(groupAssigned => {
+                // Marcar como seleccionados los grupos ya asociados a esta área
+                groupsForArea.forEach(groupsArea => {
+                    if (groupsArea.area_id === area.id) {
+                        groupsArea.groups.forEach(groupAssigned => {
                             if (groupAssigned.id === group.id) {
                                 optionElement.selected = true;
                             }
@@ -98,19 +100,18 @@ document.addEventListener('DOMContentLoaded', function () {
                 dbSelect.appendChild(optionElement);
             });
 
-            // Añadir los elementos creados al div de asignaturas
-            asignatureDiv.appendChild(hiddenInput);
-            asignatureDiv.appendChild(nameSpan);
-            asignatureDiv.appendChild(dbSelect);
-            container.appendChild(asignatureDiv);
+            // Añadir elementos al div
+            areaDiv.appendChild(hiddenInput);
+            areaDiv.appendChild(nameSpan);
+            areaDiv.appendChild(dbSelect);
+            container.appendChild(areaDiv);
         });
     }
+    // Evento para actualizar campos cuando cambia la selección de areas
+    areasSelect.addEventListener('change', getSelectedAreas);
 
-    // Evento para actualizar campos cuando cambia la selección de asignaturas
-    subjectsSelect.addEventListener('change', getSelectedAsignatures);
-
-    // Llamar a la función inicialmente para cargar las asignaturas seleccionadas
+    // Llamar a la función inicialmente para cargar las areas seleccionadas
     getSelectedRole();
-    getSelectedAsignatures();
+    getSelectedAreas();
 
 });
