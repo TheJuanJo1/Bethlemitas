@@ -24,6 +24,7 @@ use App\Http\Middleware\RolePsicoorientadorAndDocenteMiddleware;
 |--------------------------------------------------------------------------
 */
 
+
 Route::prefix('/')->group(function () {
 
     // Login
@@ -178,6 +179,16 @@ Route::middleware([PreventBackHistoryMiddleware::class])->group(function () {
 
             Route::put('/update/student/{id}', [CreateReferralController::class, 'update_student'])
                 ->name('update.student');
+            // Estudiantes por estado
+            Route::get('/psico/students/active', [PsicoController::class, 'index_students_active_psico'])
+                ->name('psico.students.active');
+
+            Route::get('/psico/students/piar', [PsicoController::class, 'index_students_piar_psico'])
+                ->name('psico.students.piar');
+
+            Route::get('/psico/students/dua', [PsicoController::class, 'index_students_dua_psico'])
+                ->name('psico.students.dua');
+
         });
 
         /*
