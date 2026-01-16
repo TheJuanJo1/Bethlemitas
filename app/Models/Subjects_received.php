@@ -11,7 +11,7 @@ class Subjects_received extends Model
 
     protected $fillable = [
         'id_group',
-        'id_asignature',
+        'id_area',
     ];
 
 }

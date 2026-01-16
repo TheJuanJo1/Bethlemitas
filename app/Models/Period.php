@@ -12,4 +12,7 @@ class Period extends Model
     protected $fillable = [
         'period',
     ];
+
+
+    
 }

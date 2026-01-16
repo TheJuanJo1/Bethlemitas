@@ -19,7 +19,8 @@ use Illuminate\Http\Request;
 class CreateReferralController extends Controller
 {
     // Vista Referral, vista de todo el formulario de remisión
-    public function create_referral() {
+    public function create_referral()
+    {
 
         $groups = Group::orderByRaw('CAST(`group` AS UNSIGNED), `group`')->get();
         $degrees = Degree::orderByRaw('CAST(`degree` AS UNSIGNED), `degree`')->get();
@@ -28,10 +29,11 @@ class CreateReferralController extends Controller
     }
 
     // Store Referral, al realizar una remision tambie se crea un estudiante, en caso tal que el estudiante ya este registrado se verificara si esta descartado o no, si esta decartado solo cambiaran algunos datos como el estado, el id del docente quien lo remite, en caso de que el estudiante no este descartado habrán avisos de error o de info para notificar al usuario.
-    public function store_referral(Request $request) {
+    public function store_referral(Request $request)
+    {
         $id_teacher = Auth::id(); // Se obtiene el id del docente autentificado.
         $state = State::where('state', 'activo')->firstOrFail(); // Obtener el estado 'activo'
-    
+
         $request->validate([
             'number_documment' => 'required|digits_between:1,20',
             'name' => 'required',
@@ -45,7 +47,7 @@ class CreateReferralController extends Controller
         ]);
 
         $input_number_documment = $request->number_documment;
-        $exist_student = Users_student::where('number_documment', $input_number_documment)->first();
+        $exist_student = Users_student::with('degree', 'group')->where('number_documment', $input_number_documment)->first();
 
         $degreeLoad = Users_load_degree::where('id_degree', $request->input('degree'))->first();
 
@@ -59,54 +61,34 @@ class CreateReferralController extends Controller
         $psico_date = Users_teacher::where('id', $id_psico)->first();
 
         if ($exist_student) {
-
             $current_state = $exist_student->id_state;
-            // Obtener los datos del estado actual
             $state_info = State::where('id', $current_state)->firstOrFail();
-            if (in_array($state_info->state, ['activo', 'en espera'])) {
-                return redirect()->back()->with('info', 'El estudiante ya está remitido, pero aún no ha ingresado al proceso PIAR.');
+
+            if ($state_info->state === 'activo') {
+                return redirect()->back()->with(
+                    'info',
+                    'El estudiante ya fue remitido y está en revisión por el psicoorientador.'
+                );
             } elseif ($state_info->state === 'en PIAR') {
-                return redirect()->back()->with('info', 'El estudiante ya está en proceso PIAR.');
-            } elseif ($state_info->state === 'descartado') {
-
-                DB::beginTransaction();
-
-                try {
-                    $exist_student->update([
-                        'age' => $request->age, // Actualizar datos de la edad
-                        'id_degree' => $request->degree, // Actualizar datos del grado
-                        'id_group' => $request->group, // Actualizar datos del grupo
-                        'sent_by' => $id_teacher, // Actualizar el docente que lo remite
-                        'id_state' => $state->id,
-                    ]);
-
-                    // Obtener el nombre del grado usando la relación
-                    $degreeName = $exist_student->degree->degree;  // Esto obtiene el nombre del grado relacionado
-
-                    $referral = new Referral();
-                    $referral->id_user_student = $exist_student->id; // Se guarda el id del usuario que se crea anteriormente.
-                    $referral->id_user_teacher = $id_teacher;
-                    $referral->reason = $request->reason_referral;
-                    $referral->observation = $request->observation;
-                    $referral->strategies = $request->strategies;
-                    $referral->course = $degreeName;
-                    $referral->save();
-
-                    Mail::to($psico_date->email)->queue(new CreatedReferralMail($exist_student, $referral));
-
-                    DB::commit();
-
-                    return redirect()->back()->with('success', 'Estudiante remitido exitosamente.');
-                }catch (\Exception $e) {
-                    DB::rollback();
-                    // Registra o muestra el error para depuración
-                    return redirect()->back()->with('error', 'Hubo problemas en el proceso. Intentelo nuevamente.');
-                }
+                return redirect()->back()->with(
+                    'info',
+                    'El estudiante ya está en proceso PIAR.'
+                );
+            } elseif ($state_info->state === 'en DUA') {
+                return redirect()->back()->with(
+                    'info',
+                    'El estudiante ya está en proceso DUA.'
+                );
+            } else {
+                return redirect()->back()->with(
+                    'info',
+                    'El estudiante ya se encuentra en otro estado y no puede ser remitido nuevamente.'
+                );
             }
         }
-    
+
         DB::beginTransaction();
-    
+
         try {
             $user = new Users_student();
             $user->number_documment = $request->number_documment;
@@ -131,7 +113,7 @@ class CreateReferralController extends Controller
             $referral->strategies = $request->strategies;
             $referral->course = $degreeName;
             $referral->save();
-            
+
             Mail::to($psico_date->email)->queue(new CreatedReferralMail($user, $referral));
 
             DB::commit();
@@ -139,6 +121,7 @@ class CreateReferralController extends Controller
             return redirect()->back()->with('success', 'Estudiante remitido exitosamente.');
         } catch (\Exception $e) {
             DB::rollback();
+            dd($e);
             return redirect()->back()->with('error', 'Hubo problemas en el proceso, intentelo nuevamente.');
         }
     }
@@ -150,7 +133,7 @@ class CreateReferralController extends Controller
 
         // Obtener los estudiantes cuyo id_state está en los estados obtenidos
         $query = Users_student::whereHas('states', function ($q) {
-            $q->whereIn('state', ['activo', 'en espera']);
+            $q->whereIn('state', ['activo']);
         })->where('sent_by', $id_teacher);
 
         // Filtrar por búsqueda
@@ -158,24 +141,25 @@ class CreateReferralController extends Controller
             $searchTerm = $request->input('search');
             $query->where(function ($q) use ($searchTerm) {
                 $q->where('name', 'LIKE', '%' . $searchTerm . '%')
-                ->orWhere('last_name', 'LIKE', '%' . $searchTerm . '%')
-                ->orWhere('number_documment', 'LIKE', '%' . $searchTerm . '%')
-                ->orWhereRaw("CONCAT(name, ' ', last_name) LIKE ?", ['%' . $searchTerm . '%']);
+                    ->orWhere('last_name', 'LIKE', '%' . $searchTerm . '%')
+                    ->orWhere('number_documment', 'LIKE', '%' . $searchTerm . '%')
+                    ->orWhereRaw("CONCAT(name, ' ', last_name) LIKE ?", ['%' . $searchTerm . '%']);
             });
         }
 
         // Ordenar y paginar resultados
-        $students = $query->with('latestReferral')
-                        ->orderBy('name', 'asc')
-                        ->orderBy('last_name', 'asc')
-                        ->paginate(15);
+        $students = $query->with('latestReferral', 'group', 'degree')
+            ->orderBy('name', 'asc')
+            ->orderBy('last_name', 'asc')
+            ->paginate(15);
 
         // Retornar vista
         return view('teacher.studentListRemitted', compact('students'));
     }
 
     // Vista de editar estudiante
-    public function edit_student(string $id) {
+    public function edit_student(string $id)
+    {
 
         $student = Users_student::find($id);
         $groups = Group::orderByRaw('CAST(`group` AS UNSIGNED), `group`')->get();
@@ -185,7 +169,8 @@ class CreateReferralController extends Controller
     }
 
     // Update student 
-    public function update_student(Request $request, string $id){
+    public function update_student(Request $request, string $id)
+    {
         $request->validate([
             'number_documment' => 'required|digits_between:1,20|unique:users_students,number_documment,' . $id,
             'name' => 'required|string',
@@ -200,7 +185,7 @@ class CreateReferralController extends Controller
         $huboCambios = false;
 
         $nuevos_datos = [
-            'number_documment' => $request->number_documment, 
+            'number_documment' => $request->number_documment,
             'name' => $request->name,
             'last_name' => $request->last_name,
             'id_degree' => $request->degree,
@@ -212,7 +197,7 @@ class CreateReferralController extends Controller
         foreach ($nuevos_datos as $key => $value) {
             if ($datos_actuales[$key] != $value) {
                 $huboCambios = true;
-                break; 
+                break;
             }
         }
 
@@ -234,14 +219,15 @@ class CreateReferralController extends Controller
     }
 
     // Añadir acta, aqui se lista los estudiantes en Piar pero se podran selecionar para añadir un acta.
-    public function addMinutes(Request $request) {
+    public function addMinutes(Request $request)
+    {
 
         $id_teacher = Auth::id(); // Obtener el id del usuario autentificado
         $id_load_groups = Users_load_group::where('id_user_teacher', $id_teacher)->pluck('id_group'); // Obtener todos los id de los grupos de los cuales el docente autentificado está a cargo o imparte clases.
 
         // Obtener los estudiantes cuyo id_state está en los estados obtenidos
         $query = Users_student::whereHas('states', function ($q) {
-            $q->whereIn('state', ['en PIAR']);
+            $q->whereIn('state', ['en PIAR', 'en DUA']);
         })->whereIn('id_group', $id_load_groups);
 
         // Filtrar por búsqueda
@@ -249,16 +235,16 @@ class CreateReferralController extends Controller
             $searchTerm = $request->input('search');
             $query->where(function ($q) use ($searchTerm) {
                 $q->where('name', 'LIKE', '%' . $searchTerm . '%')
-                ->orWhere('last_name', 'LIKE', '%' . $searchTerm . '%')
-                ->orWhere('number_documment', 'LIKE', '%' . $searchTerm . '%')
-                ->orWhereRaw("CONCAT(name, ' ', last_name) LIKE ?", ['%' . $searchTerm . '%']);
+                    ->orWhere('last_name', 'LIKE', '%' . $searchTerm . '%')
+                    ->orWhere('number_documment', 'LIKE', '%' . $searchTerm . '%')
+                    ->orWhereRaw("CONCAT(name, ' ', last_name) LIKE ?", ['%' . $searchTerm . '%']);
             });
         }
 
         // Ordenar y paginar resultados
         $students = $query->orderBy('name', 'asc')
-                        ->orderBy('last_name', 'asc')
-                        ->paginate(15);
+            ->orderBy('last_name', 'asc')
+            ->paginate(15);
 
         return view('teacher.addMinutes', compact('students'));
     }

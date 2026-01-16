@@ -17,6 +17,7 @@ class Users_teacher extends Authenticatable
         'number_documment',
         'name',
         'last_name',
+        'id_institution',
         'group_director',
         'id_state',
         'email',
@@ -41,10 +42,16 @@ class Users_teacher extends Authenticatable
         return $this->belongsToMany(Group::class, 'users_load_groups', 'id_user_teacher', 'id_group');
     }
 
-    public function asignatures()
+    public function areas()
     {
-        return $this->belongsToMany(Asignature::class, 'users_load_asignatures', 'id_user_teacher', 'id_asignature');
+        return $this->belongsToMany(Area::class, 'users_load_areas', 'id_user_teacher', 'id_area');
     }
+
+    public function institution()
+    {
+        return $this->belongsTo(Institution::class, 'id_institution');
+    }
+
 
     public function load_degrees()
     {
@@ -59,29 +66,29 @@ class Users_teacher extends Authenticatable
         return $this->belongsTo(State::class, 'id_state'); // 'id_state' es la llave foránea en users_teachers
     }
 
-    // Relación con  teachers_asignatures_groups
-    public function asignaturesGroups()
+    // Relación con  teachers_areas_groups
+    public function areasGroups()
     {
-        return $this->hasMany(Teachers_asignatures_group::class, 'id_teacher');
+        return $this->hasMany(Teachers_areas_group::class, 'id_teacher');
     }
 
-    // Relación con asignatures (Con la tabla de teachers_signatures_groups)
-    public function asignatures_g()
+    // Relación con areas (Con la tabla de teachers_areas_groups)
+    public function areas_g()
     {
-        return $this->belongsToMany(Asignature::class, 'teachers_asignatures_groups', 'id_teacher', 'id_asignature');
+        return $this->belongsToMany(Area::class, 'teachers_areas_groups', 'id_teacher', 'id_area');
     }
 
     // Relación con groups (Con la tabla de teachers_signatures_groups)
     public function groups_a()
     {
-        return $this->belongsToMany(Group::class, 'teachers_asignatures_groups', 'id_teacher', 'id_group');
+        return $this->belongsToMany(Group::class, 'teachers_areas_groups', 'id_teacher', 'id_group');
     }
 
-    // *** Relación para consultar los grupos relacionados con cada asignatura que imparte el docente en determinados grupos. ***/
-    // Paso como parametro el id de la asignatura con la que va a consultar la relación.
-    public function groupsForAsignature($asignatureId) {
-        // Relacion con la tabla teachers_asignatures_groups
-        return $this->belongsToMany(Group::class, 'teachers_asignatures_groups', 'id_teacher', 'id_group')->where('id_asignature', $asignatureId); // Filtra por asignatura
+    // *** Relación para consultar los grupos relacionados con cada area que imparte el docente en determinados grupos. ***/
+    // Paso como parametro el id de la area con la que va a consultar la relación.
+    public function groupsForArea($areaId) {
+        // Relacion con la tabla teachers_areas_groups
+        return $this->belongsToMany(Group::class, 'teachers_areas_groups', 'id_teacher', 'id_group')->where('id_area', $areaId); // Filtra por asignatura
     } 
 
 }

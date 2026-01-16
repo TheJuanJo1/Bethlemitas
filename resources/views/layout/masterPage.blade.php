@@ -132,9 +132,9 @@
                                     </div>
                                  </div>
 
-                                 <!-- Asignaturas -->
+                                 <!-- Areas -->
                                  <div>
-                                    <a href="{{ route('create.asignature') }}" class="flex items-center px-5 py-2 mt-4 hover:bg-[#95A5A6] hover:text-gray-900 hover:rounded-lg font-medium cursor-pointer">
+                                    <a href="{{ route('create.area') }}" class="flex items-center px-5 py-2 mt-4 hover:bg-[#95A5A6] hover:text-gray-900 hover:rounded-lg font-medium cursor-pointer">
                                        <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                           <path d="M2 4h6a2 2 0 0 1 2 2v12a2 2 0 0 0-2 2H2z"></path>
                                           <path d="M22 4h-6a2 2 0 0 0-2 2v12a2 2 0 0 1 2 2h6z"></path>
@@ -142,11 +142,11 @@
                                           <line x1="10" y1="10" x2="14" y2="10"></line>
                                           <line x1="10" y1="14" x2="14" y2="14"></line>
                                       </svg>
-                                      <span class="mx-3">Asignaturas</span>
+                                      <span class="mx-3">Areas</span>
                                     </a>
                                  </div>
 
-                                 <!-- Grados -->
+                                 {{-- <!-- Grados -->
                                  <div>
                                     <a href="{{ route('create.degree') }}" class="flex items-center px-5 py-2 mt-4 hover:bg-[#95A5A6] hover:text-gray-900 hover:rounded-lg font-medium cursor-pointer">
                                        <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -154,7 +154,7 @@
                                       </svg>
                                       <span class="mx-3">Grados</span>
                                     </a>
-                                 </div>
+                                 </div> --}}
 
                                  <!-- Grupos -->
                                  <div>
@@ -227,7 +227,7 @@
                               @if (Auth::user()->hasRole('psicoorientador'))
                                   <!-- Remitir estudiante -->
                                   <div>
-                                    <a href="#" class="flex items-center px-5 py-2 mt-4 hover:bg-[#95A5A6] hover:text-gray-900 hover:rounded-lg font-medium cursor-pointer">
+                                    <a href="{{ route('create.referral') }}" class="flex items-center px-5 py-2 mt-4 hover:bg-[#95A5A6] hover:text-gray-900 hover:rounded-lg font-medium cursor-pointer">
                                        <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                           <path d="M9 17l-5-5 5-5"></path>
                                           <path d="M22 12H4"></path>
@@ -263,17 +263,13 @@
                                           <span class="mx-3">• En PIAR</span>
                                        </a>
 
-                                       <a href="{{ route('waiting.students') }}"
-                                       class="flex items-center px-3  mt-2 hover:bg-[#95A5A6] hover:text-gray-900 hover:rounded-lg font-medium">
-                                          <!-- Icono si es necesario -->
-                                          <span class="mx-3">• En espera</span>
-                                       </a>
-
                                        <a href="#"
                                        class="flex items-center px-3  mt-2 hover:bg-[#95A5A6] hover:text-gray-900 hover:rounded-lg font-medium">
                                           <!-- Icono si es necesario -->
-                                          <span class="mx-3">• Descartados</span>
+                                          <span class="mx-3">• En DUA</span>
                                        </a>
+
+                                  
                                     </div>
                                  </div>
                               @endif

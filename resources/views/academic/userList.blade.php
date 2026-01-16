@@ -16,7 +16,7 @@
                 <button type="submit"
                     class="px-4 py-2 font-bold rounded-r bg-purple-white hover:bg-purple-200 text-purple-lighter">
                     <svg version="1.1" class="h-4 text-dark" xmlns="http://www.w3.org/2000/svg"
-                        xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 52.966 52.966"
+                        xmlns:xlink= "http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 52.966 52.966"
                         style="enable-background:new 0 0 52.966 52.966;" xml:space="preserve">
                         <path d="M51.704,51.273L36.845,35.82c3.79-3.801,6.138-9.041,6.138-14.82c0-11.58-9.42-21-21-21s-21,9.42-21,21s9.42,21,21,21
                                     c5.083,0,9.748-1.817,13.384-4.832l14.895,15.491c0.196,0.205,0.458,0.307,0.721,0.307c0.25,0,0.499-0.093,0.693-0.279
@@ -35,7 +35,7 @@
                 <tr>
                     <th class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-700 uppercase">Nombre completo</th>
                     <th class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-700 uppercase">Número de documento</th>
-                    <th class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-700 uppercase">Asignaturas</th>
+                    <th class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-700 uppercase">Areas</th>
                     <th class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-700 uppercase">Grupos a cargo</th>
                     <th class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-700 uppercase">Director de grupo</th>
                     <th class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-700 uppercase">Role</th>
@@ -48,10 +48,10 @@
                         <td class="px-6 py-4 whitespace-nowrap">{{ $user->name}} {{ $user->last_name }}</td>
                         <td class="px-6 py-4 whitespace-nowrap">{{ $user->number_documment}}</td>
                         <td class="px-6 py-4 whitespace-nowrap">
-                            @if($user->asignatures->isNotEmpty())
-                                {{ $user->asignatures->pluck('name_asignature')->implode(', ') }} <!-- Muestra los nombres de los grupos separados por comas -->
+                            @if($user->areas->isNotEmpty())
+                                {{ $user->areas->pluck('name_area')->implode(', ') }} <!-- Muestra los nombres de los grupos separados por comas -->
                             @else
-                                "Sin Asignaturas"
+                                "Sin Areas"
                             @endif
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">

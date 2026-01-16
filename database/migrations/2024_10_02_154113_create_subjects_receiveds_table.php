@@ -17,9 +17,9 @@ return new class extends Migration
             //Grupo
             $table->unsignedBigInteger('id_group');
             $table->foreign('id_group')->references('id')->on('groups')->onDelete('cascade');
-            //Asignatura
-            $table->unsignedBigInteger('id_asignature');
-            $table->foreign('id_asignature')->references('id')->on('asignatures')->onDelete('cascade');
+            //Area
+            $table->unsignedBigInteger('id_area');
+            $table->foreign('id_area')->references('id')->on('areas')->onDelete('cascade');
 
             $table->timestamps();
         });

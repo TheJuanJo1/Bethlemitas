@@ -4,7 +4,7 @@
     <link rel="stylesheet" type="text/css" href="#">
 @endsection
 
-@section('title', 'Estidiantes Remitidos')
+@section('title', 'Estudiantes Remitidos')
 
 @section('content')
 
