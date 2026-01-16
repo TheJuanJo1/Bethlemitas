@@ -2,7 +2,9 @@
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Password;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\Request;
+use App\Models\User;
 use App\Http\Controllers\auth\AuthController;
 use App\Http\Controllers\CreateAreaController;
 use App\Http\Controllers\CreateController;
@@ -36,7 +38,6 @@ Route::prefix('/')->group(function () {
 |--------------------------------------------------------------------------
 | OLVIDÉ MI CONTRASEÑA
 |--------------------------------------------------------------------------
-| Estas rutas NO usan auth porque el usuario aún no ha iniciado sesión
 */
 
 Route::get('/forgot-password', function () {
@@ -61,7 +62,45 @@ Route::post('/forgot-password', function (Request $request) {
 
 /*
 |--------------------------------------------------------------------------
-| RUTAS PROTEGIDAS (USUARIOS AUTENTICADOS)
+| NUEVA CONTRASEÑA
+|--------------------------------------------------------------------------
+*/
+
+Route::get('/reset-password/{token}', function ($token) {
+    return view('auth.reset-password', ['token' => $token]);
+})->name('password.reset');
+
+Route::post('/reset-password', function (Request $request) {
+
+    $request->validate([
+        'token' => 'required',
+        'email' => 'required|email',
+        'password' => 'required|min:6|confirmed',
+    ]);
+
+    $status = Password::reset(
+        $request->only(
+            'email',
+            'password',
+            'password_confirmation',
+            'token'
+        ),
+        function ($user, $password) {
+            $user->forceFill([
+                'password' => Hash::make($password),
+            ])->save();
+        }
+    );
+
+    return $status === Password::PASSWORD_RESET
+        ? redirect()->route('login')->with('status', 'Contraseña actualizada correctamente')
+        : back()->withErrors(['email' => 'El enlace es inválido o ya expiró']);
+})->name('password.update');
+
+
+/*
+|--------------------------------------------------------------------------
+| RUTAS PROTEGIDAS
 |--------------------------------------------------------------------------
 */
 
@@ -82,7 +121,6 @@ Route::middleware([PreventBackHistoryMiddleware::class])->group(function () {
 
         Route::middleware([RoleMiddleware::class])->group(function () {
 
-            // Usuarios
             Route::get('/create/user', [CreateController::class, 'create_user'])->name('create.user');
             Route::post('/store/user', [CreateController::class, 'store_user'])->name('store.user');
             Route::get('/listing/users', [CreateController::class, 'index_users'])->name('index.users');
@@ -90,19 +128,16 @@ Route::middleware([PreventBackHistoryMiddleware::class])->group(function () {
             Route::put('/update/user/{id}', [CreateController::class, 'update_user'])->name('update.user');
             Route::put('/delete/user/{id}', [CreateController::class, 'destroy_user'])->name('destroy.user');
 
-            // Grupos
             Route::get('/create/group', [CreateGroupController::class, 'create_group'])->name('create.group');
             Route::post('/store/group', [CreateGroupController::class, 'store_group'])->name('store.group');
             Route::put('/update/group', [CreateGroupController::class, 'update_group'])->name('update.group');
             Route::delete('/delete/group/{id}', [CreateGroupController::class, 'destroy_group'])->name('destroy.group');
 
-            // Grados
             Route::get('/create/degree', [CreateDegreeController::class, 'create_degree'])->name('create.degree');
             Route::post('/store/degree', [CreateDegreeController::class, 'store_degree'])->name('store.degree');
             Route::put('/update/degree', [CreateDegreeController::class, 'update_degree'])->name('update.degree');
             Route::delete('/delete/degree/{id}', [CreateDegreeController::class, 'destroy_degree'])->name('delete.degree');
 
-            // Áreas
             Route::get('/create/area', [CreateAreaController::class, 'create_area'])->name('create.area');
             Route::post('/store/area', [CreateAreaController::class, 'store_area'])->name('store.area');
             Route::put('/update/area', [CreateAreaController::class, 'update_area'])->name('update.area');
