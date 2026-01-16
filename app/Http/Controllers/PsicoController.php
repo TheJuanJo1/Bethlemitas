@@ -22,6 +22,38 @@ use Illuminate\Support\Facades\Mail;
 class PsicoController extends Controller
 {
     // Remitir estudiantes por parte de la psicooriendora
+    /**
+     * LISTAR ESTUDIANTES ACTIVOS (NUEVO)
+     */
+    public function index_students_active_psico(Request $request)
+    {
+        $id_psico = Auth::id();
+
+        // Grados asignados al psicoorientador
+        $load_degree = Users_load_degree::where('id_user', $id_psico)
+            ->pluck('id_degree')
+            ->toArray();
+
+        $query = Users_student::whereHas('states', function ($q) {
+            $q->where('state', 'activo');
+        })->whereIn('id_degree', $load_degree);
+
+        // Búsqueda
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'LIKE', "%$search%")
+                  ->orWhere('last_name', 'LIKE', "%$search%")
+                  ->orWhere('number_documment', 'LIKE', "%$search%");
+            });
+        }
+
+        $students = $query->orderBy('name')
+            ->orderBy('last_name')
+            ->paginate(15);
+
+        return view('psycho.listActive', compact('students'));
+    }
     // Listar estudiantes remitidos
     public function index_student_remitted_psico(Request $request) {
         $id_psico = Auth::id(); // Obtengo el id de la psicoorientadora autentificada.
