@@ -251,26 +251,28 @@
                                     </a>
 
                                     <div x-show="isOpen" class="ml-10">
-                                       <a href="{{ route('index.student.remitted.psico') }}"
-                                       class="flex items-center px-3  mt-2 hover:bg-[#95A5A6] hover:text-gray-900 hover:rounded-lg font-medium">
-                                             <!-- Icono si es necesario -->
-                                             <span class="mx-3">• Remitidos</span>
-                                       </a>
 
-                                       <a href="#"
-                                       class="flex items-center px-3  mt-2 hover:bg-[#95A5A6] hover:text-gray-900 hover:rounded-lg font-medium">
-                                          <!-- Icono si es necesario -->
+                                          <a href="{{ route('index.student.remitted.psico') }}"
+                                          class="flex items-center px-3 mt-2 hover:bg-[#95A5A6] hover:rounded-lg">
+                                          <span class="mx-3">• Remitidos</span>
+                                          </a>
+
+                                          <a href="{{ route('psico.students.piar') }}"
+                                          class="flex items-center px-3 mt-2 hover:bg-[#95A5A6] hover:rounded-lg">
                                           <span class="mx-3">• En PIAR</span>
-                                       </a>
+                                          </a>
 
-                                       <a href="#"
-                                       class="flex items-center px-3  mt-2 hover:bg-[#95A5A6] hover:text-gray-900 hover:rounded-lg font-medium">
-                                          <!-- Icono si es necesario -->
+                                          <a href="{{ route('psico.students.dua') }}"
+                                          class="flex items-center px-3 mt-2 hover:bg-[#95A5A6] hover:rounded-lg">
                                           <span class="mx-3">• En DUA</span>
-                                       </a>
+                                          </a>
 
-                                  
-                                    </div>
+                                          <a href="{{ route('psico.students.active') }}"
+                                          class="flex items-center px-3 mt-2 hover:bg-[#95A5A6] hover:rounded-lg">
+                                          <span class="mx-3">• Activos</span>
+                                          </a>
+
+                                       </div>
                                  </div>
                               @endif
                               
