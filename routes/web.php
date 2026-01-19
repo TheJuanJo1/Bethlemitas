@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\Request;
-use App\Models\User;
+
 use App\Http\Controllers\auth\AuthController;
 use App\Http\Controllers\CreateAreaController;
 use App\Http\Controllers\CreateController;
@@ -12,6 +12,7 @@ use App\Http\Controllers\CreateDegreeController;
 use App\Http\Controllers\CreateGroupController;
 use App\Http\Controllers\CreateReferralController;
 use App\Http\Controllers\PsicoController;
+
 use App\Http\Middleware\PreventBackHistoryMiddleware;
 use App\Http\Middleware\RoleMiddleware;
 use App\Http\Middleware\RoleDocenteMiddleware;
@@ -24,14 +25,10 @@ use App\Http\Middleware\RolePsicoorientadorAndDocenteMiddleware;
 |--------------------------------------------------------------------------
 */
 
-
 Route::prefix('/')->group(function () {
 
-    // Login
     Route::get('/', [AuthController::class, 'login'])->name('login');
     Route::post('/', [AuthController::class, 'authenticate'])->name('authenticate');
-
-    // Logout
     Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
 });
 
@@ -51,15 +48,12 @@ Route::post('/forgot-password', function (Request $request) {
         'email' => 'required|email'
     ]);
 
-    $status = Password::sendResetLink(
-        $request->only('email')
-    );
+    $status = Password::sendResetLink($request->only('email'));
 
     return $status === Password::RESET_LINK_SENT
         ? back()->with('status', 'Te hemos enviado un enlace de recuperación a tu correo')
         : back()->withErrors(['email' => 'No se encontró un usuario con ese correo']);
 })->name('password.email');
-
 
 /*
 |--------------------------------------------------------------------------
@@ -80,12 +74,7 @@ Route::post('/reset-password', function (Request $request) {
     ]);
 
     $status = Password::reset(
-        $request->only(
-            'email',
-            'password',
-            'password_confirmation',
-            'token'
-        ),
+        $request->only('email', 'password', 'password_confirmation', 'token'),
         function ($user, $password) {
             $user->forceFill([
                 'password' => Hash::make($password),
@@ -97,7 +86,6 @@ Route::post('/reset-password', function (Request $request) {
         ? redirect()->route('login')->with('status', 'Contraseña actualizada correctamente')
         : back()->withErrors(['email' => 'El enlace es inválido o ya expiró']);
 })->name('password.update');
-
 
 /*
 |--------------------------------------------------------------------------
@@ -179,16 +167,6 @@ Route::middleware([PreventBackHistoryMiddleware::class])->group(function () {
 
             Route::put('/update/student/{id}', [CreateReferralController::class, 'update_student'])
                 ->name('update.student');
-            // Estudiantes por estado
-            Route::get('/psico/students/active', [PsicoController::class, 'index_students_active_psico'])
-                ->name('psico.students.active');
-
-            Route::get('/psico/students/piar', [PsicoController::class, 'index_students_piar_psico'])
-                ->name('psico.students.piar');
-
-            Route::get('/psico/students/dua', [PsicoController::class, 'index_students_dua_psico'])
-                ->name('psico.students.dua');
-
         });
 
         /*
@@ -201,6 +179,16 @@ Route::middleware([PreventBackHistoryMiddleware::class])->group(function () {
 
             Route::get('/index/students/remitted/psico', [PsicoController::class, 'index_student_remitted_psico'])
                 ->name('index.student.remitted.psico');
+
+            // ✅ ESTUDIANTES POR ESTADO
+            Route::get('/psico/students/active', [PsicoController::class, 'index_students_active_psico'])
+                ->name('psico.students.active');
+
+            Route::get('/psico/students/piar', [PsicoController::class, 'index_students_piar_psico'])
+                ->name('psico.students.piar');
+
+            Route::get('/psico/students/dua', [PsicoController::class, 'index_students_dua_psico'])
+                ->name('psico.students.dua');
 
             Route::get('/details/referral/{id}', [PsicoController::class, 'detailsReferral'])
                 ->name('details.referral');
