@@ -159,7 +159,7 @@ class PsicoController extends Controller
         return back()->with('success', 'Remisión actualizada correctamente.');
     }
 
-    /* ===================== INFORMES ===================== */
+    /* ===================== INFORMES PSICOLÓGICOS ===================== */
 
     public function report_student(string $id)
     {
@@ -207,20 +207,20 @@ class PsicoController extends Controller
                 'id_state'         => $request->state,
             ]);
 
-            $group    = Group::findOrFail($request->group);
+            $group = Group::findOrFail($request->group);
             $director = Users_teacher::where('group_director', $request->group)->first();
 
             Psychoorientation::create([
-                'psychologist_writes'     => Auth::id(),
-                'id_user_student'         => $id,
-                'age_student'             => $request->age,
-                'group_student'           => $group->group,
-                'director_group_student'  => $director
+                'psychologist_writes'    => Auth::id(),
+                'id_user_student'        => $id,
+                'age_student'            => $request->age,
+                'group_student'          => $group->group,
+                'director_group_student' => $director
                     ? $director->name . ' ' . $director->last_name
                     : 'No asignado',
-                'title_report'            => $request->title_report,
-                'reason_inquiry'          => $request->reason_inquiry,
-                'recomendations'          => $request->recomendations,
+                'title_report'           => $request->title_report,
+                'reason_inquiry'         => $request->reason_inquiry,
+                'recomendations'         => $request->recomendations,
             ]);
 
             DB::commit();
@@ -233,5 +233,26 @@ class PsicoController extends Controller
             DB::rollBack();
             return back()->with('error', $e->getMessage());
         }
+    }
+
+    /* ===================== HISTORIAL DEL ESTUDIANTE ===================== */
+
+    public function show_student_history(string $id)
+    {
+        $student = Users_student::findOrFail($id);
+
+        $referrals = Referral::where('id_user_student', $id)
+            ->orderBy('created_at', 'desc')
+            ->paginate(10);
+
+        $reports = Psychoorientation::where('id_user_student', $id)
+            ->orderBy('created_at', 'desc')
+            ->paginate(10);
+
+        return view('psycho.studentHistory', compact(
+            'student',
+            'referrals',
+            'reports'
+        ));
     }
 }
