@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\Request;
-
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\auth\AuthController;
 use App\Http\Controllers\CreateAreaController;
 use App\Http\Controllers\CreateController;
@@ -102,6 +102,9 @@ Route::middleware([PreventBackHistoryMiddleware::class])->group(function () {
             return view('layout.homePage');
         })->name('dashboard');
 
+         // 🔹 PERFIL DE USUARIO (TODOS LOS ROLES)
+        Route::get('/mi-perfil', [ProfileController::class, 'index'])
+            ->name('profile');
         /*
         |--------------------------------------------------------------------------
         | ROL COORDINADOR
