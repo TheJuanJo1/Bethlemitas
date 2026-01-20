@@ -57,7 +57,7 @@
                               <ul class="py-2" aria-labelledby="user-menu-button ">
 
                                  <li class="flex items-center hover:bg-[#95A5A6]">
-                                    <a href="#" class="flex items-center px-4 py-2 text-sm text-black-800 ">
+                                    <a href="{{ route('profile') }}" class="flex items-center px-4 py-2 text-sm text-black-800">
                                        <svg class="w-6 mr-2 6"  fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
                                        </svg>
