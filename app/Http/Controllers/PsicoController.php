@@ -16,9 +16,9 @@ use Illuminate\Support\Facades\DB;
 
 class PsicoController extends Controller
 {
-    /**
-     * MÉTODO CENTRALIZADO PARA LISTAR ESTUDIANTES POR ESTADO
-     */
+    /* =====================================================
+     | MÉTODO GENERAL PARA FILTRAR POR ESTADO
+     ===================================================== */
     private function studentsByState(Request $request, string $state, string $label, string $routeName)
     {
         $id_psico = Auth::id();
@@ -54,27 +54,12 @@ class PsicoController extends Controller
         ]);
     }
 
-    /* ===================== LISTADOS ===================== */
+    /* =====================================================
+     | LISTADOS
+     ===================================================== */
 
+    // ✅ ACTIVO: TODOS los estudiantes (sin importar estado)
     public function index_students_active_psico(Request $request)
-    {
-        return $this->studentsByState($request, 'activo', 'Activos', 'psico.students.active');
-    }
-
-    public function index_students_piar_psico(Request $request)
-    {
-        return $this->studentsByState($request, 'en PIAR', 'En PIAR', 'psico.students.piar');
-    }
-
-    public function index_students_dua_psico(Request $request)
-    {
-        return $this->studentsByState($request, 'en DUA', 'En DUA', 'psico.students.dua');
-    }
-
-    /**
-     * REMITIDOS → TODOS LOS ESTUDIANTES (sin filtrar por estado)
-     */
-    public function index_student_remitted_psico(Request $request)
     {
         $id_psico = Auth::id();
 
@@ -99,10 +84,56 @@ class PsicoController extends Controller
             ->orderBy('last_name')
             ->paginate(15);
 
+        return view('psycho.listStudentsByState', [
+            'students'   => $students,
+            'stateLabel' => 'Activos',
+            'route'      => route('psico.students.active'),
+        ]);
+    }
+
+    public function index_students_piar_psico(Request $request)
+    {
+        return $this->studentsByState($request, 'en PIAR', 'En PIAR', 'psico.students.piar');
+    }
+
+    public function index_students_dua_psico(Request $request)
+    {
+        return $this->studentsByState($request, 'en DUA', 'En DUA', 'psico.students.dua');
+    }
+
+    public function index_student_remitted_psico(Request $request)
+    {
+        $id_psico = Auth::id();
+
+        $load_degree = Users_load_degree::where('id_user', $id_psico)
+            ->pluck('id_degree')
+            ->toArray();
+
+        $query = Users_student::whereHas('states', function ($q) {
+                $q->where('state', 'activo');
+            })
+            ->whereIn('id_degree', $load_degree);
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'LIKE', "%$search%")
+                  ->orWhere('last_name', 'LIKE', "%$search%")
+                  ->orWhere('number_documment', 'LIKE', "%$search%");
+            });
+        }
+
+        $students = $query
+            ->orderBy('name')
+            ->orderBy('last_name')
+            ->paginate(15);
+
         return view('psycho.listRemitted', compact('students'));
     }
 
-    /* ===================== DETALLES DE REMISIÓN ===================== */
+    /* =====================================================
+     | DETALLES DE REMISIÓN
+     ===================================================== */
 
     public function detailsReferral(string $id)
     {
@@ -160,7 +191,9 @@ class PsicoController extends Controller
         return back()->with('success', 'Remisión actualizada correctamente.');
     }
 
-    /* ===================== INFORMES PSICOLÓGICOS ===================== */
+    /* =====================================================
+     | INFORMES PSICOLÓGICOS
+     ===================================================== */
 
     public function report_student(string $id)
     {
@@ -212,16 +245,16 @@ class PsicoController extends Controller
             $director = Users_teacher::where('group_director', $request->group)->first();
 
             Psychoorientation::create([
-                'psychologist_writes'     => Auth::id(),
-                'id_user_student'         => $id,
-                'age_student'             => $request->age,
-                'group_student'           => $group->group,
-                'director_group_student'  => $director
+                'psychologist_writes'    => Auth::id(),
+                'id_user_student'        => $id,
+                'age_student'            => $request->age,
+                'group_student'          => $group->group,
+                'director_group_student' => $director
                     ? $director->name . ' ' . $director->last_name
                     : 'No asignado',
-                'title_report'            => $request->title_report,
-                'reason_inquiry'          => $request->reason_inquiry,
-                'recomendations'          => $request->recomendations,
+                'title_report'           => $request->title_report,
+                'reason_inquiry'         => $request->reason_inquiry,
+                'recomendations'         => $request->recomendations,
             ]);
 
             DB::commit();
@@ -236,7 +269,9 @@ class PsicoController extends Controller
         }
     }
 
-    /* ===================== HISTORIAL DEL ESTUDIANTE ===================== */
+    /* =====================================================
+     | HISTORIAL DEL ESTUDIANTE
+     ===================================================== */
 
     public function show_student_history(string $id)
     {
