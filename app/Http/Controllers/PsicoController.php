@@ -71,6 +71,9 @@ class PsicoController extends Controller
         return $this->studentsByState($request, 'en DUA', 'En DUA', 'psico.students.dua');
     }
 
+    /**
+     * REMITIDOS → TODOS LOS ESTUDIANTES (sin filtrar por estado)
+     */
     public function index_student_remitted_psico(Request $request)
     {
         $id_psico = Auth::id();
@@ -79,17 +82,15 @@ class PsicoController extends Controller
             ->pluck('id_degree')
             ->toArray();
 
-        $query = Users_student::whereHas('states', function ($q) {
-                $q->where('state', 'activo');
-            })
-            ->whereIn('id_degree', $load_degree);
+        $query = Users_student::whereIn('id_degree', $load_degree);
 
         if ($request->filled('search')) {
             $search = $request->search;
             $query->where(function ($q) use ($search) {
                 $q->where('name', 'LIKE', "%$search%")
                   ->orWhere('last_name', 'LIKE', "%$search%")
-                  ->orWhere('number_documment', 'LIKE', "%$search%");
+                  ->orWhere('number_documment', 'LIKE', "%$search%")
+                  ->orWhereRaw("CONCAT(name,' ',last_name) LIKE ?", ["%$search%"]);
             });
         }
 
@@ -211,16 +212,16 @@ class PsicoController extends Controller
             $director = Users_teacher::where('group_director', $request->group)->first();
 
             Psychoorientation::create([
-                'psychologist_writes'    => Auth::id(),
-                'id_user_student'        => $id,
-                'age_student'            => $request->age,
-                'group_student'          => $group->group,
-                'director_group_student' => $director
+                'psychologist_writes'     => Auth::id(),
+                'id_user_student'         => $id,
+                'age_student'             => $request->age,
+                'group_student'           => $group->group,
+                'director_group_student'  => $director
                     ? $director->name . ' ' . $director->last_name
                     : 'No asignado',
-                'title_report'           => $request->title_report,
-                'reason_inquiry'         => $request->reason_inquiry,
-                'recomendations'         => $request->recomendations,
+                'title_report'            => $request->title_report,
+                'reason_inquiry'          => $request->reason_inquiry,
+                'recomendations'          => $request->recomendations,
             ]);
 
             DB::commit();
