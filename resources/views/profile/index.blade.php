@@ -14,12 +14,13 @@
     @php
         $photoPath = null;
         foreach (['jpg', 'jpeg', 'png'] as $ext) {
-            if (file_exists(public_path("Imagenes_Perfil/perfil_{$user->id}.$ext"))) {
-                $photoPath = asset("Imagenes_Perfil/perfil_{$user->id}.$ext");
-                break;
-            }
+        if (file_exists(public_path("Imagenes_Perfil/perfil_{$user->number_documment}.$ext"))) {
+            $photoPath = asset("Imagenes_Perfil/perfil_{$user->number_documment}.$ext");
+            break;
         }
+    }
     @endphp
+
 
     <div class="flex items-center gap-6 mb-8">
         <img
