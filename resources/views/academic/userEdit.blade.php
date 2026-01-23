@@ -57,7 +57,22 @@
                             </p>
                         @enderror
                     </div>
-
+                    <div class="form-group-half">
+                        <label for="password">
+                            Nueva contraseña
+                            <span style="font-size: 12px; color: gray;">(opcional)</span>
+                        </label>
+                        <input
+                            type="password"
+                            id="password"
+                            name="password"
+                            placeholder="Dejar vacío para no cambiarla">
+                    </div>
+                    @error('password')
+                        <p class="mt-2 text-sm text-red-600">
+                            {{ $message }}
+                        </p>
+                    @enderror
                     <div class="form-group-half">
                         <label for="email">Email *</label>
                         <input type="email" id="email" name="email" value="{{ $user->email }}" placeholder="Email" required>

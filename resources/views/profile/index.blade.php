@@ -3,39 +3,52 @@
 @section('title', 'Mi perfil')
 
 @section('content')
-<div class="max-w-4xl mx-auto bg-white rounded-xl shadow p-8">
 
-    {{-- TÍTULO ARRIBA --}}
-    <h2 class="text-2xl font-bold mb-6">
-        Mi perfil
-    </h2>
-
-    {{-- FOTO DE PERFIL --}}
-    @php
-        $photoPath = null;
-        foreach (['jpg', 'jpeg', 'png'] as $ext) {
+@php
+    $photoPath = null;
+    foreach (['jpg', 'jpeg', 'png'] as $ext) {
         if (file_exists(public_path("Imagenes_Perfil/perfil_{$user->number_documment}.$ext"))) {
             $photoPath = asset("Imagenes_Perfil/perfil_{$user->number_documment}.$ext");
             break;
         }
     }
-    @endphp
+@endphp
 
+<div class="max-w-6xl bg-white rounded-xl shadow p-10 ml-6">
 
-    <div class="flex items-center gap-6 mb-8">
-        <img
-            id="previewImage"
-            src="{{ $photoPath ?? asset('img/default-user.png') }}"
-            class="w-24 h-24 rounded-full object-cover border"
-            alt="Foto de perfil">
+    {{-- TÍTULO --}}
+    <h2 class="text-2xl font-bold mb-8">
+        Mi perfil
+    </h2>
 
-        <div class="flex flex-col gap-3">
+    {{-- FOTO DE PERFIL --}}
+    <div class="flex flex-col lg:flex-row items-start gap-10 mb-10">
 
-            {{-- SUBIR / REEMPLAZAR FOTO --}}
+        {{-- FOTO --}}
+        <div class="flex flex-col items-center gap-4">
+            <img
+                id="previewImage"
+                src="{{ $photoPath ?? asset('img/default-user.png') }}"
+                class="w-32 h-32 rounded-full object-cover border shadow"
+                alt="Foto de perfil">
+
+            @if ($photoPath)
+            <form method="POST" action="{{ route('profile.delete.photo') }}">
+                @csrf
+                @method('DELETE')
+                <button class="bg-red-600 text-white px-4 py-1 rounded hover:bg-red-700 text-sm">
+                    Eliminar foto
+                </button>
+            </form>
+            @endif
+        </div>
+
+        {{-- FORMULARIO FOTO --}}
+        <div class="flex-1">
             <form method="POST"
                   action="{{ route('profile.update.photo') }}"
                   enctype="multipart/form-data"
-                  class="flex flex-col gap-3">
+                  class="flex flex-col gap-4">
                 @csrf
                 @method('PUT')
 
@@ -51,110 +64,97 @@
                 </label>
 
                 <p class="text-xs text-gray-500">
-                    Formatos permitidos: JPG, JPEG, PNG, que no pasen de 2 megas / 2048 kilobytes
+                    JPG, JPEG o PNG — máximo 2 MB
                 </p>
 
                 @error('photo')
                     <p class="text-sm text-red-600">{{ $message }}</p>
                 @enderror
 
-                @if (session('success_photo'))
-                    <p class="text-sm text-green-600">{{ session('success_photo') }}</p>
-                @endif
-
-                <div class="flex gap-2 mt-2">
-                    <button class="bg-blue-600 text-white px-4 py-1 rounded hover:bg-blue-700">
+                <div class="flex gap-3">
+                    <button class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
                         Guardar foto
                     </button>
 
                     <a href="{{ route('profile') }}"
-                       class="bg-gray-400 text-white px-4 py-1 rounded hover:bg-gray-500">
+                       class="bg-gray-400 text-white px-4 py-2 rounded hover:bg-gray-500">
                         Cancelar
                     </a>
                 </div>
             </form>
-
-            {{-- ELIMINAR FOTO --}}
-            @if ($photoPath)
-            <form method="POST" action="{{ route('profile.delete.photo') }}">
-                @csrf
-                @method('DELETE')
-
-                <button
-                    class="bg-red-600 text-white px-4 py-1 rounded hover:bg-red-700 text-sm w-fit">
-                    Eliminar foto
-                </button>
-            </form>
-            @endif
         </div>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    {{-- DATOS DEL USUARIO --}}
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-10 mb-10">
 
         <div>
-            <p class="font-semibold text-gray-700">Nombre:</p>
-            <p>{{ $user->name }}</p>
+            <p class="font-semibold text-gray-700">Nombre</p>
+            <p class="text-lg">{{ $user->name }}</p>
         </div>
 
         <div>
-            <p class="font-semibold text-gray-700">Apellidos:</p>
-            <p>{{ $user->last_name }}</p>
+            <p class="font-semibold text-gray-700">Apellidos</p>
+            <p class="text-lg">{{ $user->last_name }}</p>
         </div>
 
-        {{-- EDITAR CORREO --}}
+        {{-- ACTUALIZAR CORREO --}}
         <div class="md:col-span-2">
-            <p class="font-semibold text-gray-700 mb-2">Correo:</p>
+            <p class="font-semibold text-gray-700 mb-3">
+                Actualizar correo
+            </p>
 
             <form method="POST"
                   action="{{ route('profile.update.email') }}"
-                  class="flex flex-col gap-3 max-w-md">
+                  class="grid grid-cols-1 lg:grid-cols-4 gap-4 items-end max-w-5xl">
                 @csrf
                 @method('PUT')
 
-                <input
-                    type="email"
-                    name="email"
-                    value="{{ old('email', $user->email) }}"
-                    class="border rounded px-3 py-2"
-                    required>
+                <div class="lg:col-span-2">
+                    <label class="text-sm text-gray-600">Correo</label>
+                    <input
+                        type="email"
+                        name="email"
+                        value="{{ old('email', $user->email) }}"
+                        class="border rounded px-3 py-2 w-full"
+                        required>
+                </div>
 
-                <input
-                    type="password"
-                    name="password"
-                    placeholder="Contraseña"
-                    class="border rounded px-3 py-2"
-                    required>
+                <div>
+                    <label class="text-sm text-gray-600">Contraseña</label>
+                    <input
+                        type="password"
+                        name="password"
+                        class="border rounded px-3 py-2 w-full"
+                        required>
+                </div>
 
-                @error('email')
-                    <p class="text-sm text-red-600">{{ $message }}</p>
-                @enderror
-
-                @error('password')
-                    <p class="text-sm text-red-600">{{ $message }}</p>
-                @enderror
-
-                @if (session('success'))
-                    <p class="text-sm text-green-600">{{ session('success') }}</p>
-                @endif
-
-                <button class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 w-fit">
-                    Guardar cambios
+                <button class="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 h-fit">
+                    Guardar
                 </button>
             </form>
+
+            @error('email')
+                <p class="text-sm text-red-600 mt-2">{{ $message }}</p>
+            @enderror
+
+            @error('password')
+                <p class="text-sm text-red-600 mt-2">{{ $message }}</p>
+            @enderror
         </div>
 
+        {{-- ROLES --}}
         <div>
-            <p class="font-semibold text-gray-700">Cargo:</p>
-            <p class="capitalize">
-                {{ implode(', ', $roles) }}
-            </p>
+            <p class="font-semibold text-gray-700">Cargo</p>
+            <p class="capitalize">{{ implode(', ', $roles) }}</p>
         </div>
 
+        {{-- GRADOS --}}
         <div class="md:col-span-2">
-            <p class="font-semibold text-gray-700">Grupos / grados a cargo:</p>
+            <p class="font-semibold text-gray-700">Grupos / grados a cargo</p>
 
             @if ($degrees->count())
-                <ul class="list-disc ml-6">
+                <ul class="list-disc ml-6 mt-2">
                     @foreach ($degrees as $degree)
                         <li>{{ $degree }}</li>
                     @endforeach
@@ -164,8 +164,9 @@
             @endif
         </div>
 
+        {{-- DIRECTOR DE GRUPO --}}
         <div class="md:col-span-2">
-            <p class="font-semibold text-gray-700">Director de grupo:</p>
+            <p class="font-semibold text-gray-700">Director de grupo</p>
 
             @if ($directorGroup)
                 <p>
@@ -180,7 +181,7 @@
     </div>
 </div>
 
-{{-- PREVIEW DE IMAGEN --}}
+{{-- PREVIEW FOTO --}}
 <script>
 function previewPhoto(event) {
     const reader = new FileReader();
@@ -190,4 +191,5 @@ function previewPhoto(event) {
     reader.readAsDataURL(event.target.files[0]);
 }
 </script>
+
 @endsection
