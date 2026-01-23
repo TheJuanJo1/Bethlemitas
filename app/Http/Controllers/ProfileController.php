@@ -64,7 +64,7 @@ class ProfileController extends Controller
         return back()->with('success', 'Correo actualizado correctamente.');
     }
 
-    // 📸 SUBIR / REEMPLAZAR FOTO DE PERFIL
+    // 📸 SUBIR / REEMPLAZAR FOTO (POR NÚMERO DE DOCUMENTO)
     public function updatePhoto(Request $request)
     {
         $request->validate([
@@ -72,6 +72,8 @@ class ProfileController extends Controller
         ]);
 
         $user = Auth::user();
+        $documento = $user->number_documment;
+
         $folder = public_path('Imagenes_Perfil');
 
         // Crear carpeta si no existe
@@ -79,15 +81,12 @@ class ProfileController extends Controller
             mkdir($folder, 0755, true);
         }
 
-        // Extensión del archivo
         $extension = $request->file('photo')->getClientOriginalExtension();
+        $fileName = 'perfil_' . $documento . '.' . $extension;
 
-        // Nombre fijo por usuario
-        $fileName = 'perfil_' . $user->id . '.' . $extension;
-
-        // Eliminar cualquier foto anterior del usuario
+        // Eliminar cualquier foto previa del mismo documento
         foreach (['jpg', 'jpeg', 'png'] as $ext) {
-            $oldFile = $folder . '/perfil_' . $user->id . '.' . $ext;
+            $oldFile = $folder . '/perfil_' . $documento . '.' . $ext;
             if (file_exists($oldFile)) {
                 unlink($oldFile);
             }
@@ -103,10 +102,11 @@ class ProfileController extends Controller
     public function deletePhoto()
     {
         $user = Auth::user();
+        $documento = $user->number_documment;
         $folder = public_path('Imagenes_Perfil');
 
         foreach (['jpg', 'jpeg', 'png'] as $ext) {
-            $file = $folder . '/perfil_' . $user->id . '.' . $ext;
+            $file = $folder . '/perfil_' . $documento . '.' . $ext;
             if (file_exists($file)) {
                 unlink($file);
             }

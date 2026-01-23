@@ -12,6 +12,17 @@
 </head>
 <body class="bg-[#D5DBDB] ">
          <div>
+            @php
+               $user = Auth::user();
+               $photoPath = null;
+               foreach (['jpg', 'jpeg', 'png'] as $ext) {
+                  $path = public_path("Imagenes_Perfil/perfil_{$user->number_documment}.$ext");
+                  if (file_exists($path)) {
+                        $photoPath = asset("Imagenes_Perfil/perfil_{$user->number_documment}.$ext");
+                        break;
+                  }
+               }
+            @endphp
             <nav class="bg-[#D5DBDB]  border-b border-gray-200 fixed z-30 w-full">
                <div class="px-3 py-3 lg:px-5 lg:pl-3">
                   <div class="flex items-center justify-between">
@@ -44,9 +55,15 @@
                      <div class="flex items-center">
                         <div class="flex items-center space-x-3 md:order-2 md:space-x-0 rtl:space-x-reverse">
                            <span class="self-center mr-4 text-2xl whitespace-nowrap"><em>{{Auth::user()->name}} {{Auth::user()->last_name}}</em></span>
-                           <button type="button" class="flex text-sm rounded-full md:me-0 focus:ring-4 focus:ring-gray-300  id="user-menu-button" aria-expanded="false" data-dropdown-toggle="user-dropdown" data-dropdown-placement="bottom">
+                           <button
+                              type="button"
+                              class="flex text-sm rounded-full md:me-0 focus:ring-4 focus:ring-gray-300"
+                              id="user-menu-button"
+                              aria-expanded="false"
+                              data-dropdown-toggle="user-dropdown"
+                              data-dropdown-placement="bottom">
                               <span class="sr-only">Open user menu</span>
-                              <img class="w-10 h-10 rounded-full" src="{{ asset('img/icono-perfil.jpg')}}" alt="user photo">
+                              <img class="w-10 h-10 rounded-full object-cover border border-gray-400" src="{{ $photoPath ?? asset('img/icono-perfil.jpg') }}" alt="Foto de perfil">
                            </button>
                            <!-- Dropdown menu -->
                            <div class="z-50 hidden my-4 text-base list-none bg-[#D5DBDB] divide-y divide-gray-100 rounded-lg shadow dark:divide-gray-600" id="user-dropdown">
