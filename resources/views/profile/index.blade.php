@@ -5,6 +5,11 @@
 @section('content')
 <div class="max-w-4xl mx-auto bg-white rounded-xl shadow p-8">
 
+    {{-- TÍTULO ARRIBA --}}
+    <h2 class="text-2xl font-bold mb-6">
+        Mi perfil
+    </h2>
+
     {{-- FOTO DE PERFIL --}}
     @php
         $photoPath = null;
@@ -82,11 +87,6 @@
             @endif
         </div>
     </div>
-
-    {{-- TÍTULO --}}
-    <h2 class="text-2xl font-bold mb-6 flex items-center">
-        <i class="bi bi-person-circle mr-3 text-3xl"></i> Mi perfil
-    </h2>
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 
