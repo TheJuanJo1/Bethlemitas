@@ -12,7 +12,7 @@ use App\Http\Controllers\CreateDegreeController;
 use App\Http\Controllers\CreateGroupController;
 use App\Http\Controllers\CreateReferralController;
 use App\Http\Controllers\PsicoController;
-use Illuminate\Support\Facades\Storage;
+
 use App\Http\Middleware\PreventBackHistoryMiddleware;
 use App\Http\Middleware\RoleMiddleware;
 use App\Http\Middleware\RoleDocenteMiddleware;
@@ -111,7 +111,12 @@ Route::middleware([PreventBackHistoryMiddleware::class])->group(function () {
             ->middleware('auth');
 
         Route::put('/profile/photo', [ProfileController::class, 'updatePhoto'])
-            ->name('profile.update.photo');
+            ->name('profile.update.photo')
+            ->middleware('auth');
+
+        Route::delete('/profile/photo', [ProfileController::class, 'deletePhoto'])
+            ->name('profile.delete.photo')
+            ->middleware('auth');
 
         /*
         |--------------------------------------------------------------------------
