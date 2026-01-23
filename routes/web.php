@@ -12,7 +12,7 @@ use App\Http\Controllers\CreateDegreeController;
 use App\Http\Controllers\CreateGroupController;
 use App\Http\Controllers\CreateReferralController;
 use App\Http\Controllers\PsicoController;
-
+use Illuminate\Support\Facades\Storage;
 use App\Http\Middleware\PreventBackHistoryMiddleware;
 use App\Http\Middleware\RoleMiddleware;
 use App\Http\Middleware\RoleDocenteMiddleware;
@@ -105,6 +105,14 @@ Route::middleware([PreventBackHistoryMiddleware::class])->group(function () {
          // 🔹 PERFIL DE USUARIO (TODOS LOS ROLES)
         Route::get('/mi-perfil', [ProfileController::class, 'index'])
             ->name('profile');
+
+        Route::put('/mi-perfil/email', [ProfileController::class, 'updateEmail'])
+            ->name('profile.update.email')
+            ->middleware('auth');
+
+        Route::put('/profile/photo', [ProfileController::class, 'updatePhoto'])
+            ->name('profile.update.photo');
+
         /*
         |--------------------------------------------------------------------------
         | ROL COORDINADOR

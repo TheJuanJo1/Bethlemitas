@@ -47,7 +47,7 @@
 
         <div class="mt-4 text-center">
             <a href="{{ route('login') }}" class="text-sm text-blue-600 underline">
-                Volver al login
+                Volver al Inicio
             </a>
         </div>
     </div>
