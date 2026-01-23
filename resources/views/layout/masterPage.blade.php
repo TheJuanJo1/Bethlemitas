@@ -102,7 +102,7 @@
                                  <span class="mx-3">Página Principal</span>
                               </a>
 
-                              <!-- Opciones de interfaz para el rol coordinador -->
+                              <!-- Opciones de interfaz para el rol Coordinador -->
                               @if (Auth::user()->hasRole('coordinador'))
                                  <!-- Usuarios -->
                                  <div x-data="{ isOpen: false}">

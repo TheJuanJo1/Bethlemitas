@@ -15,10 +15,10 @@ class RolSeeder extends Seeder
     public function run(): void
     {
         //Crear roles
-        $coordinador = Role::create(['name' => 'Coordinador']);
-        $docente = Role::create(['name' => 'Docente']);
-        $psicoorientador = Role::create(['name' => 'Psicoorientador']);
-        $estudiante = Role::create(['name' => 'Estudiante']);
+        $coordinador = Role::create(['name' => 'coordinador']);
+        $docente = Role::create(['name' => 'docente']);
+        $psicoorientador = Role::create(['name' => 'psicoorientador']);
+        $estudiante = Role::create(['name' => 'estudiante']);
 
         //Crear permisos
         Permission::create(['name' => 'create_user']);
