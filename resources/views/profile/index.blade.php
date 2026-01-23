@@ -6,42 +6,81 @@
 <div class="max-w-4xl mx-auto bg-white rounded-xl shadow p-8">
 
     {{-- FOTO DE PERFIL --}}
+    @php
+        $photoPath = null;
+        foreach (['jpg', 'jpeg', 'png'] as $ext) {
+            if (file_exists(public_path("Imagenes_Perfil/perfil_{$user->id}.$ext"))) {
+                $photoPath = asset("Imagenes_Perfil/perfil_{$user->id}.$ext");
+                break;
+            }
+        }
+    @endphp
+
     <div class="flex items-center gap-6 mb-8">
         <img
-            src="{{ $user->signature
-                ? asset('storage/' . $user->signature)
-                : asset('img/default-user.png') }}"
+            id="previewImage"
+            src="{{ $photoPath ?? asset('img/default-user.png') }}"
             class="w-24 h-24 rounded-full object-cover border"
             alt="Foto de perfil">
 
-        <form method="POST"
-              action="{{ route('profile.update.photo') }}"
-              enctype="multipart/form-data"
-              class="flex flex-col gap-2">
-            @csrf
-            @method('PUT')
+        <div class="flex flex-col gap-3">
 
-            <input type="file" name="photo" accept="image/*" required>
+            {{-- SUBIR / REEMPLAZAR FOTO --}}
+            <form method="POST"
+                  action="{{ route('profile.update.photo') }}"
+                  enctype="multipart/form-data"
+                  class="flex flex-col gap-3">
+                @csrf
+                @method('PUT')
 
-            @error('photo')
-                <p class="text-sm text-red-600">{{ $message }}</p>
-            @enderror
+                <label class="cursor-pointer inline-block bg-gray-200 text-gray-700 px-4 py-2 rounded hover:bg-gray-300 text-sm w-fit">
+                    Seleccionar foto
+                    <input
+                        type="file"
+                        name="photo"
+                        accept="image/*"
+                        required
+                        class="hidden"
+                        onchange="previewPhoto(event)">
+                </label>
 
-            @if (session('success_photo'))
-                <p class="text-sm text-green-600">{{ session('success_photo') }}</p>
-            @endif
+                <p class="text-xs text-gray-500">
+                    Formatos permitidos: JPG, JPEG, PNG, que no pasen de 2 megas / 2048 kilobytes
+                </p>
 
-            <div class="flex gap-2">
-                <button class="bg-blue-600 text-white px-4 py-1 rounded hover:bg-blue-700">
-                    Guardar foto
+                @error('photo')
+                    <p class="text-sm text-red-600">{{ $message }}</p>
+                @enderror
+
+                @if (session('success_photo'))
+                    <p class="text-sm text-green-600">{{ session('success_photo') }}</p>
+                @endif
+
+                <div class="flex gap-2 mt-2">
+                    <button class="bg-blue-600 text-white px-4 py-1 rounded hover:bg-blue-700">
+                        Guardar foto
+                    </button>
+
+                    <a href="{{ route('profile') }}"
+                       class="bg-gray-400 text-white px-4 py-1 rounded hover:bg-gray-500">
+                        Cancelar
+                    </a>
+                </div>
+            </form>
+
+            {{-- ELIMINAR FOTO --}}
+            @if ($photoPath)
+            <form method="POST" action="{{ route('profile.delete.photo') }}">
+                @csrf
+                @method('DELETE')
+
+                <button
+                    class="bg-red-600 text-white px-4 py-1 rounded hover:bg-red-700 text-sm w-fit">
+                    Eliminar foto
                 </button>
-
-                <a href="{{ route('profile') }}"
-                   class="bg-gray-400 text-white px-4 py-1 rounded hover:bg-gray-500">
-                    Cancelar
-                </a>
-            </div>
-        </form>
+            </form>
+            @endif
+        </div>
     </div>
 
     {{-- TÍTULO --}}
@@ -139,4 +178,15 @@
 
     </div>
 </div>
-@endsection 
+
+{{-- PREVIEW DE IMAGEN --}}
+<script>
+function previewPhoto(event) {
+    const reader = new FileReader();
+    reader.onload = function () {
+        document.getElementById('previewImage').src = reader.result;
+    };
+    reader.readAsDataURL(event.target.files[0]);
+}
+</script>
+@endsection
