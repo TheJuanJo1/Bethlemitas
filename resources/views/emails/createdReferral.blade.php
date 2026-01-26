@@ -2,16 +2,22 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Remisión</title>
 </head>
 <body>
-    <h1>Nuevo estudiante remitido.</h1>
-    <p>Datos del estudiante:</p>
+    <h1>Nuevo estudiante remitido</h1>
 
-    <a href="https://laravel.com/docs/11.x/mail#queueing-mail" 
-       style="display: inline-block; padding: 10px 20px; background-color: #007bff; color: white; text-decoration: none; border-radius: 5px; font-size: 16px; text-align: center;">
+    <p><strong>Nombre:</strong> {{ $student->name }} {{ $student->last_name }}</p>
+    <p><strong>Documento:</strong> {{ $student->number_documment }}</p>
+    <p><strong>Grado:</strong> {{ $student->degree->degree }}</p>
+    <p><strong>Grupo:</strong> {{ $student->group->group }}</p>
+
+    <hr>
+
+    <p><strong>Motivo:</strong> {{ $referral->reason }}</p>
+
+    <a href="{{ url('/psico/remisiones') }}"
+       style="display:inline-block;padding:10px 20px;background:#007bff;color:#fff;text-decoration:none;border-radius:5px;">
         Revisar remisión
     </a>
 </body>
