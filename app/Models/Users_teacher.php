@@ -81,7 +81,7 @@ class Users_teacher extends Authenticatable
     }
 
     // ✅ RELACIÓN QUE FALTABA (DIRECTOR DE GRUPO)
-    public function group()
+    public function directorGroup()
     {
         return $this->belongsTo(Group::class, 'group_director');
     }
