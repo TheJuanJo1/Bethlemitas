@@ -15,31 +15,12 @@ class Degree extends Model
         'degree',
     ];
 
-    /* =========================
-     * RELACIONES
-     * ========================= */
-
     /**
-     * 🔹 Usuarios asignados a este grado
-     * (psicoorientadores)
+     * Relación con la tabla users_load_degrees
+     * Un grado puede estar asignado a varios docentes
      */
     public function users_load_degrees()
     {
-        return $this->hasMany(
-            Users_load_degree::class,
-            'id_degree'
-        );
-    }
-
-    /**
-     * 🔹 Grupos que pertenecen a este grado
-     * (ESTO ES CLAVE para mostrar grupos de psicoorientadores)
-     */
-    public function groups()
-    {
-        return $this->hasMany(
-            Group::class,
-            'id_degree'
-        );
+        return $this->hasMany(Users_load_degree::class, 'id_degree');
     }
 }

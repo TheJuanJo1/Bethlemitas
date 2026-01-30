@@ -3,9 +3,9 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Spatie\Permission\Traits\HasRoles;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Spatie\Permission\Traits\HasRoles;
 
 class Users_teacher extends Authenticatable
 {
@@ -22,6 +22,7 @@ class Users_teacher extends Authenticatable
         'id_state',
         'email',
         'signature',
+        'password',
     ];
 
     protected $hidden = [
@@ -38,10 +39,10 @@ class Users_teacher extends Authenticatable
     }
 
     /* =========================
-     * RELACIONES
+     * RELACIONES PRINCIPALES
      * ========================= */
 
-    // 🔹 Grupos donde dicta clase
+    // 🔹 Grupos donde dicta clase (docente)
     public function groups()
     {
         return $this->belongsToMany(
@@ -52,7 +53,7 @@ class Users_teacher extends Authenticatable
         );
     }
 
-    // 🔹 Áreas que dicta
+    // 🔹 Áreas que dicta (docente)
     public function areas()
     {
         return $this->belongsToMany(
@@ -63,13 +64,7 @@ class Users_teacher extends Authenticatable
         );
     }
 
-    // 🔹 Institución
-    public function institution()
-    {
-        return $this->belongsTo(Institution::class, 'id_institution');
-    }
-
-    // 🔹 Grados asignados
+    // 🔹 Grados asignados (psicoorientador)
     public function load_degrees()
     {
         return $this->belongsToMany(
@@ -80,19 +75,30 @@ class Users_teacher extends Authenticatable
         );
     }
 
-    // ✅ RELACIÓN QUE FALTABA (DIRECTOR DE GRUPO)
-    public function directorGroup()
+    // 🔹 Grupo del que es director (docente director)
+    public function director()
     {
         return $this->belongsTo(Group::class, 'group_director');
     }
 
-    // 🔹 Estado
+    // 🔹 Estado del usuario
     public function states()
     {
         return $this->belongsTo(State::class, 'id_state');
     }
 
-    // 🔹 teachers_areas_groups
+    // 🔹 Institución
+    public function institution()
+    {
+        return $this->belongsTo(Institution::class, 'id_institution');
+    }
+
+    /* =========================
+     * RELACIONES ACADÉMICAS
+     * teachers_areas_groups
+     * ========================= */
+
+    // 🔹 Relación directa con teachers_areas_groups
     public function areasGroups()
     {
         return $this->hasMany(
@@ -101,7 +107,7 @@ class Users_teacher extends Authenticatable
         );
     }
 
-    // 🔹 Áreas (desde teachers_areas_groups)
+    // 🔹 Áreas que dicta (desde teachers_areas_groups)
     public function areas_g()
     {
         return $this->belongsToMany(
@@ -112,7 +118,7 @@ class Users_teacher extends Authenticatable
         );
     }
 
-    // 🔹 Grupos (desde teachers_areas_groups)
+    // 🔹 Grupos que dicta (desde teachers_areas_groups)
     public function groups_a()
     {
         return $this->belongsToMany(
