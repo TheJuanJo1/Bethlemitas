@@ -171,7 +171,7 @@
             @if ($directorGroup)
                 <p>
                     Sí – Grupo
-                    <strong>{{ $directorGroup->group->group }}</strong>
+                    <strong>{{  optional($directorGroup->director)->group ?? 'No es director de grupo'  }}</strong>
                 </p>
             @else
                 <p class="italic text-gray-500">No es director de grupo</p>
