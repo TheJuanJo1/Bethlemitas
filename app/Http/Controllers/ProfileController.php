@@ -14,19 +14,19 @@ class ProfileController extends Controller
     {
         $user = Auth::user();
 
-        // Roles
+        // Roles del usuario
         $roles = $user->roles->pluck('name')->toArray();
 
-        // Grados asignados
+        // Grados asignados (psicoorientador)
         $degrees = Users_load_degree::where('id_user', $user->id)
             ->with('degree')
             ->get()
             ->pluck('degree.degree');
 
-        // Director de grupo
+        // Grupo donde es director (si aplica)
         $directorGroup = Users_teacher::where('id', $user->id)
             ->whereNotNull('group_director')
-            ->with('group')
+            ->with('director') // ✅ RELACIÓN CORRECTA
             ->first();
 
         return view('profile.index', compact(
@@ -64,7 +64,7 @@ class ProfileController extends Controller
         return back()->with('success', 'Correo actualizado correctamente.');
     }
 
-    // 📸 SUBIR / REEMPLAZAR FOTO (POR NÚMERO DE DOCUMENTO)
+    // 📸 SUBIR / REEMPLAZAR FOTO
     public function updatePhoto(Request $request)
     {
         $request->validate([
@@ -76,7 +76,6 @@ class ProfileController extends Controller
 
         $folder = public_path('Imagenes_Perfil');
 
-        // Crear carpeta si no existe
         if (!file_exists($folder)) {
             mkdir($folder, 0755, true);
         }
@@ -84,7 +83,7 @@ class ProfileController extends Controller
         $extension = $request->file('photo')->getClientOriginalExtension();
         $fileName = 'perfil_' . $documento . '.' . $extension;
 
-        // Eliminar cualquier foto previa del mismo documento
+        // Eliminar fotos anteriores
         foreach (['jpg', 'jpeg', 'png'] as $ext) {
             $oldFile = $folder . '/perfil_' . $documento . '.' . $ext;
             if (file_exists($oldFile)) {
@@ -92,13 +91,12 @@ class ProfileController extends Controller
             }
         }
 
-        // Guardar nueva foto
         $request->file('photo')->move($folder, $fileName);
 
         return back()->with('success_photo', 'Foto de perfil actualizada correctamente.');
     }
 
-    // 🗑️ ELIMINAR FOTO DE PERFIL
+    // 🗑️ ELIMINAR FOTO
     public function deletePhoto()
     {
         $user = Auth::user();

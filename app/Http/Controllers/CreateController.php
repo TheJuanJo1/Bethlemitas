@@ -351,7 +351,7 @@ class CreateController extends Controller
         $groups = Group::orderByRaw('CAST(`group` AS UNSIGNED), `group`')->get();
         $selectedGroups = $user->groups->pluck('id')->toArray();
         $degrees = Degree::orderByRaw('CAST(`degree` AS UNSIGNED), `degree`')->get();
-        $selectedDegrees = $user->load_degrees->pluck('id')->toArray();
+        $selectedDegrees = $user->loadDegrees()->pluck('id_degree')->toArray();
         // Obtener los grupos relacionados con las areas
         $groupsForArea = [];
 

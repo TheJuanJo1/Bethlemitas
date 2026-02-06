@@ -7,6 +7,14 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
 
+use App\Models\Group;
+use App\Models\Area;
+use App\Models\Degree;
+use App\Models\State;
+use App\Models\Institution;
+use App\Models\Users_load_degree;
+use App\Models\Teachers_areas_group;
+
 class Users_teacher extends Authenticatable
 {
     use HasFactory, HasRoles, Notifiable;
@@ -42,7 +50,7 @@ class Users_teacher extends Authenticatable
      * RELACIONES PRINCIPALES
      * ========================= */
 
-    // 🔹 Grupos donde dicta clase (docente)
+    // 🔹 Grupos donde dicta clase (DOCENTE)
     public function groups()
     {
         return $this->belongsToMany(
@@ -53,7 +61,7 @@ class Users_teacher extends Authenticatable
         );
     }
 
-    // 🔹 Áreas que dicta (docente)
+    // 🔹 Áreas que dicta (DOCENTE)
     public function areas()
     {
         return $this->belongsToMany(
@@ -64,24 +72,19 @@ class Users_teacher extends Authenticatable
         );
     }
 
-    // 🔹 Grados asignados (psicoorientador)
-    public function load_degrees()
+    // 🔹 Grados asignados (PSICOORIENTADOR)
+    public function loadDegrees()
     {
-        return $this->belongsToMany(
-            Degree::class,
-            'users_load_degrees',
-            'id_user',
-            'id_degree'
-        );
+        return $this->hasMany(Users_load_degree::class, 'id_user');
     }
 
-    // 🔹 Grupo del que es director (docente director)
+    // 🔹 Grupo del que es director
     public function director()
     {
         return $this->belongsTo(Group::class, 'group_director');
     }
 
-    // 🔹 Estado del usuario
+    // 🔹 Estado
     public function states()
     {
         return $this->belongsTo(State::class, 'id_state');
@@ -95,19 +98,13 @@ class Users_teacher extends Authenticatable
 
     /* =========================
      * RELACIONES ACADÉMICAS
-     * teachers_areas_groups
      * ========================= */
 
-    // 🔹 Relación directa con teachers_areas_groups
     public function areasGroups()
     {
-        return $this->hasMany(
-            Teachers_areas_group::class,
-            'id_teacher'
-        );
+        return $this->hasMany(Teachers_areas_group::class, 'id_teacher');
     }
 
-    // 🔹 Áreas que dicta (desde teachers_areas_groups)
     public function areas_g()
     {
         return $this->belongsToMany(
@@ -118,7 +115,6 @@ class Users_teacher extends Authenticatable
         );
     }
 
-    // 🔹 Grupos que dicta (desde teachers_areas_groups)
     public function groups_a()
     {
         return $this->belongsToMany(
@@ -129,7 +125,6 @@ class Users_teacher extends Authenticatable
         );
     }
 
-    // 🔹 Grupos por área específica
     public function groupsForArea($areaId)
     {
         return $this->belongsToMany(
