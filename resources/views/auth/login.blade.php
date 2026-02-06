@@ -4,48 +4,113 @@
 
 @section('contentLogin')
 
+{{-- SPLASH / CARGA INICIAL --}}
+<div id="splash"
+     class="fixed inset-0 z-50 flex flex-col items-center justify-center
+            bg-white/70 backdrop-blur-md">
 
-    <div class="flex flex-col justify-center px-6 py-12 lg:px-8 w-full max-w-md h-auto bg-[#747272a7] backdrop-filter backdrop-blur-[0.8px] rounded-lg" >
-        <div class="sm:mx-auto sm:w-full sm:max-w-sm">
-          <h2 class="px-1 mt-10 text-3xl leading-9 tracking-tight text-center text-white font-small border-black">Iniciar sesión</h2>
-        </div>
-      
-        <div class="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-          <form class="space-y-6" action="{{ route('authenticate') }}" method="POST">
-            @csrf
-            @if($errors->has('invalid_credentials'))
-                <div class="relative px-4 py-3 text-red-700 bg-red-100 border border-red-400 rounded" role="alert">
-                    <strong class="font-bold">Error: </strong>
-                    <span class="block sm:inline">{{ $errors->first('invalid_credentials') }}</span>
-                </div>
-            @endif
-            <div>
-              <label for="number_documment" class="block text-sm font-medium leading-6 text-black border-white">Número de documento</label>
-              <div class="mt-2">
-                <input id="number_documment" name="number_documment" type="number_documment" autocomplete="number_documment"  placeholder="Número de documento" required class="block w-full rounded-md border-0 px-2 py-1.5 text-black shadow-sm   placeholder:text-black sm:text-sm sm:leading-6" style="background-color: #0000004f">
-              </div>
-            </div>
-      
-            <div>
-              <div class="flex items-center justify-between">
-                <label for="password" class="block text-sm font-medium leading-6 text-black border-white">Contraseña</label>
-                <div class="text-sm">
-                  <a href="{{ route('password.request') }}" 
-                    class="font-semibold text-[#2a56be] underline hover:text-[#0339fc]">
-                   ¿Olvidaste la contraseña?
-                  </a>
+    {{-- LOGO --}}
+    <img
+        src="{{ asset('img/logo.png') }}"
+        alt="Logo"
+        class="w-32 h-auto mb-6 animate-pulse"
+    >
 
-                </div>
-              </div>
-              <div class="mt-2">
-                <input id="password" name="password" type="password" autocomplete="current-password" placeholder="Contraseña" required class="block w-full rounded-md border-0 px-2 py-1.5 text-black shadow-sm   placeholder:text-black sm:text-sm sm:leading-6" style="background-color: #0000004f">
-              </div>
-            </div>
-      
-            <div>
-              <button type="submit" class="flex w-full justify-center rounded-md bg-[#657eb471] px-3 py-1.5 text-sm font-semibold leading-6 text-black shadow-sm hover:bg-[#323d56be] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">Ingrear</button>
-            </div>
-          </form>
+    {{-- TEXTO --}}
+    <p
+        class="text-white text-lg font-semibold tracking-wide mb-4"
+        style="text-shadow:
+            -1px -1px 0 #000,
+             1px -1px 0 #000,
+            -1px  1px 0 #000,
+             1px  1px 0 #000;">.
+    </p>
+
+    {{-- BARRA DE PROGRESO --}}
+    <div class="w-64 h-2 bg-gray-300 rounded-full overflow-hidden border border-black">
+        <div id="progressBar"
+             class="h-full bg-blue-600 rounded-full transition-all duration-300"
+             style="width: 0%">
         </div>
     </div>
+</div>
+
+{{-- CONTENIDO LOGIN --}}
+<div id="loginContent"
+     class="hidden flex flex-col justify-center px-6 py-12 lg:px-8
+            w-full max-w-md h-auto bg-[#747272a7]
+            backdrop-filter backdrop-blur-[0.8px] rounded-lg">
+
+    <div class="sm:mx-auto sm:w-full sm:max-w-sm">
+        <h2 class="mt-10 text-3xl text-center text-white">
+            Iniciar sesión
+        </h2>
+    </div>
+
+    <div class="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
+        <form class="space-y-6" action="{{ route('authenticate') }}" method="POST">
+            @csrf
+
+            @if($errors->has('invalid_credentials'))
+                <div class="px-4 py-3 text-red-700 bg-red-100 border border-red-400 rounded">
+                    <strong>Error:</strong>
+                    {{ $errors->first('invalid_credentials') }}
+                </div>
+            @endif
+
+            <div>
+                <label class="block text-sm font-medium text-black">
+                    Número de documento
+                </label>
+                <input
+                    name="number_documment"
+                    type="text"
+                    required
+                    placeholder="Número de documento"
+                    class="mt-2 block w-full rounded-md px-2 py-1.5 text-black"
+                    style="background-color:#0000004f"
+                >
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium text-black">
+                    Contraseña
+                </label>
+                <input
+                    name="password"
+                    type="password"
+                    required
+                    placeholder="Contraseña"
+                    class="mt-2 block w-full rounded-md px-2 py-1.5 text-black"
+                    style="background-color:#0000004f"
+                >
+            </div>
+
+            <button
+                type="submit"
+                class="w-full rounded-md bg-[#657eb471] px-3 py-1.5
+                       text-sm font-semibold text-black hover:bg-[#323d56be]">
+                Ingresar
+            </button>
+        </form>
+    </div>
+</div>
+
+{{-- SCRIPT SPLASH --}}
+<script>
+    let progress = 0;
+    const bar = document.getElementById('progressBar');
+
+    const interval = setInterval(() => {
+        progress += 10;
+        bar.style.width = progress + '%';
+
+        if (progress >= 100) {
+            clearInterval(interval);
+            document.getElementById('splash').classList.add('hidden');
+            document.getElementById('loginContent').classList.remove('hidden');
+        }
+    }, 120);
+</script>
+
 @endsection
