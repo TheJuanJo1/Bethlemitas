@@ -85,7 +85,7 @@ class Users_teacher extends Authenticatable
     }
 
     // 🔹 Estado
-    public function states()
+    public function state()
     {
         return $this->belongsTo(State::class, 'id_state');
     }

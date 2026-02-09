@@ -4,21 +4,32 @@
 
 @section('content')
 
-<div class="p-4">
+{{-- LOADER --}}
+<div id="loader"
+     class="fixed inset-0 z-50 flex items-center justify-center bg-white transition-opacity duration-500">
+    <div class="flex flex-col items-center gap-3">
+        <div class="w-12 h-12 border-4 border-purple-300 border-t-purple-700 rounded-full animate-spin"></div>
+        <span class="text-sm text-gray-600">Cargando usuarios...</span>
+    </div>
+</div>
+
+<div id="content" class="p-4 opacity-0 transition-opacity duration-500">
+
     <!-- Encabezado -->
     <div class="sticky top-0 flex flex-col mb-4 lg:flex-row lg:items-center lg:justify-between">
         <h2 class="text-xl font-semibold">Lista de usuarios</h2>
 
         <div class="relative">
-            <form action="{{ route('index.users') }}" method="GET">
+            <form action="{{ route('index.users') }}" method="GET" class="flex">
                 <input
                     type="search"
                     name="search"
-                    class="py-2 pl-4 pr-8 border rounded-lg shadow-sm"
+                    class="py-2 pl-4 pr-3 border rounded-l-lg shadow-sm focus:outline-none"
                     placeholder="Buscar..."
+                    value="{{ request('search') }}"
                 >
                 <button type="submit"
-                    class="px-4 py-2 font-bold rounded-r bg-purple-white hover:bg-purple-200 text-purple-lighter">
+                        class="px-4 py-2 font-bold bg-ligh-blue-600 text-white rounded-r-lg hover:bg-dark-blue-700">
                     🔍
                 </button>
             </form>
@@ -41,8 +52,9 @@
             </thead>
 
             <tbody class="divide-y">
-                @foreach ($users as $user)
-                    <tr>
+                @forelse ($users as $user)
+                    <tr class="hover:bg-gray-50 transition">
+
                         <!-- Nombre -->
                         <td class="px-6 py-4">
                             {{ $user->name }} {{ $user->last_name }}
@@ -53,56 +65,57 @@
                             {{ $user->number_documment }}
                         </td>
 
-                        <!-- Áreas (SOLO DOCENTE) -->
+                        <!-- Áreas -->
                         <td class="px-6 py-4">
-                            @if ($user->hasRole('docente') && $user->areas->isNotEmpty())
+                            @if ($user->hasRole('docente') && $user->areas && $user->areas->isNotEmpty())
                                 {{ $user->areas->pluck('name_area')->implode(', ') }}
                             @else
-                                Sin Áreas
+                                <span class="text-gray-400">Sin Áreas</span>
                             @endif
                         </td>
 
                         <!-- Grupos -->
                         <td class="px-6 py-4">
-                            {{-- DOCENTE --}}
-                            @if ($user->hasRole('docente') && $user->groups->isNotEmpty())
+                            @if ($user->hasRole('docente') && $user->groups && $user->groups->isNotEmpty())
                                 {{ $user->groups->pluck('group')->implode(', ') }}
 
-                            {{-- PSICOORIENTADOR --}}
-                            @elseif ($user->hasRole('psicoorientador'))
+                            @elseif ($user->hasRole('psicoorientador') && $user->loadDegrees)
                                 @php
                                     $groups = collect();
 
                                     foreach ($user->loadDegrees as $load) {
-                                        if ($load->degree) {
+                                        if ($load->degree && $load->degree->groups) {
                                             $groups = $groups->merge($load->degree->groups);
                                         }
                                     }
                                 @endphp
 
-                                {{ $groups->unique('id')->pluck('group')->implode(', ') ?: 'Sin Grupos' }}
-
+                                {{ $groups->isNotEmpty()
+                                    ? $groups->unique('id')->pluck('group')->implode(', ')
+                                    : 'Sin Grupos' }}
                             @else
-                                Sin Grupos
+                                <span class="text-gray-400">Sin Grupos</span>
                             @endif
                         </td>
 
-                        <!-- Director de grupo -->
+                        <!-- Director -->
                         <td class="px-6 py-4">
-                            {{ optional($user->director)->group ?? 'Sin Grupo' }}
+                            {{ optional(optional($user->director)->group)->group ?? 'Sin Grupo' }}
                         </td>
 
                         <!-- Rol -->
                         <td class="px-6 py-4">
-                            @if (isset($userRoles[$user->id]) && is_array($userRoles[$user->id]))
-                                {{ implode(', ', $userRoles[$user->id]) }}
+                            @if (!empty($userRoles[$user->id]))
+                                {{ is_array($userRoles[$user->id])
+                                    ? implode(', ', $userRoles[$user->id])
+                                    : $userRoles[$user->id] }}
                             @else
-                                {{ $userRoles[$user->id] ?? 'Sin Rol' }}
+                                Sin Rol
                             @endif
                         </td>
 
                         <!-- Acciones -->
-                        <td class="px-6 py-4">
+                        <td class="px-6 py-4 whitespace-nowrap">
                             <a href="{{ route('edit.user', $user->id) }}"
                                class="text-blue-600 hover:underline">
                                 Editar
@@ -125,7 +138,13 @@
                             </form>
                         </td>
                     </tr>
-                @endforeach
+                @empty
+                    <tr>
+                        <td colspan="7" class="px-6 py-6 text-center text-gray-500">
+                            No hay usuarios registrados
+                        </td>
+                    </tr>
+                @endforelse
             </tbody>
         </table>
 
@@ -134,5 +153,20 @@
         </div>
     </div>
 </div>
+
+{{-- SCRIPT DEL LOADER --}}
+<script>
+    window.addEventListener('load', () => {
+        const loader = document.getElementById('loader');
+        const content = document.getElementById('content');
+
+        loader.classList.add('opacity-0');
+
+        setTimeout(() => {
+            loader.style.display = 'none';
+            content.classList.remove('opacity-0');
+        }, 500);
+    });
+</script>
 
 @endsection

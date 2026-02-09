@@ -4,7 +4,66 @@
 
 @section('contentLogin')
 
-{{-- SPLASH / CARGA INICIAL --}}
+<style>
+    /* Fade + scale splash */
+    #splash {
+        animation: splashIn 0.6s ease-out forwards;
+    }
+
+    .splash-hide {
+        animation: splashOut 0.6s ease-in forwards;
+    }
+
+    @keyframes splashIn {
+        from {
+            opacity: 0;
+            transform: scale(0.96);
+        }
+        to {
+            opacity: 1;
+            transform: scale(1);
+        }
+    }
+
+    @keyframes splashOut {
+        from {
+            opacity: 1;
+            transform: scale(1);
+        }
+        to {
+            opacity: 0;
+            transform: scale(1.05);
+        }
+    }
+
+    /* Texto respirando */
+    .loading-text {
+        animation: fadeText 1.6s ease-in-out infinite;
+    }
+
+    @keyframes fadeText {
+        0%, 100% { opacity: 0.4; }
+        50% { opacity: 1; }
+    }
+
+    /* Login entrada suave */
+    .login-show {
+        animation: loginIn 0.7s ease-out forwards;
+    }
+
+    @keyframes loginIn {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+</style>
+
+{{-- SPLASH --}}
 <div id="splash"
      class="fixed inset-0 z-50 flex flex-col items-center justify-center
             bg-white/70 backdrop-blur-md">
@@ -18,24 +77,25 @@
 
     {{-- TEXTO --}}
     <p
-        class="text-white text-lg font-semibold tracking-wide mb-4"
+        class="loading-text text-white text-lg font-semibold tracking-wide mb-4"
         style="text-shadow:
             -1px -1px 0 #000,
              1px -1px 0 #000,
             -1px  1px 0 #000,
-             1px  1px 0 #000;">.
+             1px  1px 0 #000;">
+        Cargando sistema...
     </p>
 
-    {{-- BARRA DE PROGRESO --}}
+    {{-- BARRA --}}
     <div class="w-64 h-2 bg-gray-300 rounded-full overflow-hidden border border-black">
         <div id="progressBar"
-             class="h-full bg-blue-600 rounded-full transition-all duration-300"
+             class="h-full bg-blue-600 rounded-full transition-[width] duration-200 ease-linear"
              style="width: 0%">
         </div>
     </div>
 </div>
 
-{{-- CONTENIDO LOGIN --}}
+{{-- LOGIN --}}
 <div id="loginContent"
      class="hidden flex flex-col justify-center px-6 py-12 lg:px-8
             w-full max-w-md h-auto bg-[#747272a7]
@@ -66,21 +126,27 @@
                     name="number_documment"
                     type="text"
                     required
-                    placeholder="Número de documento"
                     class="mt-2 block w-full rounded-md px-2 py-1.5 text-black"
                     style="background-color:#0000004f"
                 >
             </div>
 
             <div>
-                <label class="block text-sm font-medium text-black">
-                    Contraseña
-                </label>
+                <div class="flex items-center justify-between">
+                    <label class="block text-sm font-medium text-black">
+                        Contraseña
+                    </label>
+
+                    <a href="{{ route('password.request') }}"
+                       class="text-sm font-semibold text-blue-700 underline hover:text-blue-900">
+                        ¿Olvidaste la contraseña?
+                    </a>
+                </div>
+
                 <input
                     name="password"
                     type="password"
                     required
-                    placeholder="Contraseña"
                     class="mt-2 block w-full rounded-md px-2 py-1.5 text-black"
                     style="background-color:#0000004f"
                 >
@@ -96,19 +162,28 @@
     </div>
 </div>
 
-{{-- SCRIPT SPLASH --}}
+{{-- SCRIPT --}}
 <script>
     let progress = 0;
     const bar = document.getElementById('progressBar');
+    const splash = document.getElementById('splash');
+    const login = document.getElementById('loginContent');
 
     const interval = setInterval(() => {
-        progress += 10;
+        progress += Math.random() * 8; // avance irregular natural
+        if (progress > 100) progress = 100;
         bar.style.width = progress + '%';
 
         if (progress >= 100) {
             clearInterval(interval);
-            document.getElementById('splash').classList.add('hidden');
-            document.getElementById('loginContent').classList.remove('hidden');
+
+            splash.classList.add('splash-hide');
+
+            setTimeout(() => {
+                splash.classList.add('hidden');
+                login.classList.remove('hidden');
+                login.classList.add('login-show');
+            }, 600);
         }
     }, 120);
 </script>

@@ -31,4 +31,5 @@ class Degree extends Model
             'id_degree'
         );
     }
+    
 }
