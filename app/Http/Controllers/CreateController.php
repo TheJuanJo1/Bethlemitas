@@ -305,31 +305,32 @@ class CreateController extends Controller
         $query = Users_teacher::whereHas('roles', function ($q) {
             $q->whereIn('name', ['docente', 'psicoorientador']);
         })
-            ->whereHas('states', function ($q) {
-                $q->where('state', 'activo');
-            });
+        ->whereHas('state', function ($q) {
+            $q->where('state', 'activo');
+        });
 
         if ($request->filled('search')) {
             $searchTerm = $request->input('search');
+
             $query->where(function ($q) use ($searchTerm) {
-                $q->where('name', 'LIKE', '%' . $searchTerm . '%')
-                    ->orWhere('last_name', 'LIKE', '%' . $searchTerm . '%')
-                    ->orWhere('number_documment', 'LIKE', '%' . $searchTerm . '%')
-                    ->orWhereRaw("CONCAT(name, ' ', last_name) LIKE ?", ['%' . $searchTerm . '%'])
-                    ->orWhereHas('areas', function ($q) use ($searchTerm) {
-                        $q->where('name_area', 'LIKE', '%' . $searchTerm . '%');
-                    });
+                $q->where('name', 'LIKE', "%{$searchTerm}%")
+                ->orWhere('last_name', 'LIKE', "%{$searchTerm}%")
+                ->orWhere('number_documment', 'LIKE', "%{$searchTerm}%")
+                ->orWhereRaw("CONCAT(name, ' ', last_name) LIKE ?", ["%{$searchTerm}%"])
+                ->orWhereHas('areas', function ($q) use ($searchTerm) {
+                    $q->where('name_area', 'LIKE', "%{$searchTerm}%");
+                });
             });
         }
 
-        $users = $query->with(['groups', 'areas', 'roles'])
-            ->orderBy('name', 'asc')
-            ->orderBy('last_name', 'asc')
+        $users = $query->with(['groups', 'areas', 'roles', 'state'])
+            ->orderBy('name')
+            ->orderBy('last_name')
             ->paginate(15);
 
-        $userRoles = $users->mapWithKeys(function ($user) {
-            return [$user->id => $user->roles->pluck('name')->all()];
-        });
+        $userRoles = $users->mapWithKeys(fn ($user) => [
+            $user->id => $user->roles->pluck('name')->all()
+        ]);
 
         return view('academic.userList', compact('users', 'userRoles'));
     }
