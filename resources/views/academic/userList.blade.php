@@ -65,42 +65,36 @@
                             {{ $user->number_documment }}
                         </td>
 
-                        <!-- Áreas -->
+                        <!-- Áreas (solo docentes) -->
                         <td class="px-6 py-4">
-                            @if ($user->hasRole('docente') && $user->areas && $user->areas->isNotEmpty())
+                            @if ($user->hasRole('docente') && $user->areas->isNotEmpty())
                                 {{ $user->areas->pluck('name_area')->implode(', ') }}
                             @else
                                 <span class="text-gray-400">Sin Áreas</span>
                             @endif
                         </td>
 
-                        <!-- Grupos -->
+                        <!-- Grupos a cargo -->
                         <td class="px-6 py-4">
-                            @if ($user->hasRole('docente') && $user->groups && $user->groups->isNotEmpty())
+                            {{-- DOCENTE --}}
+                            @if ($user->hasRole('docente') && $user->groups->isNotEmpty())
                                 {{ $user->groups->pluck('group')->implode(', ') }}
 
-                            @elseif ($user->hasRole('psicoorientador') && $user->loadDegrees)
-                                @php
-                                    $groups = collect();
+                            {{-- PSICOORIENTADOR --}}
+                            @elseif ($user->hasRole('psicoorientador') && $user->loadDegrees->isNotEmpty())
+                                {{ $user->loadDegrees
+                                    ->pluck('degree.name') // o 'degree.degree'
+                                    ->filter()
+                                    ->implode(', ') }}
 
-                                    foreach ($user->loadDegrees as $load) {
-                                        if ($load->degree && $load->degree->groups) {
-                                            $groups = $groups->merge($load->degree->groups);
-                                        }
-                                    }
-                                @endphp
-
-                                {{ $groups->isNotEmpty()
-                                    ? $groups->unique('id')->pluck('group')->implode(', ')
-                                    : 'Sin Grupos' }}
                             @else
-                                <span class="text-gray-400">Sin Grupos</span>
+                                <span class="text-gray-400">Sin Asignación</span>
                             @endif
                         </td>
 
-                        <!-- Director -->
+                        <!-- Director de grupo (CORREGIDO) -->
                         <td class="px-6 py-4">
-                            {{ optional(optional($user->director)->group)->group ?? 'Sin Grupo' }}
+                            {{ optional($user->director)->group ?? 'Sin Grupo' }}
                         </td>
 
                         <!-- Rol -->

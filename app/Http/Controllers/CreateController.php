@@ -279,7 +279,7 @@ class CreateController extends Controller
                 $user->name = $request->input('name');
                 $user->last_name = $request->input('last_name');
                 $user->email = $request->input('email');
-                $user->id_state = 2;
+                $user->id_state = 1;
                 $user->password = bcrypt($request->input('number_documment'));
                 $user->assignRole($role_name);
                 $user->save();

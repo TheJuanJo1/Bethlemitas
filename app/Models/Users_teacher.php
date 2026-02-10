@@ -134,4 +134,5 @@ class Users_teacher extends Authenticatable
             'id_group'
         )->where('id_area', $areaId);
     }
+
 }
