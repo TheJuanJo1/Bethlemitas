@@ -32,7 +32,7 @@
         {{ optional($student->group)->group ?? 'No asignado' }}
     </p>
 
-    <a href="{{ url('/psico/remisiones') }}"
+    <a href="{{ url('/index/students/remitted/psico') }}"
        style="display: inline-block; padding: 10px 20px; background-color: #007bff; color: white; text-decoration: none; border-radius: 5px; font-size: 16px; text-align: center;">
         Revisar remisión
     </a>
