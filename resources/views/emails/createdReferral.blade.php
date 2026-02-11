@@ -26,7 +26,7 @@
     <p>
         <strong>Grupo:</strong>
         {{ optional($student->group)->group ?? 'No asignado' }}
-    </p>
+    </p>a
 
     <hr>
 
@@ -35,7 +35,7 @@
         {{ $referral->reason ?? 'Sin motivo especificado' }}
     </p>
 
-    <a href="{{ url('/psico/remisiones') }}"
+    <a href="{{ url('/index/students/remitted/psico') }}"
        style="display:inline-block;padding:10px 20px;background:#007bff;color:#fff;text-decoration:none;border-radius:5px;">
         Revisar remisión
     </a>
