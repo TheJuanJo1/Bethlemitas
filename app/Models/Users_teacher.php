@@ -2,35 +2,27 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Spatie\Permission\Traits\HasRoles;
-
-use App\Models\Group;
-use App\Models\Area;
-use App\Models\Degree;
-use App\Models\State;
-use App\Models\Institution;
-use App\Models\Users_load_degree;
-use App\Models\Teachers_areas_group;
 
 class Users_teacher extends Authenticatable
 {
-    use HasFactory, HasRoles, Notifiable;
+    use HasFactory, HasRoles;
+
+    protected $table = 'users_teachers';
 
     protected $guard_name = 'web';
 
     protected $fillable = [
-        'number_documment',
         'name',
-        'last_name',
-        'id_institution',
-        'group_director',
-        'id_state',
+        'lastname',
         'email',
-        'signature',
         'password',
+        'document',
+        'phone',
+        'id_state',
+        'group_director',
     ];
 
     protected $hidden = [
@@ -38,100 +30,100 @@ class Users_teacher extends Authenticatable
         'remember_token',
     ];
 
-    protected function casts(): array
-    {
-        return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
-        ];
-    }
+    /* ======================================================
+     |  RELACIONES BÁSICAS
+     ====================================================== */
 
-    /* =========================
-     * RELACIONES PRINCIPALES
-     * ========================= */
-
-    // 🔹 Grupos donde dicta clase (DOCENTE)
-    public function groups()
-    {
-        return $this->belongsToMany(
-            Group::class,
-            'users_load_groups',
-            'id_user_teacher',
-            'id_group'
-        );
-    }
-
-    // 🔹 Áreas que dicta (DOCENTE)
-    public function areas()
-    {
-        return $this->belongsToMany(
-            Area::class,
-            'users_load_areas',
-            'id_user_teacher',
-            'id_area'
-        );
-    }
-
-    // 🔹 Grados asignados (PSICOORIENTADOR)
-    public function loadDegrees()
-    {
-        return $this->hasMany(Users_load_degree::class, 'id_user');
-    }
-
-    // 🔹 Grupo del que es director
-    public function director()
-    {
-        return $this->belongsTo(Group::class, 'group_director');
-    }
-
-    // 🔹 Estado
+    // Estado del usuario (1 = activo, 2 = PIAR)
     public function state()
     {
         return $this->belongsTo(State::class, 'id_state');
     }
 
-    // 🔹 Institución
-    public function institution()
+    // Grupo del que es director
+    public function director()
     {
-        return $this->belongsTo(Institution::class, 'id_institution');
+        return $this->belongsTo(Group::class, 'group_director');
     }
 
-    /* =========================
-     * RELACIONES ACADÉMICAS
-     * ========================= */
+    /* ======================================================
+     |  RELACIONES ACADÉMICAS
+     ====================================================== */
 
-    public function areasGroups()
-    {
-        return $this->hasMany(Teachers_areas_group::class, 'id_teacher');
-    }
-
-    public function areas_g()
+    // Áreas asignadas al docente
+    public function areas()
     {
         return $this->belongsToMany(
             Area::class,
             'teachers_areas_groups',
             'id_teacher',
             'id_area'
-        );
+        )->withPivot('id_group');
     }
 
-    public function groups_a()
+    // Grupos asignados al docente
+    public function groups()
     {
         return $this->belongsToMany(
             Group::class,
             'teachers_areas_groups',
             'id_teacher',
             'id_group'
+        )->withPivot('id_area');
+    }
+
+    // Relación completa a la tabla pivote (si se necesita)
+    public function areasGroups()
+    {
+        return $this->hasMany(Teachers_areas_groups::class, 'id_teacher');
+    }
+
+    /* ======================================================
+     |  PSICOORIENTADOR / PIAR
+     ====================================================== */
+
+    // Relación directa a la tabla intermedia
+    public function loadDegrees()
+    {
+        return $this->hasMany(Users_load_degree::class, 'id_user');
+    }
+
+    // Relación LIMPIA a grados (recomendada)
+    public function degrees()
+    {
+        return $this->belongsToMany(
+            Degree::class,
+            'users_load_degrees',
+            'id_user',
+            'id_degree'
         );
     }
 
-    public function groupsForArea($areaId)
+    /* ======================================================
+     |  SCOPES (FILTROS REUTILIZABLES)
+     ====================================================== */
+
+    // Usuarios activos (docentes, psicoorientadores, coordinador)
+    public function scopeActivos($query)
     {
-        return $this->belongsToMany(
-            Group::class,
-            'teachers_areas_groups',
-            'id_teacher',
-            'id_group'
-        )->where('id_area', $areaId);
+        return $query->where('id_state', 1);
+    }
+
+    // Usuarios PIAR
+    public function scopePiar($query)
+    {
+        return $query->where('id_state', 2);
+    }
+
+    // Solo docentes, psicoorientadores o coordinador
+    public function scopeDocentesPsicoCoordinador($query)
+    {
+        return $query->whereHas('roles', function ($q) {
+            $q->whereIn('name', [
+                'docente',
+                'psicoorientador',
+                'coordinador'
+            ]);
+        });
     }
 }
