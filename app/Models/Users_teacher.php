@@ -126,4 +126,5 @@ class Users_teacher extends Authenticatable
             ]);
         });
     }
+
 }
