@@ -1,9 +1,6 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Password;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Http\Request;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\auth\AuthController;
 use App\Http\Controllers\CreateAreaController;
@@ -31,29 +28,17 @@ Route::prefix('/')->group(function () {
     Route::post('/', [AuthController::class, 'authenticate'])->name('authenticate');
     Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
 });
-
 /*
 |--------------------------------------------------------------------------
 | OLVIDÉ MI CONTRASEÑA
 |--------------------------------------------------------------------------
 */
 
-Route::get('/forgot-password', function () {
-    return view('auth.forgot-password');
-})->name('password.request');
+Route::get('/forgot-password', [AuthController::class, 'showForgotPasswordForm'])
+    ->name('password.request');
 
-Route::post('/forgot-password', function (Request $request) {
-
-    $request->validate([
-        'email' => 'required|email'
-    ]);
-
-    $status = Password::sendResetLink($request->only('email'));
-
-    return $status === Password::RESET_LINK_SENT
-        ? back()->with('status', 'Te hemos enviado un enlace de recuperación a tu correo')
-        : back()->withErrors(['email' => 'No se encontró un usuario con ese correo']);
-})->name('password.email');
+Route::post('/forgot-password', [AuthController::class, 'sendResetLink'])
+    ->name('password.email');
 
 /*
 |--------------------------------------------------------------------------
@@ -61,32 +46,11 @@ Route::post('/forgot-password', function (Request $request) {
 |--------------------------------------------------------------------------
 */
 
-Route::get('/reset-password/{token}', function ($token) {
-    return view('auth.reset-password', ['token' => $token]);
-})->name('password.reset');
+Route::get('/reset-password/{token}', [AuthController::class, 'showResetPasswordForm'])
+    ->name('password.reset');
 
-Route::post('/reset-password', function (Request $request) {
-
-    $request->validate([
-        'token' => 'required',
-        'email' => 'required|email',
-        'password' => 'required|min:6|confirmed',
-    ]);
-
-    $status = Password::reset(
-        $request->only('email', 'password', 'password_confirmation', 'token'),
-        function ($user, $password) {
-            $user->forceFill([
-                'password' => Hash::make($password),
-            ])->save();
-        }
-    );
-
-    return $status === Password::PASSWORD_RESET
-        ? redirect()->route('login')->with('status', 'Contraseña actualizada correctamente')
-        : back()->withErrors(['email' => 'El enlace es inválido o ya expiró']);
-})->name('password.update');
-
+Route::post('/reset-password', [AuthController::class, 'resetPassword'])
+    ->name('password.update');
 /*
 |--------------------------------------------------------------------------
 | RUTAS PROTEGIDAS
