@@ -121,7 +121,7 @@ class CreateReferralController extends Controller
             return redirect()->back()->with('success', 'Estudiante remitido exitosamente.');
         } catch (\Exception $e) {
             DB::rollback();
-            dd($e);
+            //dd($e);
             return redirect()->back()->with('error', 'Hubo problemas en el proceso, intentelo nuevamente.');
         }
     }
