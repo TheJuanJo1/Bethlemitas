@@ -12,18 +12,28 @@
         </h2>
         <p class="mt-2 text-center text-sm text-white">
             Ingresa tu correo para recuperar tu contraseña
-        </p>
+        </p>    
     </div>
 
     <div class="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
         <form class="space-y-6" action="{{ route('password.email') }}" method="POST">
-            @csrf
+             @csrf
 
-            @if (session('status'))
-                <div class="px-4 py-3 text-green-700 bg-green-100 rounded">
-                    {{ session('status') }}
-                </div>
-            @endif
+                    {{-- Mensaje de éxito --}}
+                    @if (session('status'))
+                        <div class="px-4 py-3 text-green-700 bg-green-100 rounded">
+                            {{ session('status') }}
+                        </div>
+                    @endif
+
+                    {{-- Mensaje de error --}}
+                    @if ($errors->any())
+                        <div class="px-4 py-3 text-red-700 bg-red-100 rounded">
+                            @foreach ($errors->all() as $error)
+                                <p>{{ $error }}</p>
+                            @endforeach
+                        </div>
+                    @endif
 
             <div>
                 <label class="block text-sm font-medium text-black">
@@ -43,7 +53,7 @@
                     Enviar enlace
                 </button>
             </div>
-        </form>
+            
 
         <div class="mt-4 text-center">
             <a href="{{ route('login') }}" class="text-sm text-blue-600 underline">
