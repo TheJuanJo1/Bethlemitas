@@ -8,14 +8,31 @@
 </head>
 <body>
     <h1>Estudiante descartado para entrar a proceso PIAR.</h1>
-    <p>Datos del estudiante:</p>
-    <p><span style="font-weight: bold;">Nombre completo:</span> {{ $student->name }} {{ $student->last_name }}.</p>
-    <p><span style="font-weight: bold;">Número de documento:</span> {{ $student->number_documment }}</p>
-    <p><span style="font-weight: bold;">Grado:</span> {{ $student->degree->degree }}</p>
-    <p
-    ><span style="font-weight: bold;">Grupo:</span> {{ $student->group->group }}</p>
 
-    <a href="https://laravel.com/docs/11.x/mail#queueing-mail" 
+    <p>Datos del estudiante:</p>
+
+    <p>
+        <span style="font-weight: bold;">Nombre completo:</span>
+        {{ $student->name ?? 'No disponible' }}
+        {{ $student->last_name ?? '' }}.
+    </p>
+
+    <p>
+        <span style="font-weight: bold;">Número de documento:</span>
+        {{ $student->number_documment ?? 'No disponible' }}
+    </p>
+
+    <p>
+        <span style="font-weight: bold;">Grado:</span>
+        {{ optional($student->degree)->degree ?? 'No asignado' }}
+    </p>
+
+    <p>
+        <span style="font-weight: bold;">Grupo:</span>
+        {{ optional($student->group)->group ?? 'No asignado' }}
+    </p>
+
+    <a href="{{ url('/psico/remisiones') }}"
        style="display: inline-block; padding: 10px 20px; background-color: #007bff; color: white; text-decoration: none; border-radius: 5px; font-size: 16px; text-align: center;">
         Revisar remisión
     </a>
