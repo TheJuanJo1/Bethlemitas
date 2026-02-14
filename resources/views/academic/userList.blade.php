@@ -65,7 +65,7 @@
                             {{ $user->number_documment }}
                         </td>
 
-                        <!-- Áreas (solo docentes) -->
+                        <!-- Áreas -->
                         <td class="px-6 py-4">
                             @if ($user->hasRole('docente') && $user->areas->isNotEmpty())
                                 {{ $user->areas->pluck('name_area')->implode(', ') }}
@@ -76,6 +76,7 @@
 
                         <!-- Grupos a cargo -->
                         <td class="px-6 py-4">
+
                             {{-- DOCENTE --}}
                             @if ($user->hasRole('docente') && $user->groups->isNotEmpty())
                                 {{ $user->groups->pluck('group')->implode(', ') }}
@@ -83,7 +84,7 @@
                             {{-- PSICOORIENTADOR --}}
                             @elseif ($user->hasRole('psicoorientador') && $user->loadDegrees->isNotEmpty())
                                 {{ $user->loadDegrees
-                                    ->pluck('degree.name') // o 'degree.degree'
+                                    ->pluck('degree.degree')  {{-- ✅ CORREGIDO --}}
                                     ->filter()
                                     ->implode(', ') }}
 
@@ -92,7 +93,7 @@
                             @endif
                         </td>
 
-                        <!-- Director de grupo (CORREGIDO) -->
+                        <!-- Director de grupo -->
                         <td class="px-6 py-4">
                             {{ optional($user->director)->group ?? 'Sin Grupo' }}
                         </td>
