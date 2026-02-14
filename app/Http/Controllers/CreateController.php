@@ -323,7 +323,13 @@ class CreateController extends Controller
             });
         }
 
-        $users = $query->with(['groups', 'areas', 'roles', 'state'])
+        $users = $query->with([
+                    'groups',
+                    'areas',
+                    'roles',
+                    'state',
+                    'loadDegrees.degree' // ← IMPORTANTE
+                ])
             ->orderBy('name')
             ->orderBy('last_name')
             ->paginate(15);
