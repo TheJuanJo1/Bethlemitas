@@ -304,11 +304,17 @@ class CreateController extends Controller
     {
         $query = Users_teacher::whereHas('roles', function ($q) {
             $q->whereIn('name', ['docente', 'psicoorientador']);
-        })
-        ->whereHas('state', function ($q) {
-            $q->where('state', 'activo');
         });
 
+        // 🔥 FILTRO POR ESTADO
+        if ($request->filled('estado') && $request->estado != 'todos') {
+
+            $query->whereHas('state', function ($q) use ($request) {
+                $q->where('state', $request->estado);
+            });
+        }
+
+        // 🔎 BÚSQUEDA
         if ($request->filled('search')) {
             $searchTerm = $request->input('search');
 
@@ -328,11 +334,12 @@ class CreateController extends Controller
                     'areas',
                     'roles',
                     'state',
-                    'loadDegrees.degree' // ← IMPORTANTE
+                    'loadDegrees.degree'
                 ])
-            ->orderBy('name')
-            ->orderBy('last_name')
-            ->paginate(15);
+                ->orderBy('name')
+                ->orderBy('last_name')
+                ->paginate(15)
+                ->withQueryString(); // 🔥 IMPORTANTE
 
         $userRoles = $users->mapWithKeys(fn ($user) => [
             $user->id => $user->roles->pluck('name')->all()
@@ -640,31 +647,24 @@ class CreateController extends Controller
 
     }
 
-    public function destroy_user(string $id)
+    public function destroy_user($id)
     {
-        // Obtener el usuario por ID
         $user = Users_teacher::findOrFail($id);
 
-        // Obtener el estado 'bloqueado'
-        $state = State::where('state', 'bloqueado')->firstOrFail();
+        // Si está activo → suspender
+        if ($user->id_state == 1) {
+            $user->id_state = 2;
+            $message = 'Usuario suspendido correctamente';
+        }
+        // Si está suspendido → activar
+        else {
+            $user->id_state = 1;
+            $message = 'Usuario activado correctamente';
+        }
 
-        // Iniciar una transacción para garantizar integridad de los datos
-        DB::transaction(function () use ($user, $state, $id) {
-            // Actualizar el estado del usuario
-            $user->update([
-                'group_director' => null,  // Eliminar la relación de director de grupo
-                'id_state' => $state->id,  // Actualizar estado a 'bloqueado'
-            ]);
+        $user->save();
 
-            // Eliminar relaciones en las tablas pivote
-            Teachers_areas_group::where('id_teacher', $id)->delete();
-            Users_load_area::where('id_user_teacher', $id)->delete();
-            Users_load_group::where('id_user_teacher', $id)->delete();
-            Users_load_degree::where('id_user', $id)->delete();
-        });
-
-        // Redirigir con mensaje de éxito
-        return redirect()->back()->with('success', 'El usuario se ha eliminado exitosamente.');
+        return redirect()->back()->with('success', $message);
     }
 
 }

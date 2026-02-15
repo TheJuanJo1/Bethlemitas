@@ -16,24 +16,41 @@
 <div id="content" class="p-4 opacity-0 transition-opacity duration-500">
 
     <!-- Encabezado -->
-    <div class="sticky top-0 flex flex-col mb-4 lg:flex-row lg:items-center lg:justify-between">
+    <div class="sticky top-0 flex flex-col gap-3 mb-4 lg:flex-row lg:items-center lg:justify-between">
         <h2 class="text-xl font-semibold">Lista de usuarios</h2>
 
-        <div class="relative">
-            <form action="{{ route('index.users') }}" method="GET" class="flex">
-                <input
-                    type="search"
-                    name="search"
-                    class="py-2 pl-4 pr-3 border rounded-l-lg shadow-sm focus:outline-none"
-                    placeholder="Buscar..."
-                    value="{{ request('search') }}"
-                >
-                <button type="submit"
-                        class="px-4 py-2 font-bold bg-ligh-blue-600 text-white rounded-r-lg hover:bg-dark-blue-700">
-                    🔍
-                </button>
-            </form>
-        </div>
+        <form action="{{ route('index.users') }}" method="GET" class="flex gap-2">
+
+            {{-- Buscador --}}
+            <input
+                type="search"
+                name="search"
+                class="py-2 pl-4 pr-3 border rounded-lg shadow-sm focus:outline-none"
+                placeholder="Buscar..."
+                value="{{ request('search') }}"
+            >
+
+            {{-- Filtro Estado --}}
+            <select name="estado"
+                    class="px-3 py-2 border rounded-lg shadow-sm focus:outline-none">
+
+                <option value="todos"
+                    {{ request('estado') == 'todos' ? 'selected' : '' }}>
+                    Todos
+                </option>
+
+                <option value="activo"
+                    {{ request('estado') == 'activo' ? 'selected' : '' }}>
+                    Activos
+                </option>
+
+            </select>
+
+            <button type="submit"
+                    class="px-4 py-2 font-bold text-white bg-blue-600 rounded-lg hover:bg-blue-700">
+                🔍
+            </button>
+        </form>
     </div>
 
     <!-- Tabla -->
@@ -47,13 +64,15 @@
                     <th class="px-6 py-3 text-xs font-medium text-left uppercase">Grupos a cargo</th>
                     <th class="px-6 py-3 text-xs font-medium text-left uppercase">Director de grupo</th>
                     <th class="px-6 py-3 text-xs font-medium text-left uppercase">Rol</th>
+                    <th class="px-6 py-3 text-xs font-medium text-left uppercase">Estado</th>
                     <th class="px-6 py-3 text-xs font-medium text-left uppercase">Acciones</th>
                 </tr>
             </thead>
 
             <tbody class="divide-y">
                 @forelse ($users as $user)
-                    <tr class="hover:bg-gray-50 transition">
+
+                    <tr class="transition {{ $user->id_state == 2 ? 'bg-red-50 hover:bg-red-100' : 'hover:bg-gray-50' }}">
 
                         <!-- Nombre -->
                         <td class="px-6 py-4">
@@ -74,17 +93,14 @@
                             @endif
                         </td>
 
-                        <!-- Grupos a cargo -->
+                        <!-- Grupos -->
                         <td class="px-6 py-4">
-
-                            {{-- DOCENTE --}}
                             @if ($user->hasRole('docente') && $user->groups->isNotEmpty())
                                 {{ $user->groups->pluck('group')->implode(', ') }}
 
-                            {{-- PSICOORIENTADOR --}}
                             @elseif ($user->hasRole('psicoorientador') && $user->loadDegrees->isNotEmpty())
                                 {{ $user->loadDegrees
-                                    ->pluck('degree.degree')  {{-- ✅ CORREGIDO --}}
+                                    ->pluck('degree.degree')
                                     ->filter()
                                     ->implode(', ') }}
 
@@ -93,7 +109,7 @@
                             @endif
                         </td>
 
-                        <!-- Director de grupo -->
+                        <!-- Director -->
                         <td class="px-6 py-4">
                             {{ optional($user->director)->group ?? 'Sin Grupo' }}
                         </td>
@@ -106,6 +122,19 @@
                                     : $userRoles[$user->id] }}
                             @else
                                 Sin Rol
+                            @endif
+                        </td>
+
+                        <!-- Estado -->
+                        <td class="px-6 py-4">
+                            @if($user->id_state == 1)
+                                <span class="px-2 py-1 text-xs font-semibold text-green-700 bg-green-100 rounded">
+                                    Activo
+                                </span>
+                            @else
+                                <span class="px-2 py-1 text-xs font-semibold text-red-700 bg-red-100 rounded">
+                                    Bloqueado
+                                </span>
                             @endif
                         </td>
 
@@ -122,20 +151,28 @@
                                   method="POST"
                                   class="inline">
                                 @csrf
-                                @method('DELETE')
+                                @method('PUT')
 
-                                <button
-                                    type="submit"
-                                    class="text-red-600 hover:underline"
-                                    onclick="return confirm('¿Estás seguro de bloquear este usuario?')">
-                                    Bloquear
-                                </button>
+                                @if($user->id_state == 1)
+                                    <button type="submit"
+                                            class="text-red-600 hover:underline"
+                                            onclick="return confirm('¿Estás seguro de bloquear este usuario?')">
+                                        Bloquear
+                                    </button>
+                                @else
+                                    <button type="submit"
+                                            class="text-green-600 hover:underline"
+                                            onclick="return confirm('¿Deseas activar nuevamente este usuario?')">
+                                        Desbloquear
+                                    </button>
+                                @endif
                             </form>
                         </td>
                     </tr>
+
                 @empty
                     <tr>
-                        <td colspan="7" class="px-6 py-6 text-center text-gray-500">
+                        <td colspan="8" class="px-6 py-6 text-center text-gray-500">
                             No hay usuarios registrados
                         </td>
                     </tr>
@@ -149,7 +186,7 @@
     </div>
 </div>
 
-{{-- SCRIPT DEL LOADER --}}
+{{-- SCRIPT LOADER --}}
 <script>
     window.addEventListener('load', () => {
         const loader = document.getElementById('loader');
