@@ -11,14 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('carer', function (Blueprint $table) {
-            $table->id();
-            $table->string('relationship');
-            $table->string('education_level');
-            $table->string('phone');
-            $table->string('email', '50');
-            $table->timestamps();
-        });
+        //
     }
 
     /**
@@ -26,6 +19,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('carer');
+        //
     }
 };
