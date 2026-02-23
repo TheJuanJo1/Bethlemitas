@@ -24,7 +24,6 @@ class Users_student extends Model
         'phone',
         'email',
         'victim_conflict',
-        'id_carer',
         'id_degree',
         'id_group',
         'id_institution',
@@ -47,35 +46,12 @@ class Users_student extends Model
         return $this->belongsTo(Degree::class, 'id_degree');
     }
 
-    // Relacion con el modelo Cares
-    public function care()
-    {
-        return $this->belongsTo(Cares::class, 'id_carer');
-    }
-
     // Relación con el modelo Institution
     public function institution()
     {
         return $this->belongsTo(Institution::class, 'id_institution');
     }
 
-    // Relacion con el modelo Grupo Etnico
-    public function ethnicGroup()
-    {
-        return $this->belongsTo(Ethnic_group::class, 'id_ethnic_group');
-    }
-
-    // Relacion con el modelo Therapies
-    public function therapies()
-    {
-        return $this->belongsTo(Therapies::class, 'id_therapie');
-    }
-
-    // Obtiene el estudiante al que pertenece este registro
-    public function health()
-    {
-        return $this->hasMany(Health::class, 'id_health');
-    }
 
 
     // Relación con el modelo Group
