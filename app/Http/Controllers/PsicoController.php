@@ -292,3 +292,4 @@ class PsicoController extends Controller
         ));
     }
 }
+    
