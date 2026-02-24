@@ -55,23 +55,44 @@
                             <td class="px-4 py-2 border">
                                 {{ $student->name }} {{ $student->last_name }}
                             </td>
+
                             <td class="px-4 py-2 text-center border">
                                 {{ $student->number_documment }}
                             </td>
+
                             <td class="px-4 py-2 text-center border">
                                 {{ $student->degree->degree }}
                             </td>
+
                             <td class="px-4 py-2 text-center border">
                                 {{ $student->group->group ?? 'Sin grupo' }}
                             </td>
+
                             <td class="px-4 py-2 text-center border">
                                 {{ $student->age }}
                             </td>
-                            <td class="px-4 py-2 text-center border">
+
+                            <!-- 🔥 ACCIONES COMPLETAS -->
+                            <td class="px-4 py-2 text-center border space-x-2">
+
+                                <!-- Ver detalles -->
                                 <a href="{{ route('details.referral', $student->id) }}"
-                                   class="text-blue-500 hover:underline">
+                                   class="px-3 py-1 text-sm text-white bg-blue-500 rounded hover:bg-blue-600">
                                     Ver
                                 </a>
+
+                                <!-- Crear informe -->
+                                <a href="{{ route('report.student', $student->id) }}"
+                                   class="px-3 py-1 text-sm text-white bg-red-500 rounded hover:bg-red-600">
+                                    Informe
+                                </a>
+
+                                <!-- Ver historial -->
+                                <a href="{{ route('show.student.history', $student->id) }}"
+                                   class="px-3 py-1 text-sm text-white bg-yellow-500 rounded hover:bg-orange-600">
+                                    Historial
+                                </a>
+
                             </td>
                         </tr>
                     @empty

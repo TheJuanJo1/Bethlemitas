@@ -40,13 +40,6 @@ return new class extends Migration
             $table->foreign('id_state')->references('id')->on('states');
             //Periodo
             $table->unsignedBigInteger('activation_period')->nullable();
-            $table->foreign('activation_period')->references('id')->on('periods');
-            //Departamento
-            $table->unsignedBigInteger('id_deparment')->nullable();
-            $table->foreign('id_deparment')->references('id')->on('deparments');
-            //Municipio
-            $table->unsignedBigInteger('id_municipality')->nullable();
-            $table->foreign('id_municipality')->references('id')->on('municipalities')->onDelete('set null');
             //Institucion
             $table->unsignedBigInteger('id_institution')->nullable();
             $table->foreign('id_institution')->references('id')->on('institution')->onDelete('set null');

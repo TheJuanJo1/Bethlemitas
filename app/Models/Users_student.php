@@ -66,12 +66,6 @@ class Users_student extends Model
         return $this->hasMany(Referral::class, 'id_user_student');
     }
 
-    // Relacion con el modelo Deparment 
-    public function deparments()
-    {
-        return $this->belongsTo(Deparment::class, 'id_deparment');
-    }
-
     // Relación con el modelo State
     public function states()
     {
