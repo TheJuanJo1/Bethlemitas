@@ -118,6 +118,13 @@
                 </div>
             @endif
 
+            @if($errors->has('blocked'))
+                <div class="px-4 py-3 text-yellow-800 bg-yellow-100 border border-yellow-500 rounded animate-pulse">
+                    <strong>Cuenta suspendida:</strong>
+                    {{ $errors->first('blocked') }}
+                </div>
+            @endif
+
             <div>
                 <label class="block text-sm font-medium text-black">
                     Número de documento

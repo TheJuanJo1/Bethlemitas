@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session; 
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Hash;
+use App\Models\Users_teacher;
 
 class AuthController extends Controller
 {
@@ -24,15 +25,31 @@ class AuthController extends Controller
     }
 
     public function authenticate(Request $request) {
+
         $request->validate([
             'number_documment' => 'required',
             'password' => 'required',
         ]);
 
-        if (Auth::attempt($request->only('number_documment', 'password'))) {
+        // 🔥 SOLO permite login si id_state = 1 (activo)
+        if (Auth::attempt([
+            'number_documment' => $request->number_documment,
+            'password' => $request->password,
+            'id_state' => 1
+        ])) {
             return redirect()->route('dashboard');
         }
 
+        // 🔎 Verificar si existe pero está suspendido
+        $user = Users_teacher::where('number_documment', $request->number_documment)->first();
+
+        if ($user && $user->id_state != 1) {
+            return back()->withErrors([
+                'blocked' => 'Tu cuenta se encuentra suspendida. Comunícate con el Director.'
+            ]);
+        }
+
+        // ❌ Credenciales incorrectas
         return back()
             ->withErrors(['invalid_credentials' => 'Número de documento ó contraseña son incorrectas'])
             ->withInput();
