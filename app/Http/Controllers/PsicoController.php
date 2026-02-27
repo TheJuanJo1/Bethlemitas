@@ -291,5 +291,69 @@ class PsicoController extends Controller
             'reports'
         ));
     }
+
+    /* =====================================================
+ | DETALLES DEL HISTORIAL (REMISIÓN)
+ ===================================================== */
+
+public function history_details_referral(string $id)
+{
+    $referral = Referral::with('user_student')->findOrFail($id);
+
+    $student = $referral->user_student;
+
+    return view('psycho.detailsHistory.referral', compact('referral', 'student'));
+}
+
+public function update_history_details_referral(Request $request, string $id)
+{
+    $request->validate([
+        'reason'      => 'required|string',
+        'observation' => 'required|string',
+        'strategies'  => 'required|string',
+    ]);
+
+    $referral = Referral::findOrFail($id);
+
+    $referral->update([
+        'reason'      => $request->reason,
+        'observation' => $request->observation,
+        'strategies'  => $request->strategies,
+    ]);
+
+    return back()->with('success', 'Historial de remisión actualizado.');
+}
+
+
+/* =====================================================
+ | DETALLES DEL HISTORIAL (INFORME PSICOLÓGICO)
+ ===================================================== */
+
+public function history_details_report(string $id)
+{
+    $report = Psychoorientation::findOrFail($id);
+    $student = $report->student; // relación
+
+    return view('psycho.detailsHistory.report', compact('report', 'student'));
+}
+
+public function update_history_details_report(Request $request, string $id)
+{
+    $request->validate([
+        'title_report'   => 'required|string',
+        'reason_inquiry' => 'required|string',
+        'recomendations' => 'required|string',
+    ]);
+
+    $report = Psychoorientation::findOrFail($id);
+
+    $report->update([
+        'title_report'   => $request->title_report,
+        'reason_inquiry' => $request->reason_inquiry,
+        'recomendations' => $request->recomendations,
+    ]);
+
+    return back()->with('success', 'Informe actualizado correctamente.');
+}
 }
     

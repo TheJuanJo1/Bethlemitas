@@ -161,8 +161,9 @@
 
             <button
                 type="submit"
+                id="loginButton"
                 class="w-full rounded-md bg-[#657eb471] px-3 py-1.5
-                       text-sm font-semibold text-black hover:bg-[#323d56be]">
+                    text-sm font-semibold text-black hover:bg-[#323d56be]">
                 Ingresar
             </button>
         </form>
@@ -171,28 +172,60 @@
 
 {{-- SCRIPT --}}
 <script>
-    let progress = 0;
-    const bar = document.getElementById('progressBar');
     const splash = document.getElementById('splash');
     const login = document.getElementById('loginContent');
+    const bar = document.getElementById('progressBar');
+    const form = document.getElementById('loginForm');
+    const button = document.getElementById('loginButton');
 
-    const interval = setInterval(() => {
-        progress += Math.random() * 8; // avance irregular natural
-        if (progress > 100) progress = 100;
-        bar.style.width = progress + '%';
+    let progress = 0;
 
-        if (progress >= 100) {
-            clearInterval(interval);
+    function startSplash(callback = null) {
+        splash.classList.remove('hidden');
+        splash.classList.remove('splash-hide');
+        progress = 0;
+        bar.style.width = "0%";
 
-            splash.classList.add('splash-hide');
+        const interval = setInterval(() => {
+            progress += Math.random() * 12;
 
-            setTimeout(() => {
-                splash.classList.add('hidden');
-                login.classList.remove('hidden');
-                login.classList.add('login-show');
-            }, 600);
-        }
-    }, 120);
+            if (progress > 100) progress = 100;
+            bar.style.width = progress + "%";
+
+            if (progress >= 100) {
+                clearInterval(interval);
+
+                if (callback) {
+                    callback();
+                } else {
+                    splash.classList.add('splash-hide');
+                    setTimeout(() => {
+                        splash.classList.add('hidden');
+                        login.classList.remove('hidden');
+                        login.classList.add('login-show');
+                    }, 600);
+                }
+            }
+        }, 100);
+    }
+
+    // Splash inicial (cuando carga login)
+    startSplash();
+
+    // Splash al enviar formulario
+    form.addEventListener('submit', function (e) {
+        button.disabled = true;
+        button.innerText = "Ingresando...";
+
+        splash.classList.remove('hidden');
+        splash.classList.remove('splash-hide');
+        login.classList.add('hidden');
+
+        // Pequeña animación antes de enviar
+        setTimeout(() => {
+            form.submit();
+        }, 800);
+    });
 </script>
 
 @endsection

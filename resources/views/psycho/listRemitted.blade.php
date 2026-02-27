@@ -42,7 +42,7 @@
                             <th class="px-4 py-2 border">Grado</th>
                             <th class="px-4 py-2 border">Grupo</th>
                             <th class="px-4 py-2 border">Edad</th>
-                            <th class="px-4 py-2 border">Docente que remite</th>
+                            <th class="px-4 py-2 border">Docente/Psicorientador que remite</th>
                             <th class="px-4 py-2 border">Fecha de remisión</th>
                             <th class="px-4 py-2 border">Detalles</th>
                             <th class="px-4 py-2 border">Historial</th>

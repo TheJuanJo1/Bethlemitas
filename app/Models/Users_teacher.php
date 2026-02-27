@@ -4,11 +4,12 @@ namespace App\Models;
 
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Notifications\Notifiable; // 👈 IMPORTANTE
 use Spatie\Permission\Traits\HasRoles;
 
 class Users_teacher extends Authenticatable
 {
-    use HasFactory, HasRoles;
+    use HasFactory, HasRoles, Notifiable; // 👈 AGREGADO
 
     protected $table = 'users_teachers';
 
@@ -72,7 +73,7 @@ class Users_teacher extends Authenticatable
         )->withPivot('id_area');
     }
 
-    // Relación completa a la tabla pivote (si se necesita)
+    // Relación completa a la tabla pivote
     public function areasGroups()
     {
         return $this->hasMany(Teachers_areas_groups::class, 'id_teacher');
@@ -88,7 +89,7 @@ class Users_teacher extends Authenticatable
         return $this->hasMany(Users_load_degree::class, 'id_user');
     }
 
-    // Relación LIMPIA a grados (recomendada)
+    // Relación limpia a grados
     public function degrees()
     {
         return $this->belongsToMany(
@@ -103,7 +104,7 @@ class Users_teacher extends Authenticatable
      |  SCOPES (FILTROS REUTILIZABLES)
      ====================================================== */
 
-    // Usuarios activos (docentes, psicoorientadores, coordinador)
+    // Usuarios activos
     public function scopeActivos($query)
     {
         return $query->where('id_state', 1);
@@ -126,5 +127,4 @@ class Users_teacher extends Authenticatable
             ]);
         });
     }
-
 }
