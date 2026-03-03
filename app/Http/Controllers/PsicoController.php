@@ -13,6 +13,7 @@ use App\Models\Users_teacher;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class PsicoController extends Controller
 {
@@ -211,63 +212,84 @@ class PsicoController extends Controller
         ));
     }
 
-    public function store_report_student(Request $request, string $id)
-    {
-        $request->validate([
-            'number_documment' => 'required|digits_between:1,20|unique:users_students,number_documment,' . $id,
-            'name'             => 'required|string',
-            'last_name'        => 'required|string',
-            'degree'           => 'required|exists:degrees,id',
-            'group'            => 'required|exists:groups,id',
-            'age'              => 'required|integer',
-            'state'            => 'required|exists:states,id',
-            'title_report'     => 'required|string',
-            'reason_inquiry'   => 'required|string',
-            'recomendations'   => 'required|string',
+   public function store_report_student(Request $request, string $id)
+{
+    $request->validate([
+        'number_documment' => 'required|digits_between:1,20|unique:users_students,number_documment,' . $id,
+        'name'             => 'required|string',
+        'last_name'        => 'required|string',
+        'degree'           => 'required|exists:degrees,id',
+        'group'            => 'required|exists:groups,id',
+        'age'              => 'required|integer',
+        'state'            => 'required|exists:states,id',
+        'title_report'     => 'required|string',
+        'reason_inquiry'   => 'required|string',
+        'recomendations'   => 'required|string',
+        'annex_one'        => 'nullable|mimes:pdf|max:5120',
+    ]);
+
+    DB::beginTransaction();
+
+    try {
+
+        $student = Users_student::findOrFail($id);
+
+        $student->update([
+            'number_documment' => $request->number_documment,
+            'name'             => $request->name,
+            'last_name'        => $request->last_name,
+            'id_degree'        => $request->degree,
+            'id_group'         => $request->group,
+            'age'              => $request->age,
+            'id_state'         => $request->state,
         ]);
 
-        DB::beginTransaction();
+        $group = Group::findOrFail($request->group);
+        $director = Users_teacher::where('group_director', $request->group)->first();
 
-        try {
-            $student = Users_student::findOrFail($id);
+        $annexPath = null;
 
-            $student->update([
-                'number_documment' => $request->number_documment,
-                'name'             => $request->name,
-                'last_name'        => $request->last_name,
-                'id_degree'        => $request->degree,
-                'id_group'         => $request->group,
-                'age'              => $request->age,
-                'id_state'         => $request->state,
-            ]);
+if ($request->hasFile('annex_one')) {
 
-            $group = Group::findOrFail($request->group);
-            $director = Users_teacher::where('group_director', $request->group)->first();
+    $file = $request->file('annex_one');
 
-            Psychoorientation::create([
-                'psychologist_writes'    => Auth::id(),
-                'id_user_student'        => $id,
-                'age_student'            => $request->age,
-                'group_student'          => $group->group,
-                'director_group_student' => $director
-                    ? $director->name . ' ' . $director->last_name
-                    : 'No asignado',
-                'title_report'           => $request->title_report,
-                'reason_inquiry'         => $request->reason_inquiry,
-                'recomendations'         => $request->recomendations,
-            ]);
+    // Usa el $id que ya recibes en el método
+    $studentId = $id;
 
-            DB::commit();
+    $fileName = 'student_' . $studentId . '_' . now()->format('Ymd_His') . '.pdf';
 
-            return redirect()
-                ->route('index.student.remitted.psico')
-                ->with('success', 'Informe guardado correctamente.');
+    $annexPath = $file->storeAs(
+        'annexes/student_' . $studentId,
+        $fileName,
+        'public'
+    );
+}
 
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return back()->with('error', $e->getMessage());
-        }
+        Psychoorientation::create([
+            'psychologist_writes'    => Auth::id(),
+            'id_user_student'        => $id,
+            'age_student'            => $request->age,
+            'group_student'          => $group->group,
+            'director_group_student' => $director
+                ? $director->name . ' ' . $director->last_name
+                : 'No asignado',
+            'title_report'           => $request->title_report,
+            'reason_inquiry'         => $request->reason_inquiry,
+            'recomendations'         => $request->recomendations,
+            'annex_one'              => $annexPath,
+        ]);
+
+        DB::commit();
+
+        return redirect()
+            ->route('index.student.remitted.psico')
+            ->with('success', 'Informe guardado correctamente.');
+
+    } catch (\Exception $e) {
+        DB::rollBack();
+        return back()->with('error', $e->getMessage());
     }
+}
 
     /* =====================================================
      | HISTORIAL DEL ESTUDIANTE
@@ -332,7 +354,7 @@ public function update_history_details_referral(Request $request, string $id)
 public function history_details_report(string $id)
 {
     $report = Psychoorientation::findOrFail($id);
-    $student = $report->student; // relación
+    $student = $report->user_student; // relación
 
     return view('psycho.detailsHistory.report', compact('report', 'student'));
 }
@@ -343,17 +365,54 @@ public function update_history_details_report(Request $request, string $id)
         'title_report'   => 'required|string',
         'reason_inquiry' => 'required|string',
         'recomendations' => 'required|string',
+        'annex_one'      => 'nullable|mimes:pdf|max:5120',
     ]);
 
     $report = Psychoorientation::findOrFail($id);
 
-    $report->update([
-        'title_report'   => $request->title_report,
-        'reason_inquiry' => $request->reason_inquiry,
-        'recomendations' => $request->recomendations,
-    ]);
+    // Actualizar campos normales
+    $report->title_report   = $request->title_report;
+    $report->reason_inquiry = $request->reason_inquiry;
+    $report->recomendations = $request->recomendations;
+
+    // Si hay archivo nuevo
+    if ($request->hasFile('annex_one')) {
+
+        // Eliminar archivo anterior
+        if ($report->annex_one && Storage::disk('public')->exists($report->annex_one)) {
+            Storage::disk('public')->delete($report->annex_one);
+        }
+
+        $file = $request->file('annex_one');
+
+        $fileName = 'student_' . $report->id_user_student . '_' . now()->format('Ymd_His') . '.pdf';
+
+        $annexPath = $file->storeAs(
+            'annexes/student_' . $report->id_user_student,
+            $fileName,
+            'public'
+        );
+
+        $report->annex_one = $annexPath;
+    }
+
+    $report->save(); // 🔥 IMPORTANTE
 
     return back()->with('success', 'Informe actualizado correctamente.');
+}
+
+public function delete_annex($id)
+{
+    $report = Psychoorientation::findOrFail($id);
+
+    if ($report->annex_one && Storage::disk('public')->exists($report->annex_one)) {
+        Storage::disk('public')->delete($report->annex_one);
+    }
+
+    $report->annex_one = null;
+    $report->save();
+
+    return back()->with('success', 'Anexo eliminado correctamente.');
 }
 }
     

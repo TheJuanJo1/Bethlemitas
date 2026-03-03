@@ -15,8 +15,11 @@ class Referral extends Model
         'reason',
         'observation',
         'strategies',
+        'annex_one',
         'course',
     ];
+
+    
 
     //Relacion con la tabla de estudiantes
     public function user_student() {

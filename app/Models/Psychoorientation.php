@@ -13,17 +13,16 @@ class Psychoorientation extends Model
      * Campos permitidos para asignación masiva
      */
     protected $fillable = [
-        'psychologist_writes',
-        'id_user_student',
-        'age_student',
-        'group_student',
-        'director_group_student',
-        'title_report',
-        'reason_inquiry',
-        'recomendations',
-        'date',
+    'psychologist_writes',
+    'id_user_student',
+    'age_student',
+    'group_student',
+    'director_group_student',
+    'title_report',
+    'reason_inquiry',
+    'recomendations',
+    'annex_one', // 👈 ESTE ES CLAVE
     ];
-
     /**
      * Relación con la tabla de docentes
      * Psicoorientadora que escribe el informe

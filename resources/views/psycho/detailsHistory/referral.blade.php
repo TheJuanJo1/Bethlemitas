@@ -9,6 +9,9 @@
     @section('content')
 
         <div class="p-8 mx-auto bg-[#D5DBDB]">
+            <button onclick="history.back()" style="background: none; border: none; cursor: pointer;">
+            <i class="bi bi-arrow-left" style="font-size: 2rem;"></i>
+            </button>
             <h1 class="mb-6 text-2xl font-bold text-gray-700">Motivo de remisión del estudiante</h1>
             <form action="{{ route('update.history.details.referral', $referral->id ) }}" method="POST">
                 @csrf
@@ -152,16 +155,27 @@
                         <p class="mt-2 text-sm text-red-600 dark:text-red-500"><span class="font-medium">¡Error! Campo vacío.</span></p>
                     @enderror
                 </div>
-            
-                <!-- Botón de editar -->
-                <div class="text-left">
-                    <button
-                    type="submit"
-                    class="px-4 py-2 font-semibold text-white bg-blue-500 rounded-md shadow-sm hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-                    >
-                    Editar remisión
-                    </button>
+                        {{-- ================= ANEXO PDF ================= --}}
+                <div class="mb-6 p-4 bg-white rounded shadow">
+
+                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                        📎 Anexo PDF
+                    </label>
+
+                    @if($referral->annex_one)
+                        <a href="{{ asset('storage/' . $referral->annex_one) }}"
+                        target="_blank"
+                        class="text-blue-600 underline hover:text-blue-800">
+                            Ver anexo
+                        </a>
+                    @else
+                        <p class="text-gray-500">
+                            No tiene anexo adjunto.
+                        </p>
+                    @endif
+
                 </div>
+                
             </form>
         </div>
 
