@@ -40,3 +40,4 @@ class Psychoorientation extends Model
         return $this->belongsTo(Users_student::class, 'id_user_student');
     }
 }
+//
