@@ -249,21 +249,23 @@ class PsicoController extends Controller
 
         $annexPath = null;
 
-if ($request->hasFile('annex_one')) {
+   $annexPath = null;
 
-    $file = $request->file('annex_one');
+    if ($request->hasFile('annex_one')) {
 
-    // Usa el $id que ya recibes en el método
-    $studentId = $id;
+        $file = $request->file('annex_one');
 
-    $fileName = 'student_' . $studentId . '_' . now()->format('Ymd_His') . '.pdf';
+        // Usa el $id que ya viene en el método
+        $studentId = $id;
 
-    $annexPath = $file->storeAs(
-        'annexes/student_' . $studentId,
-        $fileName,
-        'public'
-    );
-}
+        $fileName = 'student_' . $studentId . '_' . now()->format('Ymd_His') . '.pdf';
+
+        $annexPath = $file->storeAs(
+            'annexes/student_' . $studentId,
+            $fileName,
+            'public'
+        );
+    }
 
         Psychoorientation::create([
             'psychologist_writes'    => Auth::id(),
