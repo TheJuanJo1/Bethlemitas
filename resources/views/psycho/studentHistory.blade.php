@@ -7,6 +7,9 @@
 @section('title', 'Historial')
 
 @section('content')
+    <button onclick="history.back()" style="background: none; border: none; cursor: pointer;">
+  <i class="bi bi-arrow-left" style="font-size: 2rem;"></i>
+</button>   
     <h1 class="p-2 text-3xl font-bold text-gray-700">{{ $student->name }} {{ $student->last_name }}</h1>
     <br>
     {{-- Tabla de remisiones --}}

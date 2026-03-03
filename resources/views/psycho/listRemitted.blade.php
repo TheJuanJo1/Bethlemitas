@@ -33,46 +33,77 @@
                     </form>
                 </div>
             </div>
-            <div class="overflow-x-auto">
-                <table class="w-full border-collapse table-auto">
-                    <thead>
-                        <tr class="text-sm text-gray-600 uppercase bg-gray-200">
-                            <th class="px-4 py-2 border">Nombre completo</th>
-                            <th class="px-4 py-2 border">Número de documento</th>
-                            <th class="px-4 py-2 border">Grado</th>
-                            <th class="px-4 py-2 border">Grupo</th>
-                            <th class="px-4 py-2 border">Edad</th>
-                            <th class="px-4 py-2 border">Docente/Psicorientador que remite</th>
-                            <th class="px-4 py-2 border">Fecha de remisión</th>
-                            <th class="px-4 py-2 border">Detalles</th>
-                            <th class="px-4 py-2 border">Historial</th>
-                            <th class="px-4 py-2 border">Acciones</th>
+           <!-- TABLA -->
+        <div class="overflow-x-auto">
+            <table class="w-full border-collapse table-auto">
+                <thead>
+                    <tr class="text-sm text-gray-600 uppercase bg-gray-200">
+                        <th class="px-4 py-2 border">Nombre completo</th>
+                        <th class="px-4 py-2 border">Documento</th>
+                        <th class="px-4 py-2 border">Grado</th>
+                        <th class="px-4 py-2 border">Grupo</th>
+                        <th class="px-4 py-2 border">Edad</th>
+                        <th class="px-4 py-2 border">Acciones</th>
+                    </tr>
+                </thead>
+
+                <tbody class="text-gray-700">
+                    @forelse ($students as $student)
+                        <tr class="hover:bg-gray-100">
+                            <td class="px-4 py-2 border">
+                                {{ $student->name }} {{ $student->last_name }}
+                            </td>
+
+                            <td class="px-4 py-2 text-center border">
+                                {{ $student->number_documment }}
+                            </td>
+
+                            <td class="px-4 py-2 text-center border">
+                                {{ $student->degree->degree }}
+                            </td>
+
+                            <td class="px-4 py-2 text-center border">
+                                {{ $student->group->group ?? 'Sin grupo' }}
+                            </td>
+
+                            <td class="px-4 py-2 text-center border">
+                                {{ $student->age }}
+                            </td>
+
+                            <!-- 🔥 ACCIONES COMPLETAS -->
+                            <td class="px-4 py-2 text-center border space-x-2">
+
+                                <!-- Ver detalles -->
+                                <a href="{{ route('details.referral', $student->id) }}"
+                                   class="px-3 py-1 text-sm text-white bg-blue-500 rounded hover:bg-blue-600">
+                                    Ver
+                                </a>
+
+                                <!-- Crear informe -->
+                                <a href="{{ route('report.student', $student->id) }}"
+                                   class="px-3 py-1 text-sm text-white bg-red-500 rounded hover:bg-red-600">
+                                    Informe
+                                </a>
+
+                                <!-- Ver historial -->
+                                <a href="{{ route('show.student.history', $student->id) }}"
+                                   class="px-3 py-1 text-sm text-white bg-yellow-500 rounded hover:bg-orange-600">
+                                    Historial
+                                </a>
+
+                            </td>
                         </tr>
-                    </thead>
-                    <tbody class="text-gray-700">
-                        @foreach ($students as $student)
-                            <tr class="hover:bg-gray-100">
-                                    <td class="px-4 py-2 border">{{ $student->name }} {{ $student->last_name }}</td>
-                                    <td class="px-4 py-2 text-center border">{{ $student->number_documment }}</td>
-                                    <td class="px-4 py-2 text-center border">{{ $student->degree->degree }}</td>
-                                    <td class="px-4 py-2 text-center border">{{ $student->group->group }}</td>
-                                    <td class="px-4 py-2 text-center border">{{ $student->age }}</td>
-                                    <td class="px-4 py-2 text-center border">{{ $student->teacher->name }} {{ $student->teacher->last_name }}</td>
-                                    <td class="px-4 py-2 text-center border">{{ $student->latestReferral->created_at->format('Y-m-d') }}</td>
-                                    <td class="px-4 py-2 text-center border">
-                                        <a href="{{ route('details.referral', $student->id) }}" class="text-blue-500 hover:underline">Ver +</a>
-                                    </td>
-                                    <td class="px-4 py-2 text-center border">
-                                        <a href="{{ route('show.student.history', $student->id) }}" class="text-blue-500 hover:underline">Ver historial</a>
-                                    </td>
-                                    <td class="px-4 py-2 text-center border">
-                                        <a href="{{ route('report.student', $student->id) }}" class="text-blue-500 hover:underline">Añadir informe</a>
-                                    </td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            </div>
+                    @empty
+                        <tr>
+                            <td colspan="6" class="text-center py-4 text-gray-500">
+                                No hay estudiantes para mostrar
+                            </td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+
         </div>
     </div>
     {{ $students->links() }} <!-- Para la paginación -->
