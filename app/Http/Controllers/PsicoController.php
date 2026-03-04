@@ -266,6 +266,7 @@ class PsicoController extends Controller
             'public'
         );
     }
+        
 
         Psychoorientation::create([
             'psychologist_writes'    => Auth::id(),
@@ -326,8 +327,13 @@ public function history_details_referral(string $id)
 
     $student = $referral->user_student;
 
-    return view('psycho.detailsHistory.referral', compact('referral', 'student'));
-}
+    // 🔥 buscar informe asociado
+    $report = Psychoorientation::where('id_user_student', $student->id)
+                ->latest()
+                ->first();
+
+    return view('psycho.detailsHistory.referral', compact('referral', 'student', 'report'));
+}   
 
 public function update_history_details_referral(Request $request, string $id)
 {

@@ -162,11 +162,11 @@
                         📎 Anexo PDF
                     </label>
 
-                    @if($referral->annex_one)
-                        <a href="{{ asset('storage/' . $referral->annex_one) }}"
+                    @if(isset($report) && $report->annex_one)
+                        <a href="{{ asset('storage/' . $report->annex_one) }}"
                         target="_blank"
                         class="text-blue-600 underline hover:text-blue-800">
-                            Ver anexo
+                            Ver anexo del informe psicológico
                         </a>
                     @else
                         <p class="text-gray-500">
