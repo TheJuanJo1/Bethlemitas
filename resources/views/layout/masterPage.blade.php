@@ -279,11 +279,6 @@
                                           <span class="mx-3">• En PIAR</span>
                                           </a>
 
-                                          <a href="{{ route('psico.students.dua') }}"
-                                          class="flex items-center px-3 mt-2 hover:bg-[#95A5A6] hover:rounded-lg">
-                                          <span class="mx-3">• En DUA</span>
-                                          </a>
-
                                           <a href="{{ route('psico.students.active') }}"
                                           class="flex items-center px-3 mt-2 hover:bg-[#95A5A6] hover:rounded-lg">
                                           <span class="mx-3">• Activos</span>

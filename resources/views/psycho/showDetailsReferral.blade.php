@@ -151,17 +151,19 @@
             <label class="block text-sm font-medium text-gray-700 mb-2">
                 📎 Anexo PDF
             </label>
+            @if($report && $report->annex_one)
 
-            @if($info_referral && $info_referral->annex_one)
-                <a href="{{ asset('storage/' . $info_referral->annex_one) }}"
-                target="_blank"
-                class="text-blue-600 underline hover:text-blue-800">
-                    Ver anexo
-                </a>
+            <a href="{{ asset('storage/'.$report->annex_one) }}"
+            target="_blank"
+            class="text-blue-600 underline hover:text-blue-800">
+
+            Ver Anexo del Informe Psicológico
+            </a>
+
             @else
-                <p class="text-gray-500">
-                    No tiene anexo adjunto.
-                </p>
+
+            <p>No tiene anexo adjunto.</p>
+
             @endif
 
         </div>

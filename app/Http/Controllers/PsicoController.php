@@ -44,6 +44,9 @@ class PsicoController extends Controller
         }
 
         $students = $query
+            ->withExists(['psychoorientations as has_annex' => function ($q) {
+                $q->whereNotNull('annex_one');
+            }])
             ->orderBy('name')
             ->orderBy('last_name')
             ->paginate(15);
@@ -68,15 +71,21 @@ class PsicoController extends Controller
             ->pluck('id_degree')
             ->toArray();
 
-        $query = Users_student::whereIn('id_degree', $load_degree);
+        $query = Users_student::whereIn('id_degree', $load_degree)
+            ->with(['degree','group'])
+            ->withCount([
+                'psychoorientations as has_annex' => function ($query) {
+                    $query->whereNotNull('annex_one');
+                }
+            ]);
 
         if ($request->filled('search')) {
             $search = $request->search;
             $query->where(function ($q) use ($search) {
                 $q->where('name', 'LIKE', "%$search%")
-                  ->orWhere('last_name', 'LIKE', "%$search%")
-                  ->orWhere('number_documment', 'LIKE', "%$search%")
-                  ->orWhereRaw("CONCAT(name,' ',last_name) LIKE ?", ["%$search%"]);
+                ->orWhere('last_name', 'LIKE', "%$search%")
+                ->orWhere('number_documment', 'LIKE', "%$search%")
+                ->orWhereRaw("CONCAT(name,' ',last_name) LIKE ?", ["%$search%"]);
             });
         }
 
@@ -136,21 +145,27 @@ class PsicoController extends Controller
      | DETALLES DE REMISIÓN
      ===================================================== */
 
-    public function detailsReferral(string $id)
+    public function detailsReferral($id)
     {
-        $groups  = Group::orderByRaw('CAST(`group` AS UNSIGNED)')->get();
-        $degrees = Degree::orderByRaw('CAST(`degree` AS UNSIGNED)')->get();
-
         $info_student = Users_student::findOrFail($id);
+
         $info_referral = Referral::where('id_user_student', $id)
             ->latest()
             ->first();
 
+        $report = Psychoorientation::where('id_user_student', $id)
+            ->latest()
+            ->first();
+
+        $degrees = Degree::all();
+        $groups = Group::all();
+
         return view('psycho.showDetailsReferral', compact(
-            'groups',
-            'degrees',
             'info_student',
-            'info_referral'
+            'info_referral',
+            'degrees',
+            'groups',
+            'report'
         ));
     }
 
@@ -200,7 +215,7 @@ class PsicoController extends Controller
     {
         $groups  = Group::orderByRaw('CAST(`group` AS UNSIGNED)')->get();
         $degrees = Degree::orderByRaw('CAST(`degree` AS UNSIGNED)')->get();
-        $states  = State::whereIn('state', ['activo', 'en PIAR', 'en DUA'])->get();
+        $states  = State::whereIn('state', ['Activo', 'en PIAR' ])->get();
 
         $info_student = Users_student::findOrFail($id);
 
@@ -321,18 +336,22 @@ class PsicoController extends Controller
  | DETALLES DEL HISTORIAL (REMISIÓN)
  ===================================================== */
 
-public function history_details_referral(string $id)
+public function history_details_referral($id)
 {
     $referral = Referral::with('user_student')->findOrFail($id);
 
     $student = $referral->user_student;
 
-    // 🔥 buscar informe asociado
+    // 🔹 buscar informe del estudiante
     $report = Psychoorientation::where('id_user_student', $student->id)
-                ->latest()
-                ->first();
+        ->latest()
+        ->first();
 
-    return view('psycho.detailsHistory.referral', compact('referral', 'student', 'report'));
+    return view('psycho.detailsHistory.referral', compact(
+        'referral',
+        'student',
+        'report'
+    ));
 }   
 
 public function update_history_details_referral(Request $request, string $id)
@@ -359,10 +378,23 @@ public function update_history_details_referral(Request $request, string $id)
  | DETALLES DEL HISTORIAL (INFORME PSICOLÓGICO)
  ===================================================== */
 
+
+public function current_report_student($id)
+{
+    $student = Users_student::findOrFail($id);
+
+    // 🔎 buscar el último informe del estudiante
+    $report = Psychoorientation::where('id_user_student', $id)
+        ->latest()
+        ->first();
+
+    return view('psycho.detailsReportStudent', compact('student', 'report'));
+}
 public function history_details_report(string $id)
 {
-    $report = Psychoorientation::findOrFail($id);
-    $student = $report->user_student; // relación
+    $report = Psychoorientation::with('user_student')->findOrFail($id);
+
+    $student = $report->user_student;
 
     return view('psycho.detailsHistory.report', compact('report', 'student'));
 }
