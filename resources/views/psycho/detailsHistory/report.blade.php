@@ -108,20 +108,27 @@
     
 
     {{-- ================= ANEXO PDF ================= --}}
-    <div class="mb-6 p-4 bg-white rounded shadow">
+   <div class="mb-6 p-4 bg-white rounded shadow">
 
         <label class="block text-sm font-medium text-gray-700 mb-2">
             📎 Anexo PDF
         </label>
 
-        @if($report->annex_one)
-            <a href="{{ asset('storage/' . $report->annex_one) }}"
-               target="_blank"
-               class="text-blue-600 underline hover:text-blue-800">
-                Ver anexo
+        @if(!empty($report->annex_one))
+
+            <a href="{{ asset('storage/'.$report->annex_one) }}"
+            target="_blank"
+            class="text-blue-600 underline hover:text-blue-800">
+
+            Ver Anexo del Informe Psicológico
             </a>
-        @else
-            <p class="text-gray-500">No tiene anexo adjunto.</p>
+
+            @else
+
+            <p class="text-gray-500">
+            No tiene anexo adjunto.
+            </p>
+
         @endif
 
     </div>

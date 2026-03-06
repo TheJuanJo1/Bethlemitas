@@ -166,7 +166,7 @@
                         <a href="{{ asset('storage/' . $report->annex_one) }}"
                         target="_blank"
                         class="text-blue-600 underline hover:text-blue-800">
-                            Ver anexo del informe psicológico
+                            Ver Anexo del Informe Psicológico
                         </a>
                     @else
                         <p class="text-gray-500">

@@ -45,6 +45,7 @@
                         <th class="px-4 py-2 border">Grado</th>
                         <th class="px-4 py-2 border">Grupo</th>
                         <th class="px-4 py-2 border">Edad</th>
+                        <th class="px-4 py-2 border">Anexo</th>
                         <th class="px-4 py-2 border">Acciones</th>
                     </tr>
                 </thead>
@@ -70,6 +71,15 @@
 
                             <td class="px-4 py-2 text-center border">
                                 {{ $student->age }}
+                            </td>
+
+                            <td class="px-4 py-2 text-center border">
+
+                                @if($student->has_annex > 0)
+                                    <i class="bi bi-check-circle-fill text-green-500 text-xl"></i>
+                                @else
+                                    <i class="bi bi-x-circle-fill text-red-500 text-xl"></i>
+                                @endif
                             </td>
 
                             <!-- 🔥 ACCIONES COMPLETAS -->

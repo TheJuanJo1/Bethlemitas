@@ -46,12 +46,10 @@ class Users_student extends Model
         return $this->belongsTo(Degree::class, 'id_degree');
     }
 
-    // Relación con el modelo Institution
-    public function institution()
+   public function psychoorientations()
     {
-        return $this->belongsTo(Institution::class, 'id_institution');
+        return $this->hasMany(Psychoorientation::class, 'id_user_student');
     }
-
 
 
     // Relación con el modelo Group

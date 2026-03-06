@@ -175,6 +175,9 @@ Route::middleware([PreventBackHistoryMiddleware::class])->group(function () {
 
             Route::put('/edit/details/referral/{id}', [PsicoController::class, 'update_details_referral'])
                 ->name('update.details.referral');
+                
+            Route::get('/psico/student/{id}/report',[PsicoController::class, 'current_report_student']
+                )->name('psico.student.report');
 
             Route::get('/report/student/{id}', [PsicoController::class, 'report_student'])
                 ->name('report.student');
