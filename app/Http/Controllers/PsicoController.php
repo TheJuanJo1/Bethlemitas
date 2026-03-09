@@ -262,40 +262,66 @@ class PsicoController extends Controller
         $group = Group::findOrFail($request->group);
         $director = Users_teacher::where('group_director', $request->group)->first();
 
+        $year = now()->year;
+
+        $report = Psychoorientation::where('id_user_student', $id)
+            ->where('report_year', $year)
+            ->first();
+
         $annexPath = null;
 
-   $annexPath = null;
+        if ($request->hasFile('annex_one')) {
 
-    if ($request->hasFile('annex_one')) {
+            $file = $request->file('annex_one');
 
-        $file = $request->file('annex_one');
+            $fileName = 'student_' . $id . '_' . now()->format('Ymd_His') . '.pdf';
 
-        // Usa el $id que ya viene en el método
-        $studentId = $id;
+            $annexPath = $file->storeAs(
+                'annexes/student_' . $id,
+                $fileName,
+                'public'
+            );
+        }
 
-        $fileName = 'student_' . $studentId . '_' . now()->format('Ymd_His') . '.pdf';
+        if ($report) {
 
-        $annexPath = $file->storeAs(
-            'annexes/student_' . $studentId,
-            $fileName,
-            'public'
-        );
-    }
-        
+            // 🔥 Si existe informe del año → actualizar
 
-        Psychoorientation::create([
-            'psychologist_writes'    => Auth::id(),
-            'id_user_student'        => $id,
-            'age_student'            => $request->age,
-            'group_student'          => $group->group,
-            'director_group_student' => $director
-                ? $director->name . ' ' . $director->last_name
-                : 'No asignado',
-            'title_report'           => $request->title_report,
-            'reason_inquiry'         => $request->reason_inquiry,
-            'recomendations'         => $request->recomendations,
-            'annex_one'              => $annexPath,
-        ]);
+            if ($annexPath && $report->annex_one && Storage::disk('public')->exists($report->annex_one)) {
+                Storage::disk('public')->delete($report->annex_one);
+            }
+
+            $report->update([
+                'age_student'            => $request->age,
+                'group_student'          => $group->group,
+                'director_group_student' => $director
+                    ? $director->name . ' ' . $director->last_name
+                    : 'No asignado',
+                'title_report'           => $request->title_report,
+                'reason_inquiry'         => $request->reason_inquiry,
+                'recomendations'         => $request->recomendations,
+                'annex_one'              => $annexPath ?? $report->annex_one,
+            ]);
+
+        } else {
+
+            // 🔥 Si no existe informe del año → crear
+
+            Psychoorientation::create([
+                'psychologist_writes'    => Auth::id(),
+                'id_user_student'        => $id,
+                'report_year'            => $year,
+                'age_student'            => $request->age,
+                'group_student'          => $group->group,
+                'director_group_student' => $director
+                    ? $director->name . ' ' . $director->last_name
+                    : 'No asignado',
+                'title_report'           => $request->title_report,
+                'reason_inquiry'         => $request->reason_inquiry,
+                'recomendations'         => $request->recomendations,
+                'annex_one'              => $annexPath,
+            ]);
+        }
 
         DB::commit();
 
@@ -304,11 +330,12 @@ class PsicoController extends Controller
             ->with('success', 'Informe guardado correctamente.');
 
     } catch (\Exception $e) {
+
         DB::rollBack();
+
         return back()->with('error', $e->getMessage());
     }
 }
-
     /* =====================================================
      | HISTORIAL DEL ESTUDIANTE
      ===================================================== */

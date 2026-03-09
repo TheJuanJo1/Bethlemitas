@@ -13,19 +13,27 @@ class Psychoorientation extends Model
      * Campos permitidos para asignación masiva
      */
     protected $fillable = [
-    'psychologist_writes',
-    'id_user_student',
-    'age_student',
-    'group_student',
-    'director_group_student',
-    'title_report',
-    'reason_inquiry',
-    'recomendations',
-    'annex_one', // 👈 ESTE ES CLAVE
+        'psychologist_writes',
+        'id_user_student',
+        'report_year', // 🔹 año del informe
+        'age_student',
+        'group_student',
+        'director_group_student',
+        'title_report',
+        'reason_inquiry',
+        'recomendations',
+        'annex_one',
     ];
+
     /**
-     * Relación con la tabla de docentes
-     * Psicoorientadora que escribe el informe
+     * Valores por defecto
+     */
+    protected $attributes = [
+        'report_year' => null,
+    ];
+
+    /**
+     * Relación con la psicoorientadora que escribe el informe
      */
     public function user_psychology()
     {
@@ -33,11 +41,26 @@ class Psychoorientation extends Model
     }
 
     /**
-     * Relación con la tabla de estudiantes
+     * Relación con el estudiante
      */
     public function user_student()
     {
         return $this->belongsTo(Users_student::class, 'id_user_student');
     }
+
+    /**
+     * Scope para obtener informes de un año específico
+     */
+    public function scopeYear($query, $year)
+    {
+        return $query->where('report_year', $year);
+    }
+
+    /**
+     * Scope para obtener el informe del año actual
+     */
+    public function scopeCurrentYear($query)
+    {
+        return $query->where('report_year', now()->year);
+    }
 }
-//
