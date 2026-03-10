@@ -4,7 +4,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use PhpParser\Builder\Function_;
 use Spatie\Permission\Traits\HasRoles;
 
 class Users_student extends Model
@@ -74,5 +73,10 @@ class Users_student extends Model
     public function latestReferral()
     {
         return $this->hasOne(Referral::class, 'id_user_student')->latestOfMany();
+    }
+
+    public function piar()
+    {
+        return $this->hasMany(Acta_piar::class, 'id_user_student');
     }
 }

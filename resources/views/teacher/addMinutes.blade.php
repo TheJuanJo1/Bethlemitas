@@ -53,7 +53,10 @@
                             <td class="px-4 py-2 text-center border">{{ $student->group->group }}</td>
                             <td class="px-4 py-2 text-center border">{{ $student->age }}</td>
                             <td class="px-4 py-2 text-center border">
-                                <a href="#" class="text-blue-500 hover:underline">Seleccionar</a>
+                                <a href="{{ route('piar.act.create',$student->id) }}" 
+                                class="text-blue-500 hover:underline">
+                                Añadir Acta
+                                </a>
                             </td>
                         </tr>
                     @empty

@@ -14,7 +14,9 @@ return new class extends Migration
         Schema::table('psychoorientations', function (Blueprint $table) {
 
             // 🔹 Año del informe psicológico
-            $table->year('report_year')->after('id_user_student');
+            if (!Schema::hasColumn('psychoorientations', 'report_year')) {
+                $table->year('report_year')->after('id_user_student');
+            }
 
             // 🔹 Evita que un estudiante tenga más de un informe por año
             $table->unique(['id_user_student', 'report_year'], 'student_year_unique_report');
