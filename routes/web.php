@@ -143,6 +143,8 @@ Route::middleware([PreventBackHistoryMiddleware::class])->group(function () {
             Route::get('/piar/show/{id}',[PiarController::class,'show'])->name('piar.show');
 
             Route::get('/piar/pdf/{id}',[PiarController::class,'pdf'])->name('piar.pdf');
+
+            Route::get('/piar/{id}/pdf', [PiarController::class, 'pdf'])->name('piar.pdf');
         });
 
         /*
