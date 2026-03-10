@@ -10,6 +10,7 @@ use App\Models\State;
 use App\Models\Users_load_degree;
 use App\Models\Users_student;
 use App\Models\Users_teacher;
+use App\Notifications\StudentInPiarNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -285,8 +286,6 @@ class PsicoController extends Controller
 
         if ($report) {
 
-            // 🔥 Si existe informe del año → actualizar
-
             if ($annexPath && $report->annex_one && Storage::disk('public')->exists($report->annex_one)) {
                 Storage::disk('public')->delete($report->annex_one);
             }
@@ -305,8 +304,6 @@ class PsicoController extends Controller
 
         } else {
 
-            // 🔥 Si no existe informe del año → crear
-
             Psychoorientation::create([
                 'psychologist_writes'    => Auth::id(),
                 'id_user_student'        => $id,
@@ -321,6 +318,21 @@ class PsicoController extends Controller
                 'recomendations'         => $request->recomendations,
                 'annex_one'              => $annexPath,
             ]);
+        }
+
+        /*
+        🔔 NOTIFICACIÓN AL DOCENTE QUE REMITIÓ
+        */
+
+        $state = State::find($request->state);
+
+        if ($state && $state->state === 'en PIAR') {
+
+            $teacher = $student->teacher;
+
+            if ($teacher) {
+                $teacher->notify(new StudentInPiarNotification($student));
+            }
         }
 
         DB::commit();

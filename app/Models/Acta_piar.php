@@ -4,63 +4,56 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use PhpParser\Builder\Function_;
 
 class Acta_piar extends Model
 {
     use HasFactory;
 
+    protected $table = 'acta_piars';
+
     protected $fillable = [
-        'id_user_student',
+        'id_student_characteristics',
         'id_user_teacher',
         'id_area',
         'id_institution',
         'id_period',
         'overview',
         'student_personal_description',
-        'areas_learning', 
+        'areas_learning',
         'objetives_purposes',
-        'barries',
+        'barriers',
         'reasonable_adjustments',
         'adjustment_evaluation',
         'production_date',
     ];
 
-    //Relacion con la tabla estudiantes
-    public function user_student()
+    // Estudiante
+    public function studentCharacteristics()
     {
-        return $this->belongsTo(Users_student::class, 'id_user_student');
+        return $this->belongsTo(Student_characteristic::class, 'id_student_characteristics');
     }
 
-    //Relacion con la tabla de docentes
-    public function user_teacher()
+    // Docente
+    public function teacher()
     {
         return $this->belongsTo(Users_teacher::class, 'id_user_teacher');
     }
 
-    //Relacion con la tabla de areas
+    // Área
     public function area()
     {
         return $this->belongsTo(Area::class, 'id_area');
     }
 
-    //Relacion con la tabla de Periodos
+    // Periodo
     public function period()
-    { 
+    {
         return $this->belongsTo(Period::class, 'id_period');
-
     }
 
-    //Relacion con la tabla de institucion
+    // Institución
     public function institution()
     {
         return $this->belongsTo(Institution::class, 'id_institution');
-
-    }
-
-    public function recommendations()
-    {
-        // Un PIAR tiene muchas recomendaciones
-        return $this->hasMany(Recommendation::class, 'id_acta_PIAR');
     }
 }

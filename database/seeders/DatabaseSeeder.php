@@ -34,7 +34,7 @@ class DatabaseSeeder extends Seeder
         $this->call(PeriodSeeder::class);
         $this->call(StateSeeder::class);
         $this->call(UserSeeder::class);
-        $this->call(DeparmetSeeder::class);
+        //$this->call(DeparmetSeeder::class);
 
     }
 }
