@@ -46,6 +46,10 @@ padding:8px;
 
 <body>
 
+<button onclick="history.back()" style="background: none; border: none; cursor: pointer;">
+        <i class="bi bi-arrow-left" style="font-size: 2rem;"></i>
+</button>
+
 <div class="title">
 PLAN INDIVIDUAL DE AJUSTES RAZONABLES - PIAR
 </div>

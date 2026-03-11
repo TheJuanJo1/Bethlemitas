@@ -213,7 +213,7 @@ Características del Estudiante
 <div style="text-align:right; margin-bottom:40px;">
 
 <button type="submit" class="btn-save">
-Guardar PIAR
+Guardar y Continuar →
 </button>
 
 </div>

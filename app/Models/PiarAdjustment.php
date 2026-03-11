@@ -1,3 +1,4 @@
+<?php
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
@@ -6,7 +7,6 @@ class PiarAdjustment extends Model
 {
 
     protected $fillable = [
-
         'piar_id',
         'period',
         'area',
@@ -14,7 +14,6 @@ class PiarAdjustment extends Model
         'barrera',
         'ajuste',
         'evaluacion'
-
     ];
 
     public function piar()
