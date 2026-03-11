@@ -145,6 +145,33 @@ Route::middleware([PreventBackHistoryMiddleware::class])->group(function () {
             Route::get('/piar/pdf/{id}',[PiarController::class,'pdf'])->name('piar.pdf');
 
             Route::get('/piar/{id}/pdf', [PiarController::class, 'pdf'])->name('piar.pdf');
+
+            Route::get('/piar/{piar}/periodos',[PiarController::class,'periodos'])->name('piar.periodos');
+
+            //Periodo 1
+
+            Route::get('/piar/{piar}/periodo1', [PiarController::class, 'periodo1'])->name('piar.periodo1');
+
+            Route::post('/piar/periodo1/store', [PiarController::class, 'storePeriodo1'])->name('piar.periodo1.store');
+            
+            Route::get('/piar/{piar}/pdf/periodo1',[PiarController::class,'pdfPeriodo1'])->name('piar.pdf.periodo1');
+
+            //Periodo 2
+
+            Route::get('/piar/{piar}/periodo2', [PiarController::class, 'periodo2'])->name('piar.periodo2');
+
+            Route::post('/piar/periodo2/store', [PiarController::class, 'storePeriodo2'])->name('piar.periodo2.store');
+            
+            Route::get('/piar/{piar}/pdf/periodo2',[PiarController::class,'pdfPeriodo2'])->name('piar.pdf.periodo2');
+
+            //Periodo 3
+
+            Route::get('/piar/{piar}/periodo3', [PiarController::class, 'periodo3'])->name('piar.periodo3');
+
+            Route::post('/piar/periodo3/store', [PiarController::class, 'storePeriodo3'])->name('piar.periodo3.store');
+            
+            Route::get('/piar/{piar}/pdf/periodo3',[PiarController::class,'pdfPeriodo3'])->name('piar.pdf.periodo3');
+
         });
 
         /*
