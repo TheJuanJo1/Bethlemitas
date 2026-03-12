@@ -46,6 +46,7 @@
                         <th class="px-4 py-2 border">Grupo</th>
                         <th class="px-4 py-2 border">Edad</th>
                         <th class="px-4 py-2 border">Anexo</th>
+                        <th class="px-4 py-2 border">Acta Piar</th>
                         <th class="px-4 py-2 border">Acciones</th>
                     </tr>
                 </thead>
@@ -79,6 +80,16 @@
                                     <i class="bi bi-check-circle-fill text-green-500 text-xl"></i>
                                 @else
                                     <i class="bi bi-x-circle-fill text-red-500 text-xl"></i>
+                                @endif
+                            </td>
+
+                            <td class="px-4 py-2 text-center border">
+                                @if($student->piar)
+                                <a href="{{ route('piar.pdf',$student->piar->id) }}" target="_blank" class="text-green-500 hover:underline" >
+                                    <button class="btn btn-success" >
+                                    Descargar Acta 
+                                    </button>
+                                </a>
                                 @endif
                             </td>
 
