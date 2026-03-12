@@ -150,8 +150,7 @@ Route::middleware([PreventBackHistoryMiddleware::class])->group(function () {
 
             Route::get('/piar/{piar}/pdf',[PiarController::class,'pdfCompleto'])->name('piar.pdf.completo');
 
-            Route::get('/piar/{id}/pdf', [PiarController::class, 'pdf'])->name('piar.pdf');
-            
+
             //Periodo 1
 
             Route::get('/piar/{piar}/periodo1', [PiarController::class, 'periodo1'])->name('piar.periodo1');
@@ -252,6 +251,8 @@ Route::middleware([PreventBackHistoryMiddleware::class])->group(function () {
 
             Route::put('/accept/student', [PsicoController::class, 'accept_student_to_piar'])
                 ->name('accept.student.to.piar');
+                
+            Route::get('/piar/{id}/pdf', [PiarController::class, 'pdf'])->name('piar.pdf');
 
             
         });

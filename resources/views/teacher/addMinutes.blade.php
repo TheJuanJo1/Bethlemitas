@@ -61,7 +61,7 @@
                                 @if($student->piar)
                                 <a href="{{ route('piar.pdf',$student->piar->id) }}" target="_blank" class="text-green-500 hover:underline" >
                                     <button class="btn btn-success" >
-                                    Descargar PIAR 
+                                    Descargar Acta 
                                     </button>
                                 </a>
                                 @endif
