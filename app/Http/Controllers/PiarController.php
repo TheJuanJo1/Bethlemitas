@@ -12,11 +12,25 @@ use Illuminate\Support\Facades\Auth;
 
 class PiarController extends Controller
 {
-    public function pdf($id)
+   public function pdf($id)
     {
-        $piar = Piar::with('student')->findOrFail($id);
+        $piar = Piar::with([
+            'student.degree',
+            'student.group',
+            'teacher',
+            'characteristics'
+        ])->findOrFail($id);
 
-        $pdf = Pdf::loadView('piar.pdf', compact('piar'));
+        $periodo1 = PiarAdjustment::where('piar_id',$id)->where('period',1)->get();
+        $periodo2 = PiarAdjustment::where('piar_id',$id)->where('period',2)->get();
+        $periodo3 = PiarAdjustment::where('piar_id',$id)->where('period',3)->get();
+
+        $pdf = Pdf::loadView('pdf.piar_completo', compact(
+            'piar',
+            'periodo1',
+            'periodo2',
+            'periodo3'
+        ));
 
         return $pdf->download('PIAR_'.$piar->student->name.'.pdf');
     }
@@ -55,9 +69,6 @@ class PiarController extends Controller
                 'student_id' => $request->student_id,
                 'teacher_id' => Auth::id(),
                 'year' => date('Y'),
-                'institution' => $request->institution,
-                'sede' => $request->sede,
-                'jornada' => $request->jornada
             ]);
 
         }

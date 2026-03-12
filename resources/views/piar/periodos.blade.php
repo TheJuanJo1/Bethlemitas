@@ -55,13 +55,14 @@ font-weight:bold;
 </style>
 
 <button onclick="history.back()" style="background: none; border: none; cursor: pointer;">
-        <i class="bi bi-arrow-left" style="font-size: 2rem;"></i>
+<i class="bi bi-arrow-left" style="font-size: 2rem;"></i>
 </button>
 
 <div class="container container-piar">
 
 <h3>PIAR - Periodos Académicos</h3>
 
+{{-- PERIODO 1 --}}
 <div class="period-card">
 
 <div>
@@ -97,6 +98,7 @@ Abrir
 </div>
 
 
+{{-- PERIODO 2 --}}
 <div class="period-card">
 
 <div>
@@ -111,6 +113,16 @@ Abrir
 
 </div>
 
+<div style="display:flex; gap:10px;">
+
+@if($period2)
+<a href="{{ route('piar.pdf.periodo2',$piar->id) }}" target="_blank">
+<button class="btn-open" style="background:#16a34a;">
+Ver PDF
+</button>
+</a>
+@endif
+
 <a href="{{ route('piar.periodo2',$piar->id) }}">
 <button class="btn-open">
 Abrir
@@ -119,7 +131,10 @@ Abrir
 
 </div>
 
+</div>
 
+
+{{-- PERIODO 3 --}}
 <div class="period-card">
 
 <div>
@@ -134,11 +149,23 @@ Abrir
 
 </div>
 
+<div style="display:flex; gap:10px;">
+
+@if($period3)
+<a href="{{ route('piar.pdf.periodo3',$piar->id) }}" target="_blank">
+<button class="btn-open" style="background:#16a34a;">
+Ver PDF
+</button>
+</a>
+@endif
+
 <a href="{{ route('piar.periodo3',$piar->id) }}">
 <button class="btn-open">
 Abrir
 </button>
 </a>
+
+</div>
 
 </div>
 
