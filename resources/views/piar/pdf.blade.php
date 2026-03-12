@@ -62,23 +62,37 @@ Información General
 
 <table>
 <tr>
+<td><b>Fecha de Elaboración</b></td>
+<td>{{ \Carbon\Carbon::parse($piar->created_at)->format('d/m/Y') }}</td>
+</tr>
+
+<tr>
 <td><b>Institución</b></td>
-<td>{{ $piar->institution }}</td>
+<td>Bethelemitas</td>
 </tr>
 
 <tr>
 <td><b>Sede</b></td>
-<td>{{ $piar->sede }}</td>
+<td>Pereira</td>
 </tr>
 
 <tr>
 <td><b>Jornada</b></td>
-<td>{{ $piar->jornada }}</td>
+<td>Diurna</td>
 </tr>
 </table>
 
 </div>
 
+<tr>
+<td><b>Grado</b></td>
+<td>{{ $piar->student->degree->degree }}</td>
+</tr>
+
+<tr>
+<td><b>Grupo</b></td>
+<td>{{ $piar->student->group->group }}</td>
+</tr>
 
 <div class="section">
 

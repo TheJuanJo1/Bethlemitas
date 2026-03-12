@@ -84,7 +84,7 @@ transform:scale(1.05);
 /* GRID PARA CARACTERÍSTICAS */
 .caracteristicas-grid{
 display:grid;
-grid-template-columns: repeat(3, 1fr);
+grid-template-columns: repeat(2, 1fr);
 gap:15px;
 }
 
@@ -94,6 +94,10 @@ grid-column: span 1;
 }
 
 </style>
+
+<button onclick="history.back()" style="background: none; border: none; cursor: pointer;">
+<i class="bi bi-arrow-left" style="font-size: 2rem;"></i>
+</button>
 
 
 <div class="container container-piar">
@@ -113,21 +117,26 @@ grid-column: span 1;
 Información General
 </div>
 
-<div style="display:grid; grid-template-columns:repeat(3,1fr); gap:15px;">
+<div style="display:grid; grid-template-columns:repeat(4,1fr); gap:15px;">
 
-<div>
-<label class="form-label">Institución</label>
-<input type="text" name="institution" class="form-control" required>
+<div class="student-box">
+<b>Institución</b><br>
+Bethelemitas
 </div>
 
-<div>
-<label class="form-label">Sede</label>
-<input type="text" name="sede" class="form-control">
+<div class="student-box">
+<b>Sede</b><br>
+Pereira
 </div>
 
-<div>
-<label class="form-label">Jornada</label>
-<input type="text" name="jornada" class="form-control">
+<div class="student-box">
+<b>Jornada</b><br>
+Diurna
+</div>
+
+<div class="student-box">
+<b>Fecha de Elaboración</b><br>
+{{ date('d/m/Y') }}
 </div>
 
 </div>
@@ -144,7 +153,7 @@ Información General
 Datos del Estudiante
 </div>
 
-<div style="display:grid; grid-template-columns:repeat(3,1fr); gap:15px;">
+<div style="display:grid; grid-template-columns:repeat(4,1fr); gap:15px;">
 
 <div class="student-box">
 <b>Nombre</b><br>
@@ -158,7 +167,12 @@ Datos del Estudiante
 
 <div class="student-box">
 <b>Grado</b><br>
-{{ $student->degree->name ?? 'No asignado' }}
+{{ $student->degree->degree ?? 'No asignado' }}
+</div>
+
+<div class="student-box">
+<b>Edad</b><br>
+{{ $student->age }} años
 </div>
 
 </div>
