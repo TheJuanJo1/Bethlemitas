@@ -21,9 +21,9 @@ class PiarController extends Controller
             'characteristics'
         ])->findOrFail($id);
 
-        $periodo1 = PiarAdjustment::where('piar_id',$id)->where('period',1)->get();
-        $periodo2 = PiarAdjustment::where('piar_id',$id)->where('period',2)->get();
-        $periodo3 = PiarAdjustment::where('piar_id',$id)->where('period',3)->get();
+        $periodo1 = PiarAdjustment::with('teacher')->where('piar_id',$id)->where('period',1)->get();
+        $periodo2 = PiarAdjustment::with('teacher')->where('piar_id',$id)->where('period',2)->get();
+        $periodo3 = PiarAdjustment::with('teacher')->where('piar_id',$id)->where('period',3)->get();
 
         $pdf = Pdf::loadView('pdf.piar_completo', compact(
             'piar',
@@ -123,7 +123,7 @@ class PiarController extends Controller
 
     public function periodo1($piar_id)
     {
-        $piar = Piar::with('student')->findOrFail($piar_id);
+        $piar = Piar::with('student',)->findOrFail($piar_id);
 
         return view('piar.periodo1', compact('piar'));
     }
@@ -139,6 +139,7 @@ class PiarController extends Controller
 
                     'piar_id' => $request->piar_id,
                     'period' => 1, // 👈 ESTA ES LA CLAVE DEL ERROR
+                    'teacher_id' => auth()->id(),
 
                     'area' => $area,
                     'objetivo' => $request->objetivo[$index] ?? null,
@@ -159,12 +160,12 @@ class PiarController extends Controller
     public function pdfPeriodo1($piar_id)
     {
 
-        $piar = Piar::with('student')->findOrFail($piar_id);
+        $piar = Piar::with('student','teacher')->findOrFail($piar_id);
 
-        $adjustments = PiarAdjustment::where('piar_id',$piar_id)
-                        ->where('period',1)
-                        ->get();
-
+        $adjustments = PiarAdjustment::with('teacher')
+                ->where('piar_id',$piar_id)
+                ->where('period',1)
+                ->get();
         $pdf = PDF::loadView('pdf.piar_periodo1',compact(
             'piar',
             'adjustments'
@@ -193,6 +194,7 @@ class PiarController extends Controller
 
                     'piar_id' => $request->piar_id,
                     'period' => 2, // 👈 ESTA ES LA CLAVE DEL ERROR
+                    'teacher_id' => auth()->id(),
 
                     'area' => $area,
                     'objetivo' => $request->objetivo[$index] ?? null,
@@ -213,11 +215,12 @@ class PiarController extends Controller
     public function pdfPeriodo2($piar_id)
     {
 
-        $piar = Piar::with('student')->findOrFail($piar_id);
+        $piar = Piar::with('student','teacher')->findOrFail($piar_id);
 
-        $adjustments = PiarAdjustment::where('piar_id',$piar_id)
-                        ->where('period',2)
-                        ->get();
+        $adjustments = PiarAdjustment::with('teacher')
+                ->where('piar_id',$piar_id)
+                ->where('period',2)
+                ->get();
 
         $pdf = PDF::loadView('pdf.piar_periodo2',compact(
             'piar',
@@ -248,6 +251,7 @@ class PiarController extends Controller
 
                     'piar_id' => $request->piar_id,
                     'period' => 3, // 👈 ESTA ES LA CLAVE DEL ERROR
+                    'teacher_id' => auth()->id(),
 
                     'area' => $area,
                     'objetivo' => $request->objetivo[$index] ?? null,
@@ -268,11 +272,12 @@ class PiarController extends Controller
     public function pdfPeriodo3($piar_id)
     {
 
-        $piar = Piar::with('student')->findOrFail($piar_id);
+        $piar = Piar::with('student','teacher')->findOrFail($piar_id);
 
-        $adjustments = PiarAdjustment::where('piar_id',$piar_id)
-                        ->where('period',1)
-                        ->get();
+        $adjustments = PiarAdjustment::with('teacher')
+                ->where('piar_id',$piar_id)
+                ->where('period',3)
+                ->get();
 
         $pdf = PDF::loadView('pdf.piar_periodo3',compact(
             'piar',

@@ -47,6 +47,7 @@ background:#e5e5e5;
 <thead>
 
 <tr>
+<th>Docente</th>
 <th>Área</th>
 <th>Objetivo</th>
 <th>Barrera</th>
@@ -61,6 +62,9 @@ background:#e5e5e5;
 @foreach($adjustments as $a)
 
 <tr>
+<td>
+{{ $a->teacher->name ?? '' }} {{ $a->teacher->last_name ?? '' }}
+</td>
 <td>{{ $a->area }}</td>
 <td>{{ $a->objetivo }}</td>
 <td>{{ $a->barrera }}</td>
