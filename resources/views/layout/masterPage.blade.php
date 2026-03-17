@@ -37,9 +37,11 @@
                            </svg>
                         </button>
 
-                        <a href="#" class="text-xl font-bold flex items-center lg:ml-2.5">
-                           <img src="{{asset('img/R.png')}}" class="w-16 h-16 mr-2" alt="Windster Logo">
-                           <span class="self-center whitespace-nowrap"> <em>Bethlemitas - PiarManager</em></span>
+                       <a href="{{ route('dashboard') }}" class="text-xl font-bold flex items-center lg:ml-2.5">
+                           <img src="{{ asset('img/R.png') }}" class="w-16 h-16 mr-2" alt="Windster Logo">
+                           <span class="self-center whitespace-nowrap">
+                              <em>Bethlemitas - PiarManager</em>
+                           </span>
                         </a>
                      
                         <div class="flex items-center" style="display:none">

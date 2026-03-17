@@ -13,6 +13,7 @@ class PiarAdjustment extends Model
         'objetivo',
         'barrera',
         'ajuste',
+        'teacher_id',
         'evaluacion'
     ];
 
@@ -20,4 +21,9 @@ class PiarAdjustment extends Model
     {
         return $this->belongsTo(Piar::class);
     }
+    public function teacher()
+    {
+        return $this->belongsTo(\App\Models\Users_teacher::class,'teacher_id');
+    }
+     
 }

@@ -69,7 +69,7 @@
 
                         <td class="px-6 py-4">
                             @if ($user->hasRole('docente') && $user->areas->isNotEmpty())
-                                {{ $user->areas->pluck('name_area')->implode(', ') }}
+                                {{ $user->areas->unique('id')->pluck('name_area')->implode(', ') }}
                             @else
                                 <span class="text-gray-400">Sin Áreas</span>
                             @endif

@@ -12,6 +12,7 @@ font-size:14px;
 margin-top:85px;
 margin-bottom:40px;
 }
+
 .header{
 position:fixed;
 top:0;
@@ -72,37 +73,26 @@ padding:6px;
 </div>
 
 <div class="footer">
-    <h4>V14.16/02/2018. - Ver documento de instrucciones.
-Ministerio de Educación Nacional - Viceministerio de Educación Preescolar, Básica y Media - Decreto 1421 de 2017</h4>
+    <h4>
+    V14.16/02/2018. - Ver documento de instrucciones.
+    Ministerio de Educación Nacional - Viceministerio de Educación Preescolar, Básica y Media - Decreto 1421 de 2017
+    </h4>
 </div>
 
 
-<h1>PLAN INDIVIDUAL DE AJUSTES RAZONABLES - PIAR -
-    ANEXO 2
-</h1>
+<h1>PLAN INDIVIDUAL DE AJUSTES RAZONABLES - PIAR - ANEXO 2</h1>
 
 <table>
-    <tr>
-    <th>Fecha de Elaboración</th>
-    <td>{{ $piar->created_at->format('d/m/Y') }}</td>
-    </tr>
-
-    <tr>
-    <th>Docente Responsable</th>
-    <td>
-    {{ $piar->teacher->name ?? '' }} {{ $piar->teacher->last_name ?? '' }}
-    </td>
-    </tr>
-
-    <tr>
-    <th>Cargo</th>
-    <td>{{ $piar->teacher->teachers_areas_groups ?? 'Docente' }}</td>
-    </tr>
+<tr>
+<th>Fecha de Elaboración</th>
+<td>{{ $piar->created_at->format('d/m/Y') }}</td>
+</tr>
 </table>
+
 
 <h2>Datos del Estudiante</h2>
 
-<table>
+<table> 
 
 <tr>
 <th>Nombre</th>
@@ -121,7 +111,7 @@ Ministerio de Educación Nacional - Viceministerio de Educación Preescolar, Bá
 
 <tr>
 <th>Grado</th>
-<td>{{ $piar->student->degree->degree?? 'Sin Grado Asignado' }}</td>
+<td>{{ $piar->student->degree->degree ?? 'Sin Grado Asignado' }}</td>
 </tr>
 
 <tr>
@@ -169,6 +159,7 @@ Ministerio de Educación Nacional - Viceministerio de Educación Preescolar, Bá
 <table>
 
 <tr>
+<th>Docente</th>
 <th>Área</th>
 <th>Objetivo</th>
 <th>Barrera</th>
@@ -179,6 +170,7 @@ Ministerio de Educación Nacional - Viceministerio de Educación Preescolar, Bá
 @foreach($periodo1 as $row)
 
 <tr>
+<td>{{ $row->teacher->name ?? '' }} {{ $row->teacher->last_name ?? '' }}</td>
 <td>{{ $row->area }}</td>
 <td>{{ $row->objetivo }}</td>
 <td>{{ $row->barrera }}</td>
@@ -196,6 +188,7 @@ Ministerio de Educación Nacional - Viceministerio de Educación Preescolar, Bá
 <table>
 
 <tr>
+<th>Docente</th>
 <th>Área</th>
 <th>Objetivo</th>
 <th>Barrera</th>
@@ -206,6 +199,7 @@ Ministerio de Educación Nacional - Viceministerio de Educación Preescolar, Bá
 @foreach($periodo2 as $row)
 
 <tr>
+<td>{{ $row->teacher->name ?? '' }} {{ $row->teacher->last_name ?? '' }}</td>
 <td>{{ $row->area }}</td>
 <td>{{ $row->objetivo }}</td>
 <td>{{ $row->barrera }}</td>
@@ -223,6 +217,7 @@ Ministerio de Educación Nacional - Viceministerio de Educación Preescolar, Bá
 <table>
 
 <tr>
+<th>Docente</th>
 <th>Área</th>
 <th>Objetivo</th>
 <th>Barrera</th>
@@ -233,6 +228,7 @@ Ministerio de Educación Nacional - Viceministerio de Educación Preescolar, Bá
 @foreach($periodo3 as $row)
 
 <tr>
+<td>{{ $row->teacher->name ?? '' }} {{ $row->teacher->last_name ?? '' }}</td>
 <td>{{ $row->area }}</td>
 <td>{{ $row->objetivo }}</td>
 <td>{{ $row->barrera }}</td>
