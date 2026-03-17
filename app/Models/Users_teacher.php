@@ -15,15 +15,23 @@ class Users_teacher extends Authenticatable
 
     protected $guard_name = 'web';
 
+    /**
+     * Nota: el proyecto usa consistentemente `number_documment` y `last_name`
+     * en controladores/vistas. Mantenemos también campos legacy por compatibilidad.
+     */
     protected $fillable = [
+        'number_documment',
         'name',
-        'lastname',
+        'last_name',
         'email',
         'password',
-        'document',
         'phone',
         'id_state',
         'group_director',
+
+        // Legacy (por si existen en tu BD / código antiguo)
+        'lastname',
+        'document',
     ];
 
     protected $hidden = [
