@@ -75,7 +75,11 @@ font-weight:bold;
 
     <div class="box-section">
         <div class="box-title">Datos del Estudiante</div>
-        <p><b>Nombre:</b> {{ $piar->student->name }} {{ $piar->student->last_name }}</p>
+        <p>
+        <b>Nombre:</b> {{ $piar->student->name }} {{ $piar->student->last_name }}
+        &nbsp;&nbsp; | &nbsp;&nbsp;
+        <b>Grado:</b> {{ $piar->student->degree->degree ?? 'Sin grado' }}
+        </p>
     </div>
 
     <form action="{{ route('piar.evaluacion.store') }}" method="POST">

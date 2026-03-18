@@ -51,7 +51,7 @@ border-radius:6px;
 
 </style>
 
-<button onclick="history.back()" style="background: none; border: none; cursor: pointer;">
+<button onclick="window.location.href='/piar/5/periodos'" style="background: none; border: none; cursor: pointer;">
         <i class="bi bi-arrow-left" style="font-size: 2rem;"></i>
 </button>
 
@@ -71,7 +71,11 @@ border-radius:6px;
 Datos del Estudiante
 </div>
 
-<p><b>Nombre:</b> {{ $piar->student->name }} {{ $piar->student->last_name }}</p>
+<p>
+<b>Nombre:</b> {{ $piar->student->name }} {{ $piar->student->last_name }}
+&nbsp;&nbsp; | &nbsp;&nbsp;
+<b>Grado:</b> {{ $piar->student->degree->degree ?? 'Sin grado' }}
+</p>
 
 </div>
 
@@ -103,17 +107,17 @@ Ajustes Razonables
 
 <div class="col-md-2 mb-3">
 <label>Objetivo</label>
-<textarea name="objetivo[]" class="form-control"></textarea>
+<textarea name="objetivo[]" class="form-control" required></textarea>
 </div>
 
 <div class="col-md-2 mb-3">
 <label>Barrera</label>
-<textarea name="barrera[]" class="form-control"></textarea>
+<textarea name="barrera[]" class="form-control" required></textarea>
 </div>
 
 <div class="col-md-3 mb-3">
 <label>Ajuste Razonable</label>
-<textarea name="ajuste[]" class="form-control"></textarea>
+<textarea name="ajuste[]" class="form-control" required></textarea>
 </div>
 
 </div>

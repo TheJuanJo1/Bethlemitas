@@ -1,0 +1,2 @@
+{"sessionId":"99f4e2","runId":"pre-fix","hypothesisId":"H1","location":"app\/Http\/Controllers\/PiarController.php:storePeriodo1","message":"storePeriodo1 called","data":{"piar_id":5,"areas_count":1},"timestamp":1773853477398}
+{"sessionId":"99f4e2","runId":"pre-fix","hypothesisId":"H1","location":"app\/Http\/Controllers\/PiarController.php:storePeriodo1","message":"storePeriodo1 redirecting to periodos","data":{"to":"piar.periodos","piar_id":5},"timestamp":1773853477400}

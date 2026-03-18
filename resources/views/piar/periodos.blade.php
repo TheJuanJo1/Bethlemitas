@@ -69,13 +69,18 @@ pointer-events:none;
 
 </style>
 
-<button onclick="history.back()" style="background: none; border: none; cursor: pointer;">
-<i class="bi bi-arrow-left" style="font-size: 2rem;"></i>
+<button onclick="window.location.href='/addMinutes'" style="background: none; border: none; cursor: pointer;">
+        <i class="bi bi-arrow-left" style="font-size: 2rem;"></i>
 </button>
 
 <div class="container container-piar">
 
 <h3>PIAR - Periodos Académicos</h3>
+<p>
+<b>Estudiante:</b> {{ $piar->student->name }} {{ $piar->student->last_name }}
+&nbsp;&nbsp; | &nbsp;&nbsp;
+<b>Grado:</b> {{ $piar->student->degree->degree ?? 'Sin grado' }}
+</p>
 
 {{-- PERIODO 1 --}}
 <div class="period-card">
