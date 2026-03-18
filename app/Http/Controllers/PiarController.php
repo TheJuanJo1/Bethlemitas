@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Area;
 use App\Models\Piar;
 use Barryvdh\DomPDF\Facade\Pdf;
 use App\Models\PiarCharacteristic;
@@ -58,6 +59,15 @@ class PiarController extends Controller
     public function store(Request $request)
     {
 
+        $request->validate([
+            'student_id' => 'required',
+            'descripcion' => 'required|string',
+            'gustos' => 'required|string',
+            'expectativas' => 'required|string',
+            'habilidades' => 'required|string',
+            'apoyos' => 'required|string'
+        ]);
+
         // Verificar si ya existe PIAR este año
         $piar = Piar::where('student_id',$request->student_id)
                 ->where('year',date('Y'))
@@ -90,7 +100,6 @@ class PiarController extends Controller
         return redirect()->route('piar.periodos', $piar->id);
 
     }
-
     //Los Periosdos
 
     public function periodos($piar_id)
@@ -123,9 +132,25 @@ class PiarController extends Controller
 
     public function periodo1($piar_id)
     {
-        $piar = Piar::with('student',)->findOrFail($piar_id);
+        $piar = Piar::with('student')->findOrFail($piar_id);
 
-        return view('piar.periodo1', compact('piar'));
+        $teacherId = Auth::id();
+        $areas = Area::query()
+            ->where(function ($q) use ($teacherId) {
+                $q->whereIn('id', function ($sub) use ($teacherId) {
+                    $sub->select('id_area')
+                        ->from('users_load_areas')
+                        ->where('id_user_teacher', $teacherId);
+                })->orWhereIn('id', function ($sub) use ($teacherId) {
+                    $sub->select('id_area')
+                        ->from('teachers_areas_groups')
+                        ->where('id_teacher', $teacherId);
+                });
+            })
+            ->orderBy('name_area')
+            ->get();
+
+        return view('piar.periodo1', compact('piar','areas'));
     }
 
     public function storePeriodo1(Request $request)
@@ -145,7 +170,7 @@ class PiarController extends Controller
                     'objetivo' => $request->objetivo[$index] ?? null,
                     'barrera' => $request->barrera[$index] ?? null,
                     'ajuste' => $request->ajuste[$index] ?? null,
-                    'evaluacion' => $request->evaluacion[$index] ?? null,
+                    'evaluacion' => null,
 
                 ]);
 
@@ -180,7 +205,23 @@ class PiarController extends Controller
     {
         $piar = Piar::with('student')->findOrFail($piar_id);
 
-        return view('piar.periodo2', compact('piar'));
+        $teacherId = Auth::id();
+        $areas = Area::query()
+            ->where(function ($q) use ($teacherId) {
+                $q->whereIn('id', function ($sub) use ($teacherId) {
+                    $sub->select('id_area')
+                        ->from('users_load_areas')
+                        ->where('id_user_teacher', $teacherId);
+                })->orWhereIn('id', function ($sub) use ($teacherId) {
+                    $sub->select('id_area')
+                        ->from('teachers_areas_groups')
+                        ->where('id_teacher', $teacherId);
+                });
+            })
+            ->orderBy('name_area')
+            ->get();
+
+        return view('piar.periodo2', compact('piar','areas'));
     }
 
     public function storePeriodo2(Request $request)
@@ -200,7 +241,7 @@ class PiarController extends Controller
                     'objetivo' => $request->objetivo[$index] ?? null,
                     'barrera' => $request->barrera[$index] ?? null,
                     'ajuste' => $request->ajuste[$index] ?? null,
-                    'evaluacion' => $request->evaluacion[$index] ?? null,
+                    'evaluacion' => null,
 
                 ]);
 
@@ -237,7 +278,23 @@ class PiarController extends Controller
     {
         $piar = Piar::with('student')->findOrFail($piar_id);
 
-        return view('piar.periodo3', compact('piar'));
+        $teacherId = Auth::id();
+        $areas = Area::query()
+            ->where(function ($q) use ($teacherId) {
+                $q->whereIn('id', function ($sub) use ($teacherId) {
+                    $sub->select('id_area')
+                        ->from('users_load_areas')
+                        ->where('id_user_teacher', $teacherId);
+                })->orWhereIn('id', function ($sub) use ($teacherId) {
+                    $sub->select('id_area')
+                        ->from('teachers_areas_groups')
+                        ->where('id_teacher', $teacherId);
+                });
+            })
+            ->orderBy('name_area')
+            ->get();
+
+        return view('piar.periodo3', compact('piar','areas'));
     }
 
     public function storePeriodo3(Request $request)
@@ -257,7 +314,7 @@ class PiarController extends Controller
                     'objetivo' => $request->objetivo[$index] ?? null,
                     'barrera' => $request->barrera[$index] ?? null,
                     'ajuste' => $request->ajuste[$index] ?? null,
-                    'evaluacion' => $request->evaluacion[$index] ?? null,
+                    'evaluacion' => null,
 
                 ]);
 
@@ -286,6 +343,56 @@ class PiarController extends Controller
 
         return $pdf->stream('piar_periodo3.pdf');
 
+    }
+
+    public function evaluacion($piar_id, $period)
+    {
+        $period = (int) $period;
+        abort_unless(in_array($period, [1, 2, 3], true), 404);
+
+        $piar = Piar::with('student')->findOrFail($piar_id);
+        $teacherId = Auth::id();
+
+        $adjustments = PiarAdjustment::query()
+            ->where('piar_id', $piar_id)
+            ->where('period', $period)
+            ->where('teacher_id', $teacherId)
+            ->orderBy('area')
+            ->get();
+
+        return view('piar.evaluacion', compact('piar', 'period', 'adjustments'));
+    }
+
+    public function storeEvaluacion(Request $request)
+    {
+        $data = $request->validate([
+            'piar_id' => ['required', 'integer'],
+            'period' => ['required', 'integer', 'in:1,2,3'],
+            'adjustment_id' => ['required', 'array'],
+            'adjustment_id.*' => ['required', 'integer'],
+            'evaluacion' => ['required', 'array'],
+            'evaluacion.*' => ['nullable', 'string'],
+        ]);
+
+        $piarId = (int) $data['piar_id'];
+        $period = (int) $data['period'];
+        $ids = $data['adjustment_id'];
+        $evaluaciones = $data['evaluacion'];
+
+        foreach ($ids as $i => $id) {
+            PiarAdjustment::query()
+                ->where('id', $id)
+                ->where('piar_id', $piarId)
+                ->where('period', $period)
+                ->where('teacher_id', Auth::id())
+                ->update([
+                    'evaluacion' => $evaluaciones[$i] ?? null,
+                ]);
+        }
+
+        return redirect()
+            ->route('piar.periodos', $piarId)
+            ->with('success', 'Evaluación guardada correctamente');
     }
 
 

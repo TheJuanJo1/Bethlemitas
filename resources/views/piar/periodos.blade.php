@@ -52,6 +52,21 @@ border-radius:6px;
 font-weight:bold;
 }
 
+.btn-eval{
+background:#f59e0b;
+color:#111827;
+padding:10px 20px;
+border:none;
+border-radius:6px;
+font-weight:bold;
+}
+
+.btn-disabled{
+opacity:0.55;
+cursor:not-allowed;
+pointer-events:none;
+}
+
 </style>
 
 <button onclick="history.back()" style="background: none; border: none; cursor: pointer;">
@@ -83,6 +98,12 @@ font-weight:bold;
 <a href="{{ route('piar.pdf.periodo1',$piar->id) }}" target="_blank">
 <button class="btn-open" style="background:#16a34a;">
 Ver PDF
+</button>
+</a>
+
+<a href="{{ route('piar.evaluacion', [$piar->id, 1]) }}">
+<button class="btn-eval">
+Subir Evaluación
 </button>
 </a>
 @endif
@@ -121,6 +142,12 @@ Abrir
 Ver PDF
 </button>
 </a>
+
+<a href="{{ route('piar.evaluacion', [$piar->id, 2]) }}">
+<button class="btn-eval">
+Subir Evaluación
+</button>
+</a>
 @endif
 
 <a href="{{ route('piar.periodo2',$piar->id) }}">
@@ -155,6 +182,12 @@ Abrir
 <a href="{{ route('piar.pdf.periodo3',$piar->id) }}" target="_blank">
 <button class="btn-open" style="background:#16a34a;">
 Ver PDF
+</button>
+</a>
+
+<a href="{{ route('piar.evaluacion', [$piar->id, 3]) }}">
+<button class="btn-eval">
+Subir Evaluación
 </button>
 </a>
 @endif
