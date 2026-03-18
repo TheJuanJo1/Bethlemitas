@@ -38,7 +38,11 @@ background:#e5e5e5;
 
 <h2>PIAR - Periodo 2</h2>
 
-<p><strong>Estudiante:</strong> {{ $piar->student->name }} {{ $piar->student->last_name }}</p>
+<p>
+<strong>Estudiante:</strong> {{ $piar->student->name }} {{ $piar->student->last_name }}
+&nbsp;&nbsp; | &nbsp;&nbsp;
+<strong>Grado:</strong> {{ $piar->student->degree->degree ?? 'Sin grado' }}
+</p>
 
 <br>
 

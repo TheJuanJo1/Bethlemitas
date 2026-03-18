@@ -105,7 +105,7 @@ class PiarController extends Controller
     public function periodos($piar_id)
     {
 
-        $piar = Piar::findOrFail($piar_id);
+        $piar = Piar::with('student.degree')->findOrFail($piar_id);
 
         $period1 = PiarAdjustment::where('piar_id',$piar_id)
                     ->where('period',1)
@@ -155,6 +155,24 @@ class PiarController extends Controller
 
     public function storePeriodo1(Request $request)
     {
+        // #region agent log
+        @file_put_contents(
+            base_path('debug-99f4e2.log'),
+            json_encode([
+                'sessionId' => '99f4e2',
+                'runId' => 'pre-fix',
+                'hypothesisId' => 'H1',
+                'location' => 'app/Http/Controllers/PiarController.php:storePeriodo1',
+                'message' => 'storePeriodo1 called',
+                'data' => [
+                    'piar_id' => (int) ($request->piar_id ?? 0),
+                    'areas_count' => is_array($request->area ?? null) ? count($request->area) : null,
+                ],
+                'timestamp' => (int) round(microtime(true) * 1000),
+            ]) . PHP_EOL,
+            FILE_APPEND
+        );
+        // #endregion agent log
 
         foreach ($request->area as $index => $area) {
 
@@ -178,7 +196,28 @@ class PiarController extends Controller
 
         }
 
-        return back()->with('success','Periodo 1 guardado correctamente');
+        // #region agent log
+        @file_put_contents(
+            base_path('debug-99f4e2.log'),
+            json_encode([
+                'sessionId' => '99f4e2',
+                'runId' => 'pre-fix',
+                'hypothesisId' => 'H1',
+                'location' => 'app/Http/Controllers/PiarController.php:storePeriodo1',
+                'message' => 'storePeriodo1 redirecting to periodos',
+                'data' => [
+                    'to' => 'piar.periodos',
+                    'piar_id' => (int) ($request->piar_id ?? 0),
+                ],
+                'timestamp' => (int) round(microtime(true) * 1000),
+            ]) . PHP_EOL,
+            FILE_APPEND
+        );
+        // #endregion agent log
+
+        return redirect()
+            ->route('piar.periodos', (int) $request->piar_id)
+            ->with('success','Periodo 1 guardado correctamente');
 
     }
 
@@ -226,6 +265,24 @@ class PiarController extends Controller
 
     public function storePeriodo2(Request $request)
     {
+        // #region agent log
+        @file_put_contents(
+            base_path('debug-99f4e2.log'),
+            json_encode([
+                'sessionId' => '99f4e2',
+                'runId' => 'pre-fix',
+                'hypothesisId' => 'H1',
+                'location' => 'app/Http/Controllers/PiarController.php:storePeriodo2',
+                'message' => 'storePeriodo2 called',
+                'data' => [
+                    'piar_id' => (int) ($request->piar_id ?? 0),
+                    'areas_count' => is_array($request->area ?? null) ? count($request->area) : null,
+                ],
+                'timestamp' => (int) round(microtime(true) * 1000),
+            ]) . PHP_EOL,
+            FILE_APPEND
+        );
+        // #endregion agent log
 
         foreach ($request->area as $index => $area) {
 
@@ -249,7 +306,28 @@ class PiarController extends Controller
 
         }
 
-        return back()->with('success','Periodo 2 guardado correctamente');
+        // #region agent log
+        @file_put_contents(
+            base_path('debug-99f4e2.log'),
+            json_encode([
+                'sessionId' => '99f4e2',
+                'runId' => 'pre-fix',
+                'hypothesisId' => 'H1',
+                'location' => 'app/Http/Controllers/PiarController.php:storePeriodo2',
+                'message' => 'storePeriodo2 redirecting to periodos',
+                'data' => [
+                    'to' => 'piar.periodos',
+                    'piar_id' => (int) ($request->piar_id ?? 0),
+                ],
+                'timestamp' => (int) round(microtime(true) * 1000),
+            ]) . PHP_EOL,
+            FILE_APPEND
+        );
+        // #endregion agent log
+
+        return redirect()
+            ->route('piar.periodos', (int) $request->piar_id)
+            ->with('success','Periodo 2 guardado correctamente');
 
     }
 
@@ -299,6 +377,24 @@ class PiarController extends Controller
 
     public function storePeriodo3(Request $request)
     {
+        // #region agent log
+        @file_put_contents(
+            base_path('debug-99f4e2.log'),
+            json_encode([
+                'sessionId' => '99f4e2',
+                'runId' => 'pre-fix',
+                'hypothesisId' => 'H1',
+                'location' => 'app/Http/Controllers/PiarController.php:storePeriodo3',
+                'message' => 'storePeriodo3 called',
+                'data' => [
+                    'piar_id' => (int) ($request->piar_id ?? 0),
+                    'areas_count' => is_array($request->area ?? null) ? count($request->area) : null,
+                ],
+                'timestamp' => (int) round(microtime(true) * 1000),
+            ]) . PHP_EOL,
+            FILE_APPEND
+        );
+        // #endregion agent log
 
         foreach ($request->area as $index => $area) {
 
@@ -322,7 +418,28 @@ class PiarController extends Controller
 
         }
 
-        return back()->with('success','Periodo 3 guardado correctamente');
+        // #region agent log
+        @file_put_contents(
+            base_path('debug-99f4e2.log'),
+            json_encode([
+                'sessionId' => '99f4e2',
+                'runId' => 'pre-fix',
+                'hypothesisId' => 'H1',
+                'location' => 'app/Http/Controllers/PiarController.php:storePeriodo3',
+                'message' => 'storePeriodo3 redirecting to periodos',
+                'data' => [
+                    'to' => 'piar.periodos',
+                    'piar_id' => (int) ($request->piar_id ?? 0),
+                ],
+                'timestamp' => (int) round(microtime(true) * 1000),
+            ]) . PHP_EOL,
+            FILE_APPEND
+        );
+        // #endregion agent log
+
+        return redirect()
+            ->route('piar.periodos', (int) $request->piar_id)
+            ->with('success','Periodo 3 guardado correctamente');
 
     }
 
@@ -374,6 +491,26 @@ class PiarController extends Controller
             'evaluacion.*' => ['nullable', 'string'],
         ]);
 
+        // #region agent log
+        @file_put_contents(
+            base_path('debug-99f4e2.log'),
+            json_encode([
+                'sessionId' => '99f4e2',
+                'runId' => 'pre-fix',
+                'hypothesisId' => 'H2',
+                'location' => 'app/Http/Controllers/PiarController.php:storeEvaluacion',
+                'message' => 'storeEvaluacion called',
+                'data' => [
+                    'piar_id' => (int) $data['piar_id'],
+                    'period' => (int) $data['period'],
+                    'rows' => is_array($data['adjustment_id'] ?? null) ? count($data['adjustment_id']) : null,
+                ],
+                'timestamp' => (int) round(microtime(true) * 1000),
+            ]) . PHP_EOL,
+            FILE_APPEND
+        );
+        // #endregion agent log
+
         $piarId = (int) $data['piar_id'];
         $period = (int) $data['period'];
         $ids = $data['adjustment_id'];
@@ -389,6 +526,25 @@ class PiarController extends Controller
                     'evaluacion' => $evaluaciones[$i] ?? null,
                 ]);
         }
+
+        // #region agent log
+        @file_put_contents(
+            base_path('debug-99f4e2.log'),
+            json_encode([
+                'sessionId' => '99f4e2',
+                'runId' => 'pre-fix',
+                'hypothesisId' => 'H2',
+                'location' => 'app/Http/Controllers/PiarController.php:storeEvaluacion',
+                'message' => 'storeEvaluacion redirecting to periodos',
+                'data' => [
+                    'to' => 'piar.periodos',
+                    'piar_id' => $piarId,
+                ],
+                'timestamp' => (int) round(microtime(true) * 1000),
+            ]) . PHP_EOL,
+            FILE_APPEND
+        );
+        // #endregion agent log
 
         return redirect()
             ->route('piar.periodos', $piarId)
