@@ -16,12 +16,17 @@ class Area extends Model
     // Relación con teachers_areas_groups
     public function teachersGroups()
     {
-        return $this->hasMany(Teachers_areas_group::class, 'id_areas');
+        return $this->hasMany(Teachers_areas_group::class, 'id_area');
     }
 
     // Relación con users_teachers
     public function teachers()
     {
-        return $this->belongsToMany(Users_teacher::class, 'teachers_areas_groups', 'id_area', 'id_teacher');
+        return $this->belongsToMany(
+            Users_teacher::class,
+            'users_load_areas',
+            'id_area',
+            'id_user_teacher'
+        );
     }
 }

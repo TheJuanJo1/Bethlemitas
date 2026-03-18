@@ -9,6 +9,8 @@ class Teachers_areas_group extends Model
 {
     use HasFactory;
 
+    protected $table = 'teachers_areas_groups';
+
     protected $fillable = [
         'id_teacher',
         'id_area',
@@ -22,7 +24,7 @@ class Teachers_areas_group extends Model
     }
 
     // Relación con Area
-    public function areas()
+    public function area()
     {
         return $this->belongsTo(Area::class, 'id_area');
     }

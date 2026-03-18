@@ -179,7 +179,15 @@ Datos del Estudiante
 
 </div>
 
-
+@if ($errors->any())
+<div style="background:#fee2e2; border:1px solid #dc2626; padding:10px; margin-bottom:20px;">
+<ul>
+@foreach ($errors->all() as $error)
+<li>{{ $error }}</li>
+@endforeach
+</ul>
+</div>
+@endif
 
 <!-- CARACTERÍSTICAS -->
 
@@ -193,27 +201,27 @@ Características del Estudiante
 
 <div>
 <label class="form-label">Descripción del estudiante</label>
-<textarea name="descripcion" class="form-control textarea-small"></textarea>
+<textarea name="descripcion" class="form-control textarea-small" required></textarea>
 </div>
 
 <div>
 <label class="form-label">Gustos e intereses</label>
-<textarea name="gustos" class="form-control textarea-small"></textarea>
+<textarea name="gustos" class="form-control textarea-small" required></textarea>
 </div>
 
 <div>
 <label class="form-label">Expectativas de la familia</label>
-<textarea name="expectativas" class="form-control textarea-small"></textarea>
+<textarea name="expectativas" class="form-control textarea-small" required></textarea>
 </div>
 
 <div>
 <label class="form-label">Habilidades</label>
-<textarea name="habilidades" class="form-control textarea-small"></textarea>
+<textarea name="habilidades" class="form-control textarea-small" required></textarea>
 </div>
 
 <div>
 <label class="form-label">Apoyos requeridos</label>
-<textarea name="apoyos" class="form-control textarea-small"></textarea>
+<textarea name="apoyos" class="form-control textarea-small" required></textarea>
 </div>
 
 </div>

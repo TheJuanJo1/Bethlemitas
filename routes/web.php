@@ -147,6 +147,10 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/piar/periodo3/store', [PiarController::class, 'storePeriodo3'])->name('piar.periodo3.store');
         Route::get('/piar/{piar}/pdf/periodo3',[PiarController::class,'pdfPeriodo3'])->name('piar.pdf.periodo3');
 
+        // Evaluación por periodo (se habilita cuando el periodo ya existe)
+        Route::get('/piar/{piar}/evaluacion/{period}', [PiarController::class, 'evaluacion'])->name('piar.evaluacion');
+        Route::post('/piar/evaluacion/store', [PiarController::class, 'storeEvaluacion'])->name('piar.evaluacion.store');
+
     });
 
     /*

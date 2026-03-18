@@ -64,6 +64,17 @@ class Users_teacher extends Authenticatable
     {
         return $this->belongsToMany(
             Area::class,
+            'users_load_areas',
+            'id_user_teacher',
+            'id_area'
+        );
+    }
+
+    // Cruce área-grupo del docente (cuando aplique)
+    public function areasByGroup()
+    {
+        return $this->belongsToMany(
+            Area::class,
             'teachers_areas_groups',
             'id_teacher',
             'id_area'
@@ -84,7 +95,7 @@ class Users_teacher extends Authenticatable
     // Relación completa a la tabla pivote
     public function areasGroups()
     {
-        return $this->hasMany(Teachers_areas_groups::class, 'id_teacher');
+        return $this->hasMany(Teachers_areas_group::class, 'id_teacher');
     }
 
     /* ======================================================

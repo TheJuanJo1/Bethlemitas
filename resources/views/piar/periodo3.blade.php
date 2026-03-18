@@ -86,7 +86,15 @@ Ajustes Razonables
 
 <div class="col-md-2 mb-3">
 <label>Área</label>
-<input type="text" name="area[]" class="form-control">
+<select name="area[]" class="form-control">
+
+<option value="">Seleccione área</option>
+
+@foreach($areas as $area)
+<option value="{{ $area->name_area }}">{{ $area->name_area }}</option>
+@endforeach
+
+</select>
 </div>
 
 <div class="col-md-2 mb-3">
@@ -102,11 +110,6 @@ Ajustes Razonables
 <div class="col-md-3 mb-3">
 <label>Ajuste Razonable</label>
 <textarea name="ajuste[]" class="form-control"></textarea>
-</div>
-
-<div class="col-md-3 mb-3">
-<label>Evaluación</label>
-<textarea name="evaluacion[]" class="form-control"></textarea>
 </div>
 
 </div>
