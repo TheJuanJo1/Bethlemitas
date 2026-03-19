@@ -113,11 +113,13 @@ Subir Evaluación
 </a>
 @endif
 
-<a href="{{ route('piar.periodo1',$piar->id) }}">
-<button class="btn-open">
-Abrir
-</button>
-</a>
+@if($ready)
+    <a href="{{ route('piar.periodo1',$piar->id) }}">
+    <button class="btn-open">Abrir</button>
+    </a>
+@else
+    <button class="btn-open btn-disabled">Abrir</button>
+@endif
 
 </div>
 
@@ -155,11 +157,13 @@ Subir Evaluación
 </a>
 @endif
 
-<a href="{{ route('piar.periodo2',$piar->id) }}">
-<button class="btn-open">
-Abrir
-</button>
-</a>
+@if($ready)
+    <a href="{{ route('piar.periodo2',$piar->id) }}">
+    <button class="btn-open">Abrir</button>
+    </a>
+@else
+    <button class="btn-open btn-disabled">Abrir</button>
+@endif
 
 </div>
 
@@ -197,11 +201,13 @@ Subir Evaluación
 </a>
 @endif
 
-<a href="{{ route('piar.periodo3',$piar->id) }}">
-<button class="btn-open">
-Abrir
-</button>
-</a>
+@if($ready)
+    <a href="{{ route('piar.periodo3',$piar->id) }}">
+    <button class="btn-open">Abrir</button>
+    </a>
+@else
+    <button class="btn-open btn-disabled">Abrir</button>
+@endif
 
 </div>
 

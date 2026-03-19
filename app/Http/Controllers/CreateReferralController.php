@@ -244,6 +244,7 @@ class CreateReferralController extends Controller
         // Ordenar y paginar resultados
         $students = $query->orderBy('name', 'asc')
             ->orderBy('last_name', 'asc')
+            ->with(['degree', 'group', 'piar.characteristics'])
             ->paginate(15);
 
         return view('teacher.addMinutes', compact('students'));

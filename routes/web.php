@@ -124,11 +124,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/addMinutes', [CreateReferralController::class, 'addMinutes'])
             ->name('addMinutes');
 
-        Route::get('/piar-act/{id}', [PiarController::class,'create'])->name('piar.act.create');
-        Route::post('/piar-act/store', [PiarController::class,'store'])->name('piar.act.store');
-
-        Route::get('/piar/create/{student}',[PiarController::class,'create'])->name('piar.create');
-        Route::post('/piar/store',[PiarController::class,'store'])->name('piar.store');
+        // (PIAR caracterización inicial) -> ahora lo realiza Psicoorientador
 
         Route::get('/piar/{piar}/periodos',[PiarController::class,'periodos'])->name('piar.periodos');
 
@@ -223,6 +219,10 @@ Route::middleware(['auth'])->group(function () {
 
         Route::put('/accept/student', [PsicoController::class, 'accept_student_to_piar'])
             ->name('accept.student.to.piar');
+
+        // PIAR - caracterización inicial (solo psicoorientador)
+        Route::get('/piar/create/{student}',[PiarController::class,'create'])->name('piar.create');
+        Route::post('/piar/store',[PiarController::class,'store'])->name('piar.store');
     });
 
 });
