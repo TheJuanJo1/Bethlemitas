@@ -54,16 +54,15 @@
                             <td class="px-4 py-2 text-center border">{{ $student->age }}</td>
                             <td class="px-4 py-2 text-center border">
                                 <div style="display:flex; gap:10px; justify-content:center;">
-                                <a href="{{ route('piar.create',$student->id) }}"
-                                class="text-blue-500 hover:underline">
-                                Añadir Acta
-                                </a>
-                                @if($student->piar)
-                                <a href="{{ route('piar.pdf',$student->piar->id) }}" target="_blank" class="text-green-500 hover:underline" >
-                                    <button class="btn btn-success" >
-                                    Descargar Acta 
-                                    </button>
-                                </a>
+                                @if($student->piar && $student->piar->characteristics)
+                                    <a href="{{ route('piar.periodos',$student->piar->id) }}" class="text-blue-500 hover:underline">
+                                        <button class="btn btn-primary">Abrir Periodos</button>
+                                    </a>
+                                    <a href="{{ route('piar.pdf',$student->piar->id) }}" target="_blank" class="text-green-500 hover:underline" >
+                                        <button class="btn btn-success">Descargar Acta</button>
+                                    </a>
+                                @else
+                                    <button class="btn btn-secondary" disabled>Esperando PIAR (Psico)</button>
                                 @endif
                                 </div>
                             </td>

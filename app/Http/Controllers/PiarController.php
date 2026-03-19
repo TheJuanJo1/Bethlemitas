@@ -22,6 +22,10 @@ class PiarController extends Controller
             'characteristics'
         ])->findOrFail($id);
 
+        if (!$piar->characteristics) {
+            return back()->with('error', 'El acta no está disponible hasta que el Psicoorientador diligencie la caracterización.');
+        }
+
         $periodo1 = PiarAdjustment::with('teacher')->where('piar_id',$id)->where('period',1)->get();
         $periodo2 = PiarAdjustment::with('teacher')->where('piar_id',$id)->where('period',2)->get();
         $periodo3 = PiarAdjustment::with('teacher')->where('piar_id',$id)->where('period',3)->get();
@@ -45,12 +49,26 @@ class PiarController extends Controller
                 ->where('year',date('Y'))
                 ->first();
 
-        // Si ya existe PIAR ir directo a periodos
-        if($piar){
-            return redirect()->route('piar.periodos',$piar->id);
-        }
+        // #region agent log
+        @file_put_contents(
+            base_path('debug-99f4e2.log'),
+            json_encode([
+                'sessionId' => '99f4e2',
+                'runId' => 'pre-fix',
+                'hypothesisId' => 'H-create-1',
+                'location' => 'app/Http/Controllers/PiarController.php:create',
+                'message' => 'PIAR create accessed by psico',
+                'data' => [
+                    'student_id' => (int) $student_id,
+                    'has_piar' => (bool) $piar,
+                ],
+                'timestamp' => (int) round(microtime(true) * 1000),
+            ]) . PHP_EOL,
+            FILE_APPEND
+        );
+        // #endregion agent log
 
-        // Si no existe mostrar formulario inicial
+        // Mostrar siempre el formulario inicial; store() decide si crea o solo completa
         return view('piar.create',compact('student'));
 
     }
@@ -68,6 +86,8 @@ class PiarController extends Controller
             'apoyos' => 'required|string'
         ]);
 
+        $student = Users_student::findOrFail($request->student_id);
+
         // Verificar si ya existe PIAR este año
         $piar = Piar::where('student_id',$request->student_id)
                 ->where('year',date('Y'))
@@ -77,7 +97,8 @@ class PiarController extends Controller
 
             $piar = Piar::create([
                 'student_id' => $request->student_id,
-                'teacher_id' => Auth::id(),
+                // El PIAR pertenece al docente del estudiante (no al psico que diligencia la caracterización)
+                'teacher_id' => $student->sent_by ?? null,
                 'year' => date('Y'),
             ]);
 
@@ -97,7 +118,9 @@ class PiarController extends Controller
 
         }
 
-        return redirect()->route('piar.periodos', $piar->id);
+        return redirect()
+            ->route('psico.students.piar')
+            ->with('success', 'PIAR creado/actualizado correctamente');
 
     }
     //Los Periosdos
@@ -105,7 +128,8 @@ class PiarController extends Controller
     public function periodos($piar_id)
     {
 
-        $piar = Piar::with('student.degree')->findOrFail($piar_id);
+        $piar = Piar::with('student.degree', 'characteristics')->findOrFail($piar_id);
+        $ready = (bool) $piar->characteristics;
 
         $period1 = PiarAdjustment::where('piar_id',$piar_id)
                     ->where('period',1)
@@ -123,7 +147,8 @@ class PiarController extends Controller
             'piar',
             'period1',
             'period2',
-            'period3'
+            'period3',
+            'ready'
         ));
 
     }
