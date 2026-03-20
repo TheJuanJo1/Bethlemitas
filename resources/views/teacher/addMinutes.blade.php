@@ -62,7 +62,7 @@
                                         <button class="btn btn-success">Descargar Acta</button>
                                     </a>
                                 @else
-                                    <button class="btn btn-secondary" disabled>Esperando PIAR (Psico)</button>
+                                    <button class="btn btn-secondary" disabled>Esperando PIAR (Psicoorientador)</button>
                                 @endif
                                 </div>
                             </td>

@@ -202,20 +202,72 @@ class PiarController extends Controller
         foreach ($request->area as $index => $area) {
 
             if($area != null){
+                // #region agent log
+                $existingCount = PiarAdjustment::query()
+                    ->where('piar_id', (int) $request->piar_id)
+                    ->where('period', 1)
+                    ->where('teacher_id', auth()->id())
+                    ->where('area', $area)
+                    ->count();
+                if ($existingCount > 0) {
+                    @file_put_contents(
+                        base_path('debug-99f4e2.log'),
+                        json_encode([
+                            'sessionId' => '99f4e2',
+                            'runId' => 'pre-fix',
+                            'hypothesisId' => 'H-dup-create',
+                            'location' => 'storePeriodo1:dupCheck',
+                            'message' => 'existing adjustment found; will create duplicate unless fixed',
+                            'data' => [
+                                'piar_id' => (int) $request->piar_id,
+                                'period' => 1,
+                                'teacher_id' => (int) auth()->id(),
+                                'area' => (string) $area,
+                                'existingCount' => (int) $existingCount,
+                                'index' => (int) $index,
+                            ],
+                            'timestamp' => (int) round(microtime(true) * 1000),
+                        ]) . PHP_EOL,
+                        FILE_APPEND
+                    );
+                }
+                // #endregion agent log
 
-                PiarAdjustment::create([
-
-                    'piar_id' => $request->piar_id,
-                    'period' => 1, // 👈 ESTA ES LA CLAVE DEL ERROR
-                    'teacher_id' => auth()->id(),
-
+                $piarId = (int) $request->piar_id;
+                $teacherId = (int) auth()->id();
+                $values = [
+                    'piar_id' => $piarId,
+                    'period' => 1,
+                    'teacher_id' => $teacherId,
                     'area' => $area,
                     'objetivo' => $request->objetivo[$index] ?? null,
                     'barrera' => $request->barrera[$index] ?? null,
                     'ajuste' => $request->ajuste[$index] ?? null,
                     'evaluacion' => null,
+                ];
 
-                ]);
+                $baseQuery = PiarAdjustment::query()
+                    ->where('piar_id', $piarId)
+                    ->where('period', 1)
+                    ->where('teacher_id', $teacherId)
+                    ->where('area', $area);
+
+                $existingIds = $baseQuery->orderBy('id')->pluck('id');
+
+                if ($existingIds->isNotEmpty()) {
+                    // Actualiza y luego elimina duplicados extra para evitar repetir materias.
+                    $baseQuery->update([
+                        'objetivo' => $values['objetivo'],
+                        'barrera' => $values['barrera'],
+                        'ajuste' => $values['ajuste'],
+                        'evaluacion' => null,
+                    ]);
+
+                    $keepId = $existingIds->first();
+                    $baseQuery->where('id', '!=', $keepId)->delete();
+                } else {
+                    PiarAdjustment::create($values);
+                }
 
             }
 
@@ -312,20 +364,71 @@ class PiarController extends Controller
         foreach ($request->area as $index => $area) {
 
             if($area != null){
+                // #region agent log
+                $existingCount = PiarAdjustment::query()
+                    ->where('piar_id', (int) $request->piar_id)
+                    ->where('period', 2)
+                    ->where('teacher_id', auth()->id())
+                    ->where('area', $area)
+                    ->count();
+                if ($existingCount > 0) {
+                    @file_put_contents(
+                        base_path('debug-99f4e2.log'),
+                        json_encode([
+                            'sessionId' => '99f4e2',
+                            'runId' => 'pre-fix',
+                            'hypothesisId' => 'H-dup-create',
+                            'location' => 'storePeriodo2:dupCheck',
+                            'message' => 'existing adjustment found; will create duplicate unless fixed',
+                            'data' => [
+                                'piar_id' => (int) $request->piar_id,
+                                'period' => 2,
+                                'teacher_id' => (int) auth()->id(),
+                                'area' => (string) $area,
+                                'existingCount' => (int) $existingCount,
+                                'index' => (int) $index,
+                            ],
+                            'timestamp' => (int) round(microtime(true) * 1000),
+                        ]) . PHP_EOL,
+                        FILE_APPEND
+                    );
+                }
+                // #endregion agent log
 
-                PiarAdjustment::create([
-
-                    'piar_id' => $request->piar_id,
-                    'period' => 2, // 👈 ESTA ES LA CLAVE DEL ERROR
-                    'teacher_id' => auth()->id(),
-
+                $piarId = (int) $request->piar_id;
+                $teacherId = (int) auth()->id();
+                $values = [
+                    'piar_id' => $piarId,
+                    'period' => 2,
+                    'teacher_id' => $teacherId,
                     'area' => $area,
                     'objetivo' => $request->objetivo[$index] ?? null,
                     'barrera' => $request->barrera[$index] ?? null,
                     'ajuste' => $request->ajuste[$index] ?? null,
                     'evaluacion' => null,
+                ];
 
-                ]);
+                $baseQuery = PiarAdjustment::query()
+                    ->where('piar_id', $piarId)
+                    ->where('period', 2)
+                    ->where('teacher_id', $teacherId)
+                    ->where('area', $area);
+
+                $existingIds = $baseQuery->orderBy('id')->pluck('id');
+
+                if ($existingIds->isNotEmpty()) {
+                    $baseQuery->update([
+                        'objetivo' => $values['objetivo'],
+                        'barrera' => $values['barrera'],
+                        'ajuste' => $values['ajuste'],
+                        'evaluacion' => null,
+                    ]);
+
+                    $keepId = $existingIds->first();
+                    $baseQuery->where('id', '!=', $keepId)->delete();
+                } else {
+                    PiarAdjustment::create($values);
+                }
 
             }
 
@@ -424,20 +527,71 @@ class PiarController extends Controller
         foreach ($request->area as $index => $area) {
 
             if($area != null){
+                // #region agent log
+                $existingCount = PiarAdjustment::query()
+                    ->where('piar_id', (int) $request->piar_id)
+                    ->where('period', 3)
+                    ->where('teacher_id', auth()->id())
+                    ->where('area', $area)
+                    ->count();
+                if ($existingCount > 0) {
+                    @file_put_contents(
+                        base_path('debug-99f4e2.log'),
+                        json_encode([
+                            'sessionId' => '99f4e2',
+                            'runId' => 'pre-fix',
+                            'hypothesisId' => 'H-dup-create',
+                            'location' => 'storePeriodo3:dupCheck',
+                            'message' => 'existing adjustment found; will create duplicate unless fixed',
+                            'data' => [
+                                'piar_id' => (int) $request->piar_id,
+                                'period' => 3,
+                                'teacher_id' => (int) auth()->id(),
+                                'area' => (string) $area,
+                                'existingCount' => (int) $existingCount,
+                                'index' => (int) $index,
+                            ],
+                            'timestamp' => (int) round(microtime(true) * 1000),
+                        ]) . PHP_EOL,
+                        FILE_APPEND
+                    );
+                }
+                // #endregion agent log
 
-                PiarAdjustment::create([
-
-                    'piar_id' => $request->piar_id,
-                    'period' => 3, // 👈 ESTA ES LA CLAVE DEL ERROR
-                    'teacher_id' => auth()->id(),
-
+                $piarId = (int) $request->piar_id;
+                $teacherId = (int) auth()->id();
+                $values = [
+                    'piar_id' => $piarId,
+                    'period' => 3,
+                    'teacher_id' => $teacherId,
                     'area' => $area,
                     'objetivo' => $request->objetivo[$index] ?? null,
                     'barrera' => $request->barrera[$index] ?? null,
                     'ajuste' => $request->ajuste[$index] ?? null,
                     'evaluacion' => null,
+                ];
 
-                ]);
+                $baseQuery = PiarAdjustment::query()
+                    ->where('piar_id', $piarId)
+                    ->where('period', 3)
+                    ->where('teacher_id', $teacherId)
+                    ->where('area', $area);
+
+                $existingIds = $baseQuery->orderBy('id')->pluck('id');
+
+                if ($existingIds->isNotEmpty()) {
+                    $baseQuery->update([
+                        'objetivo' => $values['objetivo'],
+                        'barrera' => $values['barrera'],
+                        'ajuste' => $values['ajuste'],
+                        'evaluacion' => null,
+                    ]);
+
+                    $keepId = $existingIds->first();
+                    $baseQuery->where('id', '!=', $keepId)->delete();
+                } else {
+                    PiarAdjustment::create($values);
+                }
 
             }
 
@@ -575,6 +729,85 @@ class PiarController extends Controller
             ->route('piar.periodos', $piarId)
             ->with('success', 'Evaluación guardada correctamente');
     }
+
+    // #region Psico - Edición de Ajustes Razonables
+
+    public function psicoEditarAjustes($piar_id)
+    {
+        $piar_id = (int) $piar_id;
+
+        $piar = Piar::with([
+            'student.degree',
+            'characteristics',
+        ])->findOrFail($piar_id);
+
+        // Si no está caracterizado, no tiene sentido editar ajustes.
+        if (!$piar->characteristics) {
+            return redirect()
+                ->route('psico.students.piar')
+                ->with('error', 'Primero debe existir la caracterización del PIAR (Psico).');
+        }
+
+        $periodo1 = PiarAdjustment::query()
+            ->where('piar_id', $piar_id)
+            ->where('period', 1)
+            ->orderBy('area')
+            ->get();
+
+        $periodo2 = PiarAdjustment::query()
+            ->where('piar_id', $piar_id)
+            ->where('period', 2)
+            ->orderBy('area')
+            ->get();
+
+        $periodo3 = PiarAdjustment::query()
+            ->where('piar_id', $piar_id)
+            ->where('period', 3)
+            ->orderBy('area')
+            ->get();
+
+        return view('piar.editar_ajustes', compact('piar', 'periodo1', 'periodo2', 'periodo3'));
+    }
+
+    public function psicoGuardarAjustes(Request $request)
+    {
+        $data = $request->validate([
+            'piar_id' => ['required', 'integer'],
+            'period' => ['required', 'integer', 'in:1,2,3'],
+            'adjustment_id' => ['required', 'array'],
+            'adjustment_id.*' => ['required', 'integer'],
+            'objetivo' => ['required', 'array'],
+            'objetivo.*' => ['nullable', 'string'],
+            'barrera' => ['required', 'array'],
+            'barrera.*' => ['nullable', 'string'],
+            'ajuste' => ['required', 'array'],
+            'ajuste.*' => ['nullable', 'string'],
+        ]);
+
+        $piarId = (int) $data['piar_id'];
+        $period = (int) $data['period'];
+        $ids = $data['adjustment_id'];
+
+        foreach ($ids as $i => $adjId) {
+            $adjId = (int) $adjId;
+
+            PiarAdjustment::query()
+                ->where('id', $adjId)
+                ->where('piar_id', $piarId)
+                ->where('period', $period)
+                ->update([
+                    'objetivo' => $data['objetivo'][$i] ?? null,
+                    'barrera' => $data['barrera'][$i] ?? null,
+                    'ajuste' => $data['ajuste'][$i] ?? null,
+                ]);
+        }
+
+        return redirect()
+            ->route('piar.psico.ajustes.edit', $piarId)
+            ->with('success', 'Ajustes actualizados correctamente.');
+    }
+
+    // #endregion Psico - Edición de Ajustes Razonables
 
 
 }
