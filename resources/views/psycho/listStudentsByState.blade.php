@@ -84,19 +84,30 @@
                             </td>
 
                             <td class="px-4 py-2 text-center border">
-                                <div class="flex justify-center gap-2">
+                                <div class="flex justify-center gap-1">
                                     <a href="{{ route('piar.create', $student->id) }}"
-                                       class="px-3 py-1 text-sm text-black bg-yellow-400 rounded hover:bg-yellow-500">
+                                       class="px-2 py-0.5 text-xs text-black bg-yellow-400 rounded hover:bg-yellow-500">
                                         Llenar PIAR
                                     </a>
 
+                                    @if($student->piar && $student->piar->adjustments()->exists())
+                                        <a href="{{ route('piar.psico.ajustes.edit', $student->piar->id) }}"
+                                           class="px-2 py-0.5 text-xs text-white bg-orange-500 rounded hover:bg-orange-600">
+                                            Editar Ajustes
+                                        </a>
+                                    @else
+                                        <span class="px-2 py-0.5 text-xs text-gray-500 bg-gray-200 rounded">
+                                            Editar Ajustes
+                                        </span>
+                                    @endif
+
                                     @if($student->piar && $student->piar->characteristics)
                                         <a href="{{ route('piar.pdf',$student->piar->id) }}" target="_blank"
-                                           class="px-3 py-1 text-sm text-white bg-green-600 rounded hover:bg-green-700">
+                                           class="px-2 py-0.5 text-xs text-white bg-green-600 rounded hover:bg-green-700">
                                             Descargar Acta
                                         </a>
                                     @else
-                                        <span class="px-3 py-1 text-sm text-gray-500 bg-gray-200 rounded">
+                                        <span class="px-2 py-0.5 text-xs text-gray-500 bg-gray-200 rounded">
                                             Acta no disponible
                                         </span>
                                     @endif

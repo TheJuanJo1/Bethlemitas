@@ -223,6 +223,12 @@ Route::middleware(['auth'])->group(function () {
         // PIAR - caracterización inicial (solo psicoorientador)
         Route::get('/piar/create/{student}',[PiarController::class,'create'])->name('piar.create');
         Route::post('/piar/store',[PiarController::class,'store'])->name('piar.store');
+
+        // PIAR - Ajustes Razonables (edición por psico)
+        Route::get('/piar/{piar}/editar-ajustes', [PiarController::class, 'psicoEditarAjustes'])
+            ->name('piar.psico.ajustes.edit');
+        Route::post('/piar/ajustes/store', [PiarController::class, 'psicoGuardarAjustes'])
+            ->name('piar.psico.ajustes.store');
     });
 
 });
