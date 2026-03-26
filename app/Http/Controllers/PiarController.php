@@ -185,7 +185,7 @@ class PiarController extends Controller
             base_path('debug-99f4e2.log'),
             json_encode([
                 'sessionId' => '99f4e2',
-                'runId' => 'pre-fix',
+                'runId' => 'updated',
                 'hypothesisId' => 'H1',
                 'location' => 'app/Http/Controllers/PiarController.php:storePeriodo1',
                 'message' => 'storePeriodo1 called',
@@ -201,30 +201,35 @@ class PiarController extends Controller
 
         foreach ($request->area as $index => $area) {
 
-            if($area != null){
-                // #region agent log
+            if ($area != null) {
+
+                $piarId = (int) $request->piar_id;
+                $teacherId = (int) auth()->id();
+
+                // #region agent log (duplicados)
                 $existingCount = PiarAdjustment::query()
-                    ->where('piar_id', (int) $request->piar_id)
+                    ->where('piar_id', $piarId)
                     ->where('period', 1)
-                    ->where('teacher_id', auth()->id())
+                    ->where('teacher_id', $teacherId)
                     ->where('area', $area)
                     ->count();
+
                 if ($existingCount > 0) {
                     @file_put_contents(
                         base_path('debug-99f4e2.log'),
                         json_encode([
                             'sessionId' => '99f4e2',
-                            'runId' => 'pre-fix',
+                            'runId' => 'updated',
                             'hypothesisId' => 'H-dup-create',
                             'location' => 'storePeriodo1:dupCheck',
-                            'message' => 'existing adjustment found; will create duplicate unless fixed',
+                            'message' => 'existing adjustment found',
                             'data' => [
-                                'piar_id' => (int) $request->piar_id,
+                                'piar_id' => $piarId,
                                 'period' => 1,
-                                'teacher_id' => (int) auth()->id(),
-                                'area' => (string) $area,
-                                'existingCount' => (int) $existingCount,
-                                'index' => (int) $index,
+                                'teacher_id' => $teacherId,
+                                'area' => $area,
+                                'existingCount' => $existingCount,
+                                'index' => $index,
                             ],
                             'timestamp' => (int) round(microtime(true) * 1000),
                         ]) . PHP_EOL,
@@ -233,16 +238,26 @@ class PiarController extends Controller
                 }
                 // #endregion agent log
 
-                $piarId = (int) $request->piar_id;
-                $teacherId = (int) auth()->id();
+                // 🔥 NUEVOS CAMPOS
                 $values = [
                     'piar_id' => $piarId,
                     'period' => 1,
                     'teacher_id' => $teacherId,
+
                     'area' => $area,
                     'objetivo' => $request->objetivo[$index] ?? null,
                     'barrera' => $request->barrera[$index] ?? null,
-                    'ajuste' => $request->ajuste[$index] ?? null,
+
+                    'ajuste_curricular' => $request->ajuste_curricular[$index] ?? null,
+                    'ajuste_metodologico' => $request->ajuste_metodologico[$index] ?? null,
+                    'ajuste_evaluativo' => $request->ajuste_evaluativo[$index] ?? null,
+
+                    'convivencia' => $request->convivencia[$index] ?? null,
+                    'socializacion' => $request->socializacion[$index] ?? null,
+                    'participacion' => $request->participacion[$index] ?? null,
+                    'autonomia' => $request->autonomia[$index] ?? null,
+                    'autocontrol' => $request->autocontrol[$index] ?? null,
+
                     'evaluacion' => null,
                 ];
 
@@ -255,22 +270,33 @@ class PiarController extends Controller
                 $existingIds = $baseQuery->orderBy('id')->pluck('id');
 
                 if ($existingIds->isNotEmpty()) {
-                    // Actualiza y luego elimina duplicados extra para evitar repetir materias.
+
+                    // ✅ UPDATE con nuevos campos
                     $baseQuery->update([
                         'objetivo' => $values['objetivo'],
                         'barrera' => $values['barrera'],
-                        'ajuste' => $values['ajuste'],
+
+                        'ajuste_curricular' => $values['ajuste_curricular'],
+                        'ajuste_metodologico' => $values['ajuste_metodologico'],
+                        'ajuste_evaluativo' => $values['ajuste_evaluativo'],
+
+                        'convivencia' => $values['convivencia'],
+                        'socializacion' => $values['socializacion'],
+                        'participacion' => $values['participacion'],
+                        'autonomia' => $values['autonomia'],
+                        'autocontrol' => $values['autocontrol'],
+
                         'evaluacion' => null,
                     ]);
 
+                    // 🧹 eliminar duplicados dejando uno
                     $keepId = $existingIds->first();
                     $baseQuery->where('id', '!=', $keepId)->delete();
+
                 } else {
                     PiarAdjustment::create($values);
                 }
-
             }
-
         }
 
         // #region agent log
@@ -278,12 +304,11 @@ class PiarController extends Controller
             base_path('debug-99f4e2.log'),
             json_encode([
                 'sessionId' => '99f4e2',
-                'runId' => 'pre-fix',
+                'runId' => 'updated',
                 'hypothesisId' => 'H1',
-                'location' => 'app/Http/Controllers/PiarController.php:storePeriodo1',
-                'message' => 'storePeriodo1 redirecting to periodos',
+                'location' => 'storePeriodo1',
+                'message' => 'redirecting',
                 'data' => [
-                    'to' => 'piar.periodos',
                     'piar_id' => (int) ($request->piar_id ?? 0),
                 ],
                 'timestamp' => (int) round(microtime(true) * 1000),
@@ -294,8 +319,7 @@ class PiarController extends Controller
 
         return redirect()
             ->route('piar.periodos', (int) $request->piar_id)
-            ->with('success','Periodo 1 guardado correctamente');
-
+            ->with('success', 'Periodo 1 guardado correctamente');
     }
 
     public function pdfPeriodo1($piar_id)
