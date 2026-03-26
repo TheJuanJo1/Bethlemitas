@@ -7,7 +7,7 @@
 <style>
 
 .container-piar{
-max-width:1100px;
+max-width:1200px;
 margin:auto;
 }
 
@@ -29,15 +29,34 @@ margin-bottom:20px;
 }
 
 .form-control{
-border:2px solid #000;
-border-radius:6px;
-padding:8px;
+border:1px solid #000;
+border-radius:4px;
+padding:6px;
 width:100%;
+font-size:12px;
 }
 
 textarea.form-control{
-height:70px;
+height:60px;
 resize:none;
+}
+
+table{
+width:100%;
+border-collapse:collapse;
+font-size:12px;
+}
+
+th, td{
+border:1px solid #000;
+padding:5px;
+text-align:center;
+vertical-align:middle;
+}
+
+thead th{
+background:#dbeafe;
+font-weight:bold;
 }
 
 .btn-save{
@@ -51,15 +70,15 @@ border-radius:6px;
 
 </style>
 
-<button onclick="window.location.href='/piar/5/periodos'" style="background: none; border: none; cursor: pointer;">
-        <i class="bi bi-arrow-left" style="font-size: 2rem;"></i>
+<button onclick="history.back()" style="background:none;border:none;cursor:pointer;">
+<i class="bi bi-arrow-left" style="font-size:2rem;"></i>
 </button>
 
 <div class="container container-piar">
 
 <h3>PIAR - Ajustes Razonables (Periodo 2)</h3>
 
-<form action="{{ route('piar.periodo2.store') }}" method="POST">
+<form action="{{ route('piar.periodo1.store') }}" method="POST">
 
 @csrf
 
@@ -86,37 +105,92 @@ Datos del Estudiante
 Ajustes Razonables
 </div>
 
-<div class="row">
+<table>
 
-<div class="col-md-2 mb-3">
-<label>Área</label>
-<select name="area[]" class="form-control">
+<thead>
 
-<option value="">Seleccione área</option>
+<tr>
+<th rowspan="2">Área</th>
+<th rowspan="2">Objetivo / Propósito</th>
+<th rowspan="2">Barreras</th>
 
+<th colspan="3">Ajustes Razonables</th>
+
+<th colspan="5">Otros</th>
+</tr>
+
+<tr>
+<th>Curriculares</th>
+<th>Metodológicos</th>
+<th>Evaluativos</th>
+
+<th>Convivencia</th>
+<th>Socialización</th>
+<th>Participación</th>
+<th>Autonomía</th>
+<th>Autocontrol</th>
+</tr>
+
+</thead>
+
+<tbody>
+
+<tr>
+
+<td>
+<select name="area[]" class="form-control" required>
+<option value="">Seleccione</option>
 @foreach($areas as $area)
 <option value="{{ $area->name_area }}">{{ $area->name_area }}</option>
 @endforeach
-
 </select>
-</div>
+</td>
 
-<div class="col-md-2 mb-3">
-<label>Objetivo</label>
+<td>
 <textarea name="objetivo[]" class="form-control" required></textarea>
-</div>
+</td>
 
-<div class="col-md-2 mb-3">
-<label>Barrera</label>
+<td>
 <textarea name="barrera[]" class="form-control" required></textarea>
-</div>
+</td>
 
-<div class="col-md-3 mb-3">
-<label>Ajuste Razonable</label>
-<textarea name="ajuste[]" class="form-control" required></textarea>
-</div>
+<td>
+<textarea name="ajuste_curricular[]" class="form-control" required></textarea>
+</td>
 
-</div>
+<td>
+<textarea name="ajuste_metodologico[]" class="form-control" required></textarea>
+</td>
+
+<td>
+<textarea name="ajuste_evaluativo[]" class="form-control" required></textarea>
+</td>
+
+<td>
+<textarea name="convivencia[]" class="form-control" required></textarea>
+</td>
+
+<td>
+<textarea name="socializacion[]" class="form-control" required></textarea>
+</td>
+
+<td>
+<textarea name="participacion[]" class="form-control" required></textarea>
+</td>
+
+<td>
+<textarea name="autonomia[]" class="form-control" required></textarea>
+</td>
+
+<td>
+<textarea name="autocontrol[]" class="form-control" required></textarea>
+</td>
+
+</tr>
+
+</tbody>
+
+</table>
 
 </div>
 
