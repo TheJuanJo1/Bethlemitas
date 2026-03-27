@@ -78,7 +78,7 @@ border-radius:6px;
 
 <h3>PIAR - Ajustes Razonables (Periodo 2)</h3>
 
-<form action="{{ route('piar.periodo1.store') }}" method="POST">
+<form action="{{ route('piar.periodo2.store') }}" method="POST">
 
 @csrf
 
