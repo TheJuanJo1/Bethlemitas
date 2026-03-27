@@ -14,7 +14,17 @@ class PiarAdjustment extends Model
         'barrera',
         'ajuste',
         'teacher_id',
-        'evaluacion'
+        'evaluacion',
+
+        'ajuste_curricular',
+        'ajuste_metodologico',
+        'ajuste_evaluativo',
+        'convivencia',
+        'socializacion',
+        'participacion',
+        'autonomia',
+        'autocontrol',
+        'evaluacion',
     ];
 
     public function piar()

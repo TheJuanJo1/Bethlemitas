@@ -41,6 +41,10 @@ font-size:18px;
 margin-bottom:10px;
 }
 
+h3{
+margin-top:10px;
+}
+
 table{
 width:100%;
 border-collapse:collapse;
@@ -52,9 +56,15 @@ border:1px solid black;
 }
 
 th,td{
-padding:6px;
+padding:5px;
 vertical-align:top;
 word-wrap:break-word;
+font-size:11px;
+}
+
+th{
+background:#e5e5e5;
+text-align:left;
 }
 
 .titulo-seccion{
@@ -77,10 +87,14 @@ min-height:80px;
 page-break-before:always;
 }
 
+.separador{
+background:#ccc;
+height:5px;
+}
+
 </style>
 
 </head>
-
 
 <body>
 
@@ -93,12 +107,10 @@ V14.16/02/2018. - Ver documento de instrucciones.<br>
 Ministerio de Educación Nacional – Viceministerio de Educación Preescolar, Básica y Media – Decreto 1421 de 2017
 </div>
 
-
 <h1>
 PLAN INDIVIDUAL DE AJUSTES RAZONABLES – PIAR –<br>
 ANEXO 2
 </h1>
-
 
 <table>
 
@@ -119,7 +131,7 @@ ANEXO 2
 </tr>
 
 <tr>
-<td class="campo">Docentes que elaboran y cargo:</td>
+<td class="campo">Docentes que elaboran:</td>
 <td colspan="3">
 
 @if($periodo1->count() > 0)
@@ -131,8 +143,6 @@ ANEXO 2
 </tr>
 
 </table>
-
-
 
 <table>
 
@@ -150,14 +160,13 @@ DATOS DEL ESTUDIANTE
 {{ $piar->student->last_name ?? '' }}
 </td>
 
-<td class="campo">Documento de Identificación</td>
+<td class="campo">Documento</td>
 
 <td>
 {{ $piar->student->number_documment ?? '' }}
 </td>
 
 </tr>
-
 
 <tr>
 
@@ -177,9 +186,6 @@ DATOS DEL ESTUDIANTE
 
 </table>
 
-
-
-
 <table>
 
 <tr>
@@ -188,65 +194,44 @@ DATOS DEL ESTUDIANTE
 </td>
 </tr>
 
-
 <tr>
-
 <td class="campo">Descripción</td>
-
 <td class="caja-grande">
 {{ $piar->characteristics->descripcion_estudiante ?? '' }}
 </td>
-
 </tr>
 
-
 <tr>
-
 <td class="campo">Gustos e intereses</td>
-
 <td class="caja-grande">
 {{ $piar->characteristics->gustos_intereses ?? '' }}
 </td>
-
 </tr>
 
-
 <tr>
-
-<td class="campo">Expectativas de la familia</td>
-
+<td class="campo">Expectativas familia</td>
 <td class="caja-grande">
 {{ $piar->characteristics->expectativas_familia ?? '' }}
 </td>
-
 </tr>
 
-
 <tr>
-
 <td class="campo">Habilidades</td>
-
 <td class="caja-grande">
 {{ $piar->characteristics->habilidades ?? '' }}
 </td>
-
 </tr>
 
-
 <tr>
-
 <td class="campo">Apoyos requeridos</td>
-
 <td class="caja-grande">
 {{ $piar->characteristics->apoyos_requeridos ?? '' }}
 </td>
-
 </tr>
 
 </table>
 
-
-
+<!-- ================= PERIODO 1 ================= -->
 
 <div class="page-break"></div>
 
@@ -254,53 +239,72 @@ DATOS DEL ESTUDIANTE
 
 <table>
 
-<tr>
-<th>Docente</th>
-<th>Área</th>
-<th>Objetivo</th>
-<th>Barrera</th>
-<th>Ajuste</th>
-<th>Evaluación</th>
-</tr>
-
-
 @foreach($periodo1 as $row)
 
 <tr>
-
-<td>
-{{ $row->teacher->name ?? '' }}
-{{ $row->teacher->last_name ?? '' }}
+<th style="width:15%">Docente</th>
+<td style="width:35%">
+{{ $row->teacher->name ?? '' }} {{ $row->teacher->last_name ?? '' }}
 </td>
 
-<td>
-{{ $row->area ?? '' }}
-</td>
+<th style="width:15%">Área</th>
+<td style="width:35%">{{ $row->area ?? '' }}</td>
+</tr>
 
-<td>
-{{ $row->objetivo ?? '' }}
-</td>
+<tr>
+<th>Objetivo</th>
+<td>{{ $row->objetivo ?? '' }}</td>
 
-<td>
-{{ $row->barrera ?? '' }}
-</td>
+<th>Barrera</th>
+<td>{{ $row->barrera ?? '' }}</td>
+</tr>
 
-<td>
-{{ $row->ajuste ?? '' }}
-</td>
+<tr>
+<th>Ajuste Curricular</th>
+<td>{{ $row->ajuste_curricular ?? '' }}</td>
 
-<td>
-{{ $row->evaluacion ?? '' }}
-</td>
+<th>Ajuste Metodológico</th>
+<td>{{ $row->ajuste_metodologico ?? '' }}</td>
+</tr>
 
+<tr>
+<th>Ajuste Evaluativo</th>
+<td>{{ $row->ajuste_evaluativo ?? '' }}</td>
+
+<th>Convivencia</th>
+<td>{{ $row->convivencia ?? '' }}</td>
+</tr>
+
+<tr>
+<th>Socialización</th>
+<td>{{ $row->socializacion ?? '' }}</td>
+
+<th>Participación</th>
+<td>{{ $row->participacion ?? '' }}</td>
+</tr>
+
+<tr>
+<th>Autonomía</th>
+<td>{{ $row->autonomia ?? '' }}</td>
+
+<th>Autocontrol</th>
+<td>{{ $row->autocontrol ?? '' }}</td>
+</tr>
+
+<tr>
+<th>Evaluación</th>
+<td colspan="3">{{ $row->evaluacion ?? '' }}</td>
+</tr>
+
+<tr>
+<td colspan="4" class="separador"></td>
 </tr>
 
 @endforeach
 
 </table>
 
-
-
+<!-- ================= PERIODO 2 ================= -->
 
 <div class="page-break"></div>
 
@@ -308,53 +312,72 @@ DATOS DEL ESTUDIANTE
 
 <table>
 
-<tr>
-<th>Docente</th>
-<th>Área</th>
-<th>Objetivo</th>
-<th>Barrera</th>
-<th>Ajuste</th>
-<th>Evaluación</th>
-</tr>
-
-
 @foreach($periodo2 as $row)
 
 <tr>
-
-<td>
-{{ $row->teacher->name ?? '' }}
-{{ $row->teacher->last_name ?? '' }}
+<th style="width:15%">Docente</th>
+<td style="width:35%">
+{{ $row->teacher->name ?? '' }} {{ $row->teacher->last_name ?? '' }}
 </td>
 
-<td>
-{{ $row->area ?? '' }}
-</td>
+<th style="width:15%">Área</th>
+<td style="width:35%">{{ $row->area ?? '' }}</td>
+</tr>
 
-<td>
-{{ $row->objetivo ?? '' }}
-</td>
+<tr>
+<th>Objetivo</th>
+<td>{{ $row->objetivo ?? '' }}</td>
 
-<td>
-{{ $row->barrera ?? '' }}
-</td>
+<th>Barrera</th>
+<td>{{ $row->barrera ?? '' }}</td>
+</tr>
 
-<td>
-{{ $row->ajuste ?? '' }}
-</td>
+<tr>
+<th>Ajuste Curricular</th>
+<td>{{ $row->ajuste_curricular ?? '' }}</td>
 
-<td>
-{{ $row->evaluacion ?? '' }}
-</td>
+<th>Ajuste Metodológico</th>
+<td>{{ $row->ajuste_metodologico ?? '' }}</td>
+</tr>
 
+<tr>
+<th>Ajuste Evaluativo</th>
+<td>{{ $row->ajuste_evaluativo ?? '' }}</td>
+
+<th>Convivencia</th>
+<td>{{ $row->convivencia ?? '' }}</td>
+</tr>
+
+<tr>
+<th>Socialización</th>
+<td>{{ $row->socializacion ?? '' }}</td>
+
+<th>Participación</th>
+<td>{{ $row->participacion ?? '' }}</td>
+</tr>
+
+<tr>
+<th>Autonomía</th>
+<td>{{ $row->autonomia ?? '' }}</td>
+
+<th>Autocontrol</th>
+<td>{{ $row->autocontrol ?? '' }}</td>
+</tr>
+
+<tr>
+<th>Evaluación</th>
+<td colspan="3">{{ $row->evaluacion ?? '' }}</td>
+</tr>
+
+<tr>
+<td colspan="4" class="separador"></td>
 </tr>
 
 @endforeach
 
 </table>
 
-
-
+<!-- ================= PERIODO 3 ================= -->
 
 <div class="page-break"></div>
 
@@ -362,52 +385,70 @@ DATOS DEL ESTUDIANTE
 
 <table>
 
-<tr>
-<th>Docente</th>
-<th>Área</th>
-<th>Objetivo</th>
-<th>Barrera</th>
-<th>Ajuste</th>
-<th>Evaluación</th>
-</tr>
-
-
 @foreach($periodo3 as $row)
 
 <tr>
-
-<td>
-{{ $row->teacher->name ?? '' }}
-{{ $row->teacher->last_name ?? '' }}
+<th style="width:15%">Docente</th>
+<td style="width:35%">
+{{ $row->teacher->name ?? '' }} {{ $row->teacher->last_name ?? '' }}
 </td>
 
-<td>
-{{ $row->area ?? '' }}
-</td>
+<th style="width:15%">Área</th>
+<td style="width:35%">{{ $row->area ?? '' }}</td>
+</tr>
 
-<td>
-{{ $row->objetivo ?? '' }}
-</td>
+<tr>
+<th>Objetivo</th>
+<td>{{ $row->objetivo ?? '' }}</td>
 
-<td>
-{{ $row->barrera ?? '' }}
-</td>
+<th>Barrera</th>
+<td>{{ $row->barrera ?? '' }}</td>
+</tr>
 
-<td>
-{{ $row->ajuste ?? '' }}
-</td>
+<tr>
+<th>Ajuste Curricular</th>
+<td>{{ $row->ajuste_curricular ?? '' }}</td>
 
-<td>
-{{ $row->evaluacion ?? '' }}
-</td>
+<th>Ajuste Metodológico</th>
+<td>{{ $row->ajuste_metodologico ?? '' }}</td>
+</tr>
 
+<tr>
+<th>Ajuste Evaluativo</th>
+<td>{{ $row->ajuste_evaluativo ?? '' }}</td>
+
+<th>Convivencia</th>
+<td>{{ $row->convivencia ?? '' }}</td>
+</tr>
+
+<tr>
+<th>Socialización</th>
+<td>{{ $row->socializacion ?? '' }}</td>
+
+<th>Participación</th>
+<td>{{ $row->participacion ?? '' }}</td>
+</tr>
+
+<tr>
+<th>Autonomía</th>
+<td>{{ $row->autonomia ?? '' }}</td>
+
+<th>Autocontrol</th>
+<td>{{ $row->autocontrol ?? '' }}</td>
+</tr>
+
+<tr>
+<th>Evaluación</th>
+<td colspan="3">{{ $row->evaluacion ?? '' }}</td>
+</tr>
+
+<tr>
+<td colspan="4" class="separador"></td>
 </tr>
 
 @endforeach
 
 </table>
-
-
 
 </body>
 </html>
