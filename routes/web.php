@@ -147,6 +147,33 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/piar/{piar}/evaluacion/{period}', [PiarController::class, 'evaluacion'])->name('piar.evaluacion');
         Route::post('/piar/evaluacion/store', [PiarController::class, 'storeEvaluacion'])->name('piar.evaluacion.store');
 
+        //Editar los Periods:
+        Route::get('/piar/{id}/editar-periodo1', [PiarController::class, 'editarPeriodo1'])
+        ->name('piar.editar.periodo1');
+        Route::get('/piar/{id}/editar-periodo2', [PiarController::class, 'editarPeriodo2'])
+        ->name('piar.editar.periodo2');
+        Route::get('/piar/{id}/editar-periodo3', [PiarController::class, 'editarPeriodo3'])
+        ->name('piar.editar.periodo3');
+        // ACTUALIZAR PERIODOS (EDICIÓN)
+        Route::post('/piar/update/periodo1', [PiarController::class, 'updatePeriodo1'])
+        ->name('piar.update.periodo1');
+
+        Route::post('/piar/update/periodo2', [PiarController::class, 'updatePeriodo2'])
+        ->name('piar.update.periodo2');
+
+        Route::post('/piar/update/periodo3', [PiarController::class, 'updatePeriodo3'])
+        ->name('piar.update.periodo3');
+
+        // UPDATE PERIODOS (DOCENTE)
+        Route::put('/piar/update/periodo1', [PiarController::class, 'updatePeriodo1'])
+        ->name('piar.update.periodo1');
+
+        Route::put('/piar/update/periodo2', [PiarController::class, 'updatePeriodo2'])
+        ->name('piar.update.periodo2');
+
+        Route::put('/piar/update/periodo3', [PiarController::class, 'updatePeriodo3'])
+        ->name('piar.update.periodo3');
+
     });
 
     /*

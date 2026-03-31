@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
 use App\Models\Area;
 use App\Models\Piar;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -125,32 +126,32 @@ class PiarController extends Controller
     }
     //Los Periosdos
 
+    
+
     public function periodos($piar_id)
     {
-
         $piar = Piar::with('student.degree', 'characteristics')->findOrFail($piar_id);
         $ready = (bool) $piar->characteristics;
 
-        $period1 = PiarAdjustment::where('piar_id',$piar_id)
-                    ->where('period',1)
-                    ->exists();
+        $period1 = PiarAdjustment::where('piar_id',$piar_id)->where('period',1)->exists();
+        $period2 = PiarAdjustment::where('piar_id',$piar_id)->where('period',2)->exists();
+        $period3 = PiarAdjustment::where('piar_id',$piar_id)->where('period',3)->exists();
 
-        $period2 = PiarAdjustment::where('piar_id',$piar_id)
-                    ->where('period',2)
-                    ->exists();
+        // 🔥 CONTADOR 30 DÍAS
+        $fechaInicio = Carbon::parse($piar->created_at);
+        $fechaLimite = $fechaInicio->copy()->addDays(30);
+        $hoy = Carbon::now();
 
-        $period3 = PiarAdjustment::where('piar_id',$piar_id)
-                    ->where('period',3)
-                    ->exists();
+        $diasRestantes = $hoy->diffInDays($fechaLimite, false);
 
-        return view('piar.periodos',compact(
+        return view('piar.periodos', compact(
             'piar',
             'period1',
             'period2',
             'period3',
-            'ready'
+            'ready',
+            'diasRestantes'
         ));
-
     }
 
     //Periodo Uno
@@ -340,6 +341,55 @@ class PiarController extends Controller
 
     }
 
+    public function editarPeriodo1($piar_id)
+    {
+        $piar_id = (int) $piar_id;
+
+        $adjustments = PiarAdjustment::where('piar_id', $piar_id)
+            ->where('period', 1)
+            ->where('teacher_id', auth()->id()) // 🔥 solo sus propios registros
+            ->orderBy('area')
+            ->get();
+
+        // 🚨 Validación: que sí existan datos
+        if ($adjustments->isEmpty()) {
+            return redirect()
+                ->route('piar.periodos', $piar_id)
+                ->with('error', 'No hay datos para editar en este periodo.');
+        }
+
+        return view('piar.editar_periodo1', compact('adjustments', 'piar_id'));
+    }
+
+    public function updatePeriodo1(Request $request)
+    {
+        foreach ($request->adjustment_id as $index => $id) {
+
+            $adj = PiarAdjustment::find($id);
+
+            if ($adj) {
+                $adj->update([
+                    // ❌ quitar area (NO viene del form)
+
+                    'objetivo' => $request->objetivo[$index] ?? null,
+                    'barrera' => $request->barrera[$index] ?? null,
+
+                    'ajuste_curricular' => $request->ajuste_curricular[$index] ?? null,
+                    'ajuste_metodologico' => $request->ajuste_metodologico[$index] ?? null,
+                    'ajuste_evaluativo' => $request->ajuste_evaluativo[$index] ?? null,
+
+                    'convivencia' => $request->convivencia[$index] ?? null,
+                    'socializacion' => $request->socializacion[$index] ?? null,
+                    'participacion' => $request->participacion[$index] ?? null,
+                    'autonomia' => $request->autonomia[$index] ?? null,
+                    'autocontrol' => $request->autocontrol[$index] ?? null,
+                ]);
+            }
+        }
+
+        return back()->with('success', 'Periodo 1 actualizado correctamente');
+    }
+
     //Periodo 2
      public function periodo2($piar_id)
     {
@@ -501,9 +551,57 @@ class PiarController extends Controller
         return $pdf->stream('piar_periodo2.pdf');
 
     }
+
+    public function editarPeriodo2($piar_id)
+    {
+        $piar_id = (int) $piar_id;
+
+        $adjustments = PiarAdjustment::where('piar_id', $piar_id)
+            ->where('period', 2)
+            ->where('teacher_id', auth()->id()) // 🔥 solo sus propios registros
+            ->orderBy('area')
+            ->get();
+
+        // 🚨 Validación: que sí existan datos
+        if ($adjustments->isEmpty()) {
+            return redirect()
+                ->route('piar.periodos', $piar_id)
+                ->with('error', 'No hay datos para editar en este periodo.');
+        }
+
+        return view('piar.editar_periodo1', compact('adjustments', 'piar_id'));
+    }
+
+    public function updatePeriodo2(Request $request)
+    {
+        foreach ($request->adjustment_id as $index => $id) {
+
+            $adj = PiarAdjustment::find($id);
+
+            if ($adj) {
+                $adj->update([
+                    // ❌ quitar area (NO viene del form)
+
+                    'objetivo' => $request->objetivo[$index] ?? null,
+                    'barrera' => $request->barrera[$index] ?? null,
+
+                    'ajuste_curricular' => $request->ajuste_curricular[$index] ?? null,
+                    'ajuste_metodologico' => $request->ajuste_metodologico[$index] ?? null,
+                    'ajuste_evaluativo' => $request->ajuste_evaluativo[$index] ?? null,
+
+                    'convivencia' => $request->convivencia[$index] ?? null,
+                    'socializacion' => $request->socializacion[$index] ?? null,
+                    'participacion' => $request->participacion[$index] ?? null,
+                    'autonomia' => $request->autonomia[$index] ?? null,
+                    'autocontrol' => $request->autocontrol[$index] ?? null,
+                ]);
+            }
+        }
+
+        return back()->with('success', 'Periodo 2 actualizado correctamente');
+    }
+
     //Y PPeiorodo 3
-
-
      public function periodo3($piar_id)
     {
         $piar = Piar::with('student')->findOrFail($piar_id);
@@ -663,6 +761,55 @@ class PiarController extends Controller
 
         return $pdf->stream('piar_periodo3.pdf');
 
+    }
+
+    public function editarPeriodo3($piar_id)
+    {
+        $piar_id = (int) $piar_id;
+
+        $adjustments = PiarAdjustment::where('piar_id', $piar_id)
+            ->where('period', 3)
+            ->where('teacher_id', auth()->id()) // 🔥 solo sus propios registros
+            ->orderBy('area')
+            ->get();
+
+        // 🚨 Validación: que sí existan datos
+        if ($adjustments->isEmpty()) {
+            return redirect()
+                ->route('piar.periodos', $piar_id)
+                ->with('error', 'No hay datos para editar en este periodo.');
+        }
+
+        return view('piar.editar_periodo1', compact('adjustments', 'piar_id'));
+    }
+    
+    public function updatePeriodo3(Request $request)
+    {
+        foreach ($request->adjustment_id as $index => $id) {
+
+            $adj = PiarAdjustment::find($id);
+
+            if ($adj) {
+                $adj->update([
+                    // ❌ quitar area (NO viene del form)
+
+                    'objetivo' => $request->objetivo[$index] ?? null,
+                    'barrera' => $request->barrera[$index] ?? null,
+
+                    'ajuste_curricular' => $request->ajuste_curricular[$index] ?? null,
+                    'ajuste_metodologico' => $request->ajuste_metodologico[$index] ?? null,
+                    'ajuste_evaluativo' => $request->ajuste_evaluativo[$index] ?? null,
+
+                    'convivencia' => $request->convivencia[$index] ?? null,
+                    'socializacion' => $request->socializacion[$index] ?? null,
+                    'participacion' => $request->participacion[$index] ?? null,
+                    'autonomia' => $request->autonomia[$index] ?? null,
+                    'autocontrol' => $request->autocontrol[$index] ?? null,
+                ]);
+            }
+        }
+
+        return back()->with('success', 'Periodo 3 actualizado correctamente');
     }
 
     public function evaluacion($piar_id, $period)

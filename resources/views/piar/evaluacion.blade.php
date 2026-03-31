@@ -55,14 +55,21 @@ border-collapse:collapse;
 
 th, td{
 border:1px solid #000;
-padding:10px;
+padding:8px;
 vertical-align:top;
 background:#fff;
+font-size:12px;
 }
 
 th{
 background:#f3f4f6;
 font-weight:bold;
+width:20%;
+}
+
+.separador{
+background:#ddd;
+height:6px;
 }
 </style>
 
@@ -91,31 +98,79 @@ font-weight:bold;
             <div class="box-title">Evaluación por Ajuste</div>
 
             @if($adjustments->isEmpty())
-                <p>No hay ajustes registrados, realizados por usted para este periodo.</p>
+                <p>No hay ajustes registrados para este periodo.</p>
             @else
                 <table>
-                    <thead>
-                        <tr>
-                            <th style="width:14%">Área</th>
-                            <th style="width:18%">Objetivo</th>
-                            <th style="width:18%">Barrera</th>
-                            <th style="width:22%">Ajuste</th>
-                            <th style="width:28%">Evaluación</th>
-                        </tr>
-                    </thead>
                     <tbody>
+
                         @foreach($adjustments as $adj)
-                            <tr>
-                                <td>{{ $adj->area }}</td>
-                                <td>{{ $adj->objetivo }}</td>
-                                <td>{{ $adj->barrera }}</td>
-                                <td>{{ $adj->ajuste }}</td>
-                                <td>
-                                    <input type="hidden" name="adjustment_id[]" value="{{ $adj->id }}">
-                                    <textarea name="evaluacion[]" class="form-control">{{ old('evaluacion.' . $loop->index, $adj->evaluacion) }}</textarea>
-                                </td>
-                            </tr>
+
+                        <!-- FILA 1 -->
+                        <tr>
+                            <th>Área</th>
+                            <td>{{ $adj->area }}</td>
+
+                            <th>Objetivo</th>
+                            <td>{{ $adj->objetivo }}</td>
+                        </tr>
+
+                        <!-- FILA 2 -->
+                        <tr>
+                            <th>Barrera</th>
+                            <td>{{ $adj->barrera }}</td>
+
+                            <th>Ajuste Curricular</th>
+                            <td>{{ $adj->ajuste_curricular }}</td>
+                        </tr>
+
+                        <!-- FILA 3 -->
+                        <tr>
+                            <th>Ajuste Metodológico</th>
+                            <td>{{ $adj->ajuste_metodologico }}</td>
+
+                            <th>Ajuste Evaluativo</th>
+                            <td>{{ $adj->ajuste_evaluativo }}</td>
+                        </tr>
+
+                        <!-- FILA 4 -->
+                        <tr>
+                            <th>Convivencia</th>
+                            <td>{{ $adj->convivencia }}</td>
+
+                            <th>Socialización</th>
+                            <td>{{ $adj->socializacion }}</td>
+                        </tr>
+
+                        <!-- FILA 5 -->
+                        <tr>
+                            <th>Participación</th>
+                            <td>{{ $adj->participacion }}</td>
+
+                            <th>Autonomía</th>
+                            <td>{{ $adj->autonomia }}</td>
+                        </tr>
+
+                        <!-- FILA 6 -->
+                        <tr>
+                            <th>Autocontrol</th>
+                            <td>{{ $adj->autocontrol }}</td>
+
+                            <th>Evaluación</th>
+                            <td>
+                                <input type="hidden" name="adjustment_id[]" value="{{ $adj->id }}">
+                                <textarea name="evaluacion[]" class="form-control">
+{{ old('evaluacion.' . $loop->index, $adj->evaluacion) }}
+                                </textarea>
+                            </td>
+                        </tr>
+
+                        <!-- Separador visual -->
+                        <tr>
+                            <td colspan="4" class="separador"></td>
+                        </tr>
+
                         @endforeach
+
                     </tbody>
                 </table>
             @endif
