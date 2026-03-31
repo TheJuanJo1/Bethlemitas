@@ -8,3 +8,5 @@
 {"sessionId":"99f4e2","runId":"updated","hypothesisId":"H1","location":"storePeriodo1","message":"redirecting","data":{"piar_id":1},"timestamp":1774548108762}
 {"sessionId":"99f4e2","runId":"updated","hypothesisId":"H1","location":"app\/Http\/Controllers\/PiarController.php:storePeriodo1","message":"storePeriodo1 called","data":{"piar_id":1,"areas_count":1},"timestamp":1774618591699}
 {"sessionId":"99f4e2","runId":"updated","hypothesisId":"H1","location":"storePeriodo1","message":"redirecting","data":{"piar_id":1},"timestamp":1774618591774}
+{"sessionId":"99f4e2","runId":"pre-fix","hypothesisId":"H2","location":"app\/Http\/Controllers\/PiarController.php:storeEvaluacion","message":"storeEvaluacion called","data":{"piar_id":1,"period":1,"rows":1},"timestamp":1774889497098}
+{"sessionId":"99f4e2","runId":"pre-fix","hypothesisId":"H2","location":"app\/Http\/Controllers\/PiarController.php:storeEvaluacion","message":"storeEvaluacion redirecting to periodos","data":{"to":"piar.periodos","piar_id":1},"timestamp":1774889497107}

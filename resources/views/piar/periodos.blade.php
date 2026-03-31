@@ -61,6 +61,15 @@ border-radius:6px;
 font-weight:bold;
 }
 
+.btn-edit{
+background:#9333ea;
+color:white;
+padding:10px 20px;
+border:none;
+border-radius:6px;
+font-weight:bold;
+}
+
 .btn-disabled{
 opacity:0.55;
 cursor:not-allowed;
@@ -70,23 +79,23 @@ pointer-events:none;
 </style>
 
 <button onclick="window.location.href='/addMinutes'" style="background: none; border: none; cursor: pointer;">
-        <i class="bi bi-arrow-left" style="font-size: 2rem;"></i>
+    <i class="bi bi-arrow-left" style="font-size: 2rem;"></i>
 </button>
 
 <div class="container container-piar">
 
 <h3>PIAR - Periodos Académicos</h3>
+
 <p>
 <b>Estudiante:</b> {{ $piar->student->name }} {{ $piar->student->last_name }}
 &nbsp;&nbsp; | &nbsp;&nbsp;
 <b>Grado:</b> {{ $piar->student->degree->degree ?? 'Sin grado' }}
 </p>
 
-{{-- PERIODO 1 --}}
+{{-- ================= PERIODO 1 ================= --}}
 <div class="period-card">
 
 <div>
-
 <div class="period-title">Periodo 1</div>
 
 @if($period1)
@@ -97,28 +106,29 @@ pointer-events:none;
 
 </div>
 
-<div style="display:flex; gap:10px;">
+<div style="display:flex; gap:10px; flex-wrap:wrap;">
 
 @if($period1)
 <a href="{{ route('piar.pdf.periodo1',$piar->id) }}" target="_blank">
-<button class="btn-open" style="background:#16a34a;">
-Ver PDF
-</button>
+<button class="btn-open" style="background:#16a34a;">Ver PDF</button>
 </a>
 
 <a href="{{ route('piar.evaluacion', [$piar->id, 1]) }}">
-<button class="btn-eval">
-Subir Evaluación
-</button>
+<button class="btn-eval">Subir Evaluación</button>
+</a>
+
+{{-- BOTÓN EDITAR --}}
+<a href="{{ route('piar.editar.periodo1',$piar->id) }}">
+<button class="btn-edit">Editar</button>
 </a>
 @endif
 
 @if($ready)
-    <a href="{{ route('piar.periodo1',$piar->id) }}">
-    <button class="btn-open">Abrir</button>
-    </a>
+<a href="{{ route('piar.periodo1',$piar->id) }}">
+<button class="btn-open">Abrir</button>
+</a>
 @else
-    <button class="btn-open btn-disabled">Abrir</button>
+<button class="btn-open btn-disabled">Abrir</button>
 @endif
 
 </div>
@@ -126,11 +136,10 @@ Subir Evaluación
 </div>
 
 
-{{-- PERIODO 2 --}}
+{{-- ================= PERIODO 2 ================= --}}
 <div class="period-card">
 
 <div>
-
 <div class="period-title">Periodo 2</div>
 
 @if($period2)
@@ -141,28 +150,29 @@ Subir Evaluación
 
 </div>
 
-<div style="display:flex; gap:10px;">
+<div style="display:flex; gap:10px; flex-wrap:wrap;">
 
 @if($period2)
 <a href="{{ route('piar.pdf.periodo2',$piar->id) }}" target="_blank">
-<button class="btn-open" style="background:#16a34a;">
-Ver PDF
-</button>
+<button class="btn-open" style="background:#16a34a;">Ver PDF</button>
 </a>
 
 <a href="{{ route('piar.evaluacion', [$piar->id, 2]) }}">
-<button class="btn-eval">
-Subir Evaluación
-</button>
+<button class="btn-eval">Subir Evaluación</button>
+</a>
+
+{{-- BOTÓN EDITAR --}}
+<a href="{{ route('piar.editar.periodo2',$piar->id) }}">
+<button class="btn-edit">Editar</button>
 </a>
 @endif
 
 @if($ready)
-    <a href="{{ route('piar.periodo2',$piar->id) }}">
-    <button class="btn-open">Abrir</button>
-    </a>
+<a href="{{ route('piar.periodo2',$piar->id) }}">
+<button class="btn-open">Abrir</button>
+</a>
 @else
-    <button class="btn-open btn-disabled">Abrir</button>
+<button class="btn-open btn-disabled">Abrir</button>
 @endif
 
 </div>
@@ -170,11 +180,10 @@ Subir Evaluación
 </div>
 
 
-{{-- PERIODO 3 --}}
+{{-- ================= PERIODO 3 ================= --}}
 <div class="period-card">
 
 <div>
-
 <div class="period-title">Periodo 3</div>
 
 @if($period3)
@@ -185,28 +194,29 @@ Subir Evaluación
 
 </div>
 
-<div style="display:flex; gap:10px;">
+<div style="display:flex; gap:10px; flex-wrap:wrap;">
 
 @if($period3)
 <a href="{{ route('piar.pdf.periodo3',$piar->id) }}" target="_blank">
-<button class="btn-open" style="background:#16a34a;">
-Ver PDF
-</button>
+<button class="btn-open" style="background:#16a34a;">Ver PDF</button>
 </a>
 
 <a href="{{ route('piar.evaluacion', [$piar->id, 3]) }}">
-<button class="btn-eval">
-Subir Evaluación
-</button>
+<button class="btn-eval">Subir Evaluación</button>
+</a>
+
+{{-- BOTÓN EDITAR --}}
+<a href="{{ route('piar.editar.periodo3',$piar->id) }}">
+<button class="btn-edit">Editar</button>
 </a>
 @endif
 
 @if($ready)
-    <a href="{{ route('piar.periodo3',$piar->id) }}">
-    <button class="btn-open">Abrir</button>
-    </a>
+<a href="{{ route('piar.periodo3',$piar->id) }}">
+<button class="btn-open">Abrir</button>
+</a>
 @else
-    <button class="btn-open btn-disabled">Abrir</button>
+<button class="btn-open btn-disabled">Abrir</button>
 @endif
 
 </div>
