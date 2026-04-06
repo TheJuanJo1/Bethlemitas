@@ -43,6 +43,7 @@ border-radius:6px;
 }
 .btn-row{
 text-align:right;
+margin-top:15px;
 }
 table{
 width:100%;
@@ -50,9 +51,10 @@ border-collapse:collapse;
 }
 th, td{
 border:1px solid #000;
-padding:10px;
+padding:8px;
 background:#fff;
 vertical-align:top;
+font-size:12px;
 }
 th{
 background:#f3f4f6;
@@ -75,7 +77,7 @@ background:#f3f4f6;
         </p>
     </div>
 
-    {{-- Periodo 1 --}}
+    {{-- ================= PERIODO 1 ================= --}}
     <div class="box-section">
         <div class="box-title">Periodo 1</div>
 
@@ -87,35 +89,7 @@ background:#f3f4f6;
                 <input type="hidden" name="piar_id" value="{{ $piar->id }}">
                 <input type="hidden" name="period" value="1">
 
-                <table>
-                    <thead>
-                        <tr>
-                            <th style="width:16%">Área</th>
-                            <th style="width:18%">Objetivo</th>
-                            <th style="width:18%">Barrera</th>
-                            <th style="width:22%">Ajuste</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach($periodo1 as $adj)
-                            <tr>
-                                <td>
-                                    {{ $adj->area }}
-                                    <input type="hidden" name="adjustment_id[]" value="{{ $adj->id }}">
-                                </td>
-                                <td>
-                                    <textarea name="objetivo[]" class="form-control">{{ $adj->objetivo }}</textarea>
-                                </td>
-                                <td>
-                                    <textarea name="barrera[]" class="form-control">{{ $adj->barrera }}</textarea>
-                                </td>
-                                <td>
-                                    <textarea name="ajuste[]" class="form-control">{{ $adj->ajuste }}</textarea>
-                                </td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
+                @include('piar.partials.tabla_ajustes', ['datos' => $periodo1])
 
                 <div class="btn-row">
                     <button type="submit" class="btn-save">Guardar Periodo 1</button>
@@ -124,7 +98,7 @@ background:#f3f4f6;
         @endif
     </div>
 
-    {{-- Periodo 2 --}}
+    {{-- ================= PERIODO 2 ================= --}}
     <div class="box-section">
         <div class="box-title">Periodo 2</div>
 
@@ -136,35 +110,7 @@ background:#f3f4f6;
                 <input type="hidden" name="piar_id" value="{{ $piar->id }}">
                 <input type="hidden" name="period" value="2">
 
-                <table>
-                    <thead>
-                        <tr>
-                            <th style="width:16%">Área</th>
-                            <th style="width:18%">Objetivo</th>
-                            <th style="width:18%">Barrera</th>
-                            <th style="width:22%">Ajuste</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach($periodo2 as $adj)
-                            <tr>
-                                <td>
-                                    {{ $adj->area }}
-                                    <input type="hidden" name="adjustment_id[]" value="{{ $adj->id }}">
-                                </td>
-                                <td>
-                                    <textarea name="objetivo[]" class="form-control">{{ $adj->objetivo }}</textarea>
-                                </td>
-                                <td>
-                                    <textarea name="barrera[]" class="form-control">{{ $adj->barrera }}</textarea>
-                                </td>
-                                <td>
-                                    <textarea name="ajuste[]" class="form-control">{{ $adj->ajuste }}</textarea>
-                                </td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
+                @include('piar.partials.tabla_ajustes', ['datos' => $periodo2])
 
                 <div class="btn-row">
                     <button type="submit" class="btn-save">Guardar Periodo 2</button>
@@ -173,7 +119,7 @@ background:#f3f4f6;
         @endif
     </div>
 
-    {{-- Periodo 3 --}}
+    {{-- ================= PERIODO 3 ================= --}}
     <div class="box-section">
         <div class="box-title">Periodo 3</div>
 
@@ -185,35 +131,7 @@ background:#f3f4f6;
                 <input type="hidden" name="piar_id" value="{{ $piar->id }}">
                 <input type="hidden" name="period" value="3">
 
-                <table>
-                    <thead>
-                        <tr>
-                            <th style="width:16%">Área</th>
-                            <th style="width:18%">Objetivo</th>
-                            <th style="width:18%">Barrera</th>
-                            <th style="width:22%">Ajuste</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach($periodo3 as $adj)
-                            <tr>
-                                <td>
-                                    {{ $adj->area }}
-                                    <input type="hidden" name="adjustment_id[]" value="{{ $adj->id }}">
-                                </td>
-                                <td>
-                                    <textarea name="objetivo[]" class="form-control">{{ $adj->objetivo }}</textarea>
-                                </td>
-                                <td>
-                                    <textarea name="barrera[]" class="form-control">{{ $adj->barrera }}</textarea>
-                                </td>
-                                <td>
-                                    <textarea name="ajuste[]" class="form-control">{{ $adj->ajuste }}</textarea>
-                                </td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
+                @include('piar.partials.tabla_ajustes', ['datos' => $periodo3])
 
                 <div class="btn-row">
                     <button type="submit" class="btn-save">Guardar Periodo 3</button>
@@ -225,4 +143,3 @@ background:#f3f4f6;
 </div>
 
 @endsection
-
