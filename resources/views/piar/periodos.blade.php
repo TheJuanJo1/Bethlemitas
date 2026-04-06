@@ -86,6 +86,46 @@ pointer-events:none;
 
 <h3>PIAR - Periodos Académicos</h3>
 
+
+{{-- CONTADOR 30 DÍAS --}}
+@if(is_null($diasRestantes))
+
+<div style="margin:15px 0; padding:10px; border-radius:8px; background:#e5e7eb; color:#374151;">
+    ⏳ El periodo aún no ha iniciado
+</div>
+
+@else
+
+<div style="margin:15px 0; padding:10px; border-radius:8px;
+@if($diasRestantes > 10)
+    background:#dcfce7; color:#166534;
+@elseif($diasRestantes > 0 || $horasRestantes > 0)
+    background:#fef9c3; color:#854d0e;
+@else
+    background:#fee2e2; color:#991b1b;
+@endif
+">
+
+@if($diasRestantes > 1)
+    ⏳ Quedan <b>{{ (int)$diasRestantes }}</b> días para editar el periodo
+
+@elseif($diasRestantes == 1)
+    ⏳ Queda <b>1 día</b> para editar el periodo
+
+@elseif($diasRestantes == 0 && $horasRestantes > 0)
+    ⏳ Quedan <b>{{ (int)$horasRestantes }}</b> horas para editar el periodo
+
+@elseif($diasRestantes == 0 && $horasRestantes <= 0)
+    ⚠️ Hoy es el último momento
+
+@else
+    ❌ El plazo ya venció
+@endif
+
+</div>
+
+@endif
+
 <p>
 <b>Estudiante:</b> {{ $piar->student->name }} {{ $piar->student->last_name }}
 &nbsp;&nbsp; | &nbsp;&nbsp;
@@ -125,7 +165,13 @@ pointer-events:none;
 
 @if($ready)
 <a href="{{ route('piar.periodo1',$piar->id) }}">
-<button class="btn-open">Abrir</button>
+@if($ready && (!isset($diasRestantes) || $diasRestantes >= 0))
+    <a href="{{ route('piar.periodo1',$piar->id) }}">
+        <button class="btn-open">Abrir</button>
+    </a>
+@else
+    <button class="btn-open btn-disabled">Bloqueado</button>
+@endif
 </a>
 @else
 <button class="btn-open btn-disabled">Abrir</button>
@@ -169,7 +215,13 @@ pointer-events:none;
 
 @if($ready)
 <a href="{{ route('piar.periodo2',$piar->id) }}">
-<button class="btn-open">Abrir</button>
+@if($ready && (!isset($diasRestantes) || $diasRestantes >= 0))
+    <a href="{{ route('piar.periodo2',$piar->id) }}">
+        <button class="btn-open">Abrir</button>
+    </a>
+@else
+    <button class="btn-open btn-disabled">Bloqueado</button>
+@endif
 </a>
 @else
 <button class="btn-open btn-disabled">Abrir</button>
@@ -213,7 +265,13 @@ pointer-events:none;
 
 @if($ready)
 <a href="{{ route('piar.periodo3',$piar->id) }}">
-<button class="btn-open">Abrir</button>
+@if($ready && (!isset($diasRestantes) || $diasRestantes >= 0))
+    <a href="{{ route('piar.periodo3',$piar->id) }}">
+        <button class="btn-open">Abrir</button>
+    </a>
+@else
+    <button class="btn-open btn-disabled">Bloqueado</button>
+@endif
 </a>
 @else
 <button class="btn-open btn-disabled">Abrir</button>

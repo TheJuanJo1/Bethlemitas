@@ -152,6 +152,23 @@ class PiarController extends Controller
             'ready',
             'diasRestantes'
         ));
+
+        // 🔥 FECHA INICIO PERIODO 1 (primera que exista)
+        $inicioPeriodo = PiarAdjustment::where('piar_id', $piar_id)
+        ->where('period', 1)
+        ->whereNotNull('start_date')
+        ->orderBy('start_date')
+        ->value('start_date');
+
+        if ($inicioPeriodo) {
+        $fechaInicio = Carbon::parse($inicioPeriodo);
+        $fechaLimite = $fechaInicio->copy()->addDays(30);
+        $hoy = Carbon::now();
+
+        $diasRestantes = $hoy->diffInDays($fechaLimite, false);
+        } else {
+        $diasRestantes = null; // aún no inicia
+        }
     }
 
     //Periodo Uno
@@ -260,6 +277,8 @@ class PiarController extends Controller
                     'autocontrol' => $request->autocontrol[$index] ?? null,
 
                     'evaluacion' => null,
+
+                    'start_date' => now(),
                 ];
 
                 $baseQuery = PiarAdjustment::query()
@@ -280,6 +299,7 @@ class PiarController extends Controller
                         'ajuste_curricular' => $values['ajuste_curricular'],
                         'ajuste_metodologico' => $values['ajuste_metodologico'],
                         'ajuste_evaluativo' => $values['ajuste_evaluativo'],
+                        'start_date' => DB::raw('COALESCE(start_date, NOW())'),
 
                         'convivencia' => $values['convivencia'],
                         'socializacion' => $values['socializacion'],
@@ -480,6 +500,7 @@ class PiarController extends Controller
                     'barrera' => $request->barrera[$index] ?? null,
                     'ajuste' => $request->ajuste[$index] ?? null,
                     'evaluacion' => null,
+                    'start_date' => now()
                 ];
 
                 $baseQuery = PiarAdjustment::query()
@@ -495,6 +516,7 @@ class PiarController extends Controller
                         'objetivo' => $values['objetivo'],
                         'barrera' => $values['barrera'],
                         'ajuste' => $values['ajuste'],
+                        'start_date' => DB::raw('COALESCE(start_date, NOW())'),
                         'evaluacion' => null,
                     ]);
 
@@ -691,6 +713,7 @@ class PiarController extends Controller
                     'barrera' => $request->barrera[$index] ?? null,
                     'ajuste' => $request->ajuste[$index] ?? null,
                     'evaluacion' => null,
+                    'start_date' => now(),  
                 ];
 
                 $baseQuery = PiarAdjustment::query()
@@ -705,6 +728,7 @@ class PiarController extends Controller
                     $baseQuery->update([
                         'objetivo' => $values['objetivo'],
                         'barrera' => $values['barrera'],
+                        'start_date' => DB::raw('COALESCE(start_date, NOW())'),
                         'ajuste' => $values['ajuste'],
                         'evaluacion' => null,
                     ]);
