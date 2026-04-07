@@ -229,125 +229,125 @@ class PsicoController extends Controller
     }
 
    public function store_report_student(Request $request, string $id)
-{
-    $request->validate([
-        'number_documment' => 'required|digits_between:1,20|unique:users_students,number_documment,' . $id,
-        'name'             => 'required|string',
-        'last_name'        => 'required|string',
-        'degree'           => 'required|exists:degrees,id',
-        'group'            => 'required|exists:groups,id',
-        'age'              => 'required|integer',
-        'state'            => 'required|exists:states,id',
-        'title_report'     => 'required|string',
-        'reason_inquiry'   => 'required|string',
-        'recomendations'   => 'required|string',
-        'annex_one'        => 'nullable|mimes:pdf|max:5120',
-    ]);
-
-    DB::beginTransaction();
-
-    try {
-
-        $student = Users_student::findOrFail($id);
-
-        $student->update([
-            'number_documment' => $request->number_documment,
-            'name'             => $request->name,
-            'last_name'        => $request->last_name,
-            'id_degree'        => $request->degree,
-            'id_group'         => $request->group,
-            'age'              => $request->age,
-            'id_state'         => $request->state,
+    {
+        $request->validate([
+            'number_documment' => 'required|digits_between:1,20|unique:users_students,number_documment,' . $id,
+            'name'             => 'required|string',
+            'last_name'        => 'required|string',
+            'degree'           => 'required|exists:degrees,id',
+            'group'            => 'required|exists:groups,id',
+            'age'              => 'required|integer',
+            'state'            => 'required|exists:states,id',
+            'title_report'     => 'required|string',
+            'reason_inquiry'   => 'required|string',
+            'recomendations'   => 'required|string',
+            'annex_one'        => 'nullable|mimes:pdf|max:5120',
         ]);
 
-        $group = Group::findOrFail($request->group);
-        $director = Users_teacher::where('group_director', $request->group)->first();
+        DB::beginTransaction();
 
-        $year = now()->year;
+        try {
 
-        $report = Psychoorientation::where('id_user_student', $id)
-            ->where('report_year', $year)
-            ->first();
+            $student = Users_student::findOrFail($id);
 
-        $annexPath = null;
-
-        if ($request->hasFile('annex_one')) {
-
-            $file = $request->file('annex_one');
-
-            $fileName = 'student_' . $id . '_' . now()->format('Ymd_His') . '.pdf';
-
-            $annexPath = $file->storeAs(
-                'annexes/student_' . $id,
-                $fileName,
-                'public'
-            );
-        }
-
-        if ($report) {
-
-            if ($annexPath && $report->annex_one && Storage::disk('public')->exists($report->annex_one)) {
-                Storage::disk('public')->delete($report->annex_one);
-            }
-
-            $report->update([
-                'age_student'            => $request->age,
-                'group_student'          => $group->group,
-                'director_group_student' => $director
-                    ? $director->name . ' ' . $director->last_name
-                    : 'No asignado',
-                'title_report'           => $request->title_report,
-                'reason_inquiry'         => $request->reason_inquiry,
-                'recomendations'         => $request->recomendations,
-                'annex_one'              => $annexPath ?? $report->annex_one,
+            $student->update([
+                'number_documment' => $request->number_documment,
+                'name'             => $request->name,
+                'last_name'        => $request->last_name,
+                'id_degree'        => $request->degree,
+                'id_group'         => $request->group,
+                'age'              => $request->age,
+                'id_state'         => $request->state,
             ]);
 
-        } else {
+            $group = Group::findOrFail($request->group);
+            $director = Users_teacher::where('group_director', $request->group)->first();
 
-            Psychoorientation::create([
-                'psychologist_writes'    => Auth::id(),
-                'id_user_student'        => $id,
-                'report_year'            => $year,
-                'age_student'            => $request->age,
-                'group_student'          => $group->group,
-                'director_group_student' => $director
-                    ? $director->name . ' ' . $director->last_name
-                    : 'No asignado',
-                'title_report'           => $request->title_report,
-                'reason_inquiry'         => $request->reason_inquiry,
-                'recomendations'         => $request->recomendations,
-                'annex_one'              => $annexPath,
-            ]);
-        }
+            $year = now()->year;
 
-        /*
-        🔔 NOTIFICACIÓN AL DOCENTE QUE REMITIÓ
-        */
+            $report = Psychoorientation::where('id_user_student', $id)
+                ->where('report_year', $year)
+                ->first();
 
-        $state = State::find($request->state);
+            $annexPath = null;
 
-        if ($state && $state->state === 'en PIAR') {
+            if ($request->hasFile('annex_one')) {
 
-            $teacher = $student->teacher;
+                $file = $request->file('annex_one');
 
-            if ($teacher) {
-                $teacher->notify(new StudentInPiarNotification($student));
+                $fileName = 'student_' . $id . '_' . now()->format('Ymd_His') . '.pdf';
+
+                $annexPath = $file->storeAs(
+                    'annexes/student_' . $id,
+                    $fileName,
+                    'public'
+                );
             }
+
+            if ($report) {
+
+                if ($annexPath && $report->annex_one && Storage::disk('public')->exists($report->annex_one)) {
+                    Storage::disk('public')->delete($report->annex_one);
+                }
+
+                $report->update([
+                    'age_student'            => $request->age,
+                    'group_student'          => $group->group,
+                    'director_group_student' => $director
+                        ? $director->name . ' ' . $director->last_name
+                        : 'No asignado',
+                    'title_report'           => $request->title_report,
+                    'reason_inquiry'         => $request->reason_inquiry,
+                    'recomendations'         => $request->recomendations,
+                    'annex_one'              => $annexPath ?? $report->annex_one,
+                ]);
+
+            } else {
+
+                Psychoorientation::create([
+                    'psychologist_writes'    => Auth::id(),
+                    'id_user_student'        => $id,
+                    'report_year'            => $year,
+                    'age_student'            => $request->age,
+                    'group_student'          => $group->group,
+                    'director_group_student' => $director
+                        ? $director->name . ' ' . $director->last_name
+                        : 'No asignado',
+                    'title_report'           => $request->title_report,
+                    'reason_inquiry'         => $request->reason_inquiry,
+                    'recomendations'         => $request->recomendations,
+                    'annex_one'              => $annexPath,
+                ]);
+            }
+
+            /*
+            🔔 NOTIFICACIÓN AL DOCENTE QUE REMITIÓ
+            */
+
+            $state = State::find($request->state);
+
+            if ($state && $state->state === 'en PIAR') {
+
+                $teacher = $student->teacher;
+
+                if ($teacher) {
+                    $teacher->notify(new StudentInPiarNotification($student));
+                }
+            }
+
+            DB::commit();
+
+            return redirect()
+                ->route('index.student.remitted.psico')
+                ->with('success', 'Informe guardado correctamente.');
+
+        } catch (\Exception $e) {
+
+            DB::rollBack();
+
+            return back()->with('error', $e->getMessage());
         }
-
-        DB::commit();
-
-        return redirect()
-            ->route('index.student.remitted.psico')
-            ->with('success', 'Informe guardado correctamente.');
-
-    } catch (\Exception $e) {
-
-        DB::rollBack();
-
-        return back()->with('error', $e->getMessage());
     }
-}
     /* =====================================================
      | HISTORIAL DEL ESTUDIANTE
      ===================================================== */
@@ -372,126 +372,177 @@ class PsicoController extends Controller
     }
 
     /* =====================================================
- | DETALLES DEL HISTORIAL (REMISIÓN)
- ===================================================== */
+    | DETALLES DEL HISTORIAL (REMISIÓN)
+    ===================================================== */
 
-public function history_details_referral($id)
-{
-    $referral = Referral::with('user_student')->findOrFail($id);
+    public function history_details_referral($id)
+    {
+        $referral = Referral::with('user_student')->findOrFail($id);
 
-    $student = $referral->user_student;
+        $student = $referral->user_student;
 
-    // 🔹 buscar informe del estudiante
-    $report = Psychoorientation::where('id_user_student', $student->id)
-        ->latest()
-        ->first();
+        // 🔹 buscar informe del estudiante
+        $report = Psychoorientation::where('id_user_student', $student->id)
+            ->latest()
+            ->first();
 
-    return view('psycho.detailsHistory.referral', compact(
-        'referral',
-        'student',
-        'report'
-    ));
-}   
+        return view('psycho.detailsHistory.referral', compact(
+            'referral',
+            'student',
+            'report'
+        ));
+    }   
 
-public function update_history_details_referral(Request $request, string $id)
-{
-    $request->validate([
-        'reason'      => 'required|string',
-        'observation' => 'required|string',
-        'strategies'  => 'required|string',
-    ]);
+    public function update_history_details_referral(Request $request, string $id)
+    {
+        $request->validate([
+            'reason'      => 'required|string',
+            'observation' => 'required|string',
+            'strategies'  => 'required|string',
+        ]);
 
-    $referral = Referral::findOrFail($id);
+        $referral = Referral::findOrFail($id);
 
-    $referral->update([
-        'reason'      => $request->reason,
-        'observation' => $request->observation,
-        'strategies'  => $request->strategies,
-    ]);
+        $referral->update([
+            'reason'      => $request->reason,
+            'observation' => $request->observation,
+            'strategies'  => $request->strategies,
+        ]);
 
-    return back()->with('success', 'Historial de remisión actualizado.');
-}
-
-
-/* =====================================================
- | DETALLES DEL HISTORIAL (INFORME PSICOLÓGICO)
- ===================================================== */
+        return back()->with('success', 'Historial de remisión actualizado.');
+    }
 
 
-public function current_report_student($id)
-{
-    $student = Users_student::findOrFail($id);
+    /* =====================================================
+    | DETALLES DEL HISTORIAL (INFORME PSICOLÓGICO)
+    ===================================================== */
 
-    // 🔎 buscar el último informe del estudiante
-    $report = Psychoorientation::where('id_user_student', $id)
-        ->latest()
-        ->first();
 
-    return view('psycho.detailsReportStudent', compact('student', 'report'));
-}
-public function history_details_report(string $id)
-{
-    $report = Psychoorientation::with('user_student')->findOrFail($id);
+    public function current_report_student($id)
+    {
+        $student = Users_student::findOrFail($id);
 
-    $student = $report->user_student;
+        // 🔎 buscar el último informe del estudiante
+        $report = Psychoorientation::where('id_user_student', $id)
+            ->latest()
+            ->first();
 
-    return view('psycho.detailsHistory.report', compact('report', 'student'));
-}
+        return view('psycho.detailsReportStudent', compact('student', 'report'));
+    }
+    public function history_details_report(string $id)
+    {
+        $report = Psychoorientation::with('user_student')->findOrFail($id);
 
-public function update_history_details_report(Request $request, string $id)
-{
-    $request->validate([
-        'title_report'   => 'required|string',
-        'reason_inquiry' => 'required|string',
-        'recomendations' => 'required|string',
-        'annex_one'      => 'nullable|mimes:pdf|max:5120',
-    ]);
+        $student = $report->user_student;
 
-    $report = Psychoorientation::findOrFail($id);
+        return view('psycho.detailsHistory.report', compact('report', 'student'));
+    }
 
-    // Actualizar campos normales
-    $report->title_report   = $request->title_report;
-    $report->reason_inquiry = $request->reason_inquiry;
-    $report->recomendations = $request->recomendations;
+    public function update_history_details_report(Request $request, string $id)
+    {
+        $request->validate([
+            'title_report'   => 'required|string',
+            'reason_inquiry' => 'required|string',
+            'recomendations' => 'required|string',
+            'annex_one'      => 'nullable|mimes:pdf|max:5120',
+        ]);
 
-    // Si hay archivo nuevo
-    if ($request->hasFile('annex_one')) {
+        $report = Psychoorientation::findOrFail($id);
 
-        // Eliminar archivo anterior
+        // Actualizar campos normales
+        $report->title_report   = $request->title_report;
+        $report->reason_inquiry = $request->reason_inquiry;
+        $report->recomendations = $request->recomendations;
+
+        // Si hay archivo nuevo
+        if ($request->hasFile('annex_one')) {
+
+            // Eliminar archivo anterior
+            if ($report->annex_one && Storage::disk('public')->exists($report->annex_one)) {
+                Storage::disk('public')->delete($report->annex_one);
+            }
+
+            $file = $request->file('annex_one');
+
+            $fileName = 'student_' . $report->id_user_student . '_' . now()->format('Ymd_His') . '.pdf';
+
+            $annexPath = $file->storeAs(
+                'annexes/student_' . $report->id_user_student,
+                $fileName,
+                'public'
+            );
+
+            $report->annex_one = $annexPath;
+        }
+
+        $report->save(); // 🔥 IMPORTANTE
+
+        return back()->with('success', 'Informe actualizado correctamente.');
+    }
+
+    public function delete_annex($id)
+    {
+        $report = Psychoorientation::findOrFail($id);
+
         if ($report->annex_one && Storage::disk('public')->exists($report->annex_one)) {
             Storage::disk('public')->delete($report->annex_one);
         }
 
-        $file = $request->file('annex_one');
+        $report->annex_one = null;
+        $report->save();
 
-        $fileName = 'student_' . $report->id_user_student . '_' . now()->format('Ymd_His') . '.pdf';
-
-        $annexPath = $file->storeAs(
-            'annexes/student_' . $report->id_user_student,
-            $fileName,
-            'public'
-        );
-
-        $report->annex_one = $annexPath;
+        return back()->with('success', 'Anexo eliminado correctamente.');
     }
 
-    $report->save(); // 🔥 IMPORTANTE
+    /* =====================================================
+     | HISTORIAL DE PERIODOS (PIAR)
+     ===================================================== */
 
-    return back()->with('success', 'Informe actualizado correctamente.');
-}
-
-public function delete_annex($id)
-{
-    $report = Psychoorientation::findOrFail($id);
-
-    if ($report->annex_one && Storage::disk('public')->exists($report->annex_one)) {
-        Storage::disk('public')->delete($report->annex_one);
+     public function show_piar_periods_history(string $id)
+    {
+         // 1. Buscamos al estudiante con su relación piar
+         $student = Users_student::with('piar')->findOrFail($id);
+         
+         if (!$student->piar) {
+             return back()->with('error', 'Este estudiante aún no tiene un proceso PIAR iniciado.');
+         }
+     
+         // 2. Traemos los ajustes usando las columnas REALES de tu tabla
+         // Usamos 'period' (sin 'o') y 'created_at' para el orden
+         $history = $student->piar->adjustments()
+             ->orderBy('created_at', 'desc')
+             ->orderBy('period', 'asc') 
+             ->get()
+             ->groupBy(function($item) {
+                 // Agrupamos por el año de creación (ej: 2026)
+                 return $item->created_at->format('Y'); 
+             });
+     
+         return view('psycho.piarPeriodsHistory', compact('student', 'history'));
     }
 
-    $report->annex_one = null;
-    $report->save();
-
-    return back()->with('success', 'Anexo eliminado correctamente.');
-}
+    public function generate_period_pdf($piar_id, $adjustment_id)
+    {
+        // 1. Buscamos el ajuste específico
+        $adjustment = \App\Models\PiarAdjustment::with(['piar.student.degree', 'teacher'])->findOrFail($adjustment_id);
+    
+        // 2. Definimos las variables que la vista espera
+        $piar = $adjustment->piar;
+        
+        // Metemos el ajuste en una colección/array para que el @foreach($adjustments as $a) no falle
+        $adjustments = collect([$adjustment]); 
+    
+        // 3. Determinamos la vista según el periodo del ajuste
+        $viewName = 'pdf.piar_periodo' . $adjustment->period;
+    
+        if (!view()->exists($viewName)) {
+            $viewName = 'pdf.piar_completo'; 
+        }
+    
+        // 4. Pasamos todas las variables necesarias
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView($viewName, compact('adjustment', 'piar', 'adjustments'));
+    
+        return $pdf->stream('Ajuste_PIAR_P' . $adjustment->period . '_' . $piar->student->name . '.pdf');
+    }
 }
     
