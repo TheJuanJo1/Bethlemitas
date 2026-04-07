@@ -5,7 +5,6 @@
 @section('content')
 
 <style>
-    /* Variables de color para consistencia */
     :root {
         --primary: #f59e0b;
         --primary-dark: #d97706;
@@ -20,7 +19,6 @@
         font-family: 'Inter', sans-serif;
     }
 
-    /* Botón Volver Mejorado */
     .btn-back {
         display: inline-flex;
         align-items: center;
@@ -53,7 +51,6 @@
     .info-item b { color: #64748b; font-size: 0.85rem; text-transform: uppercase; display: block; }
     .info-item span { font-size: 1.1rem; font-weight: 600; color: #1e293b; }
 
-    /* Estilo de Tarjetas de Ajuste */
     .adjustment-card {
         background: white;
         border-radius: 12px;
@@ -81,39 +78,44 @@
         font-size: 0.9rem;
     }
 
+    /* Grid ajustado para mejor separación */
     .grid-details {
         display: grid;
         grid-template-columns: repeat(2, 1fr);
-        gap: 1.5rem;
+        gap: 1.2rem;
         padding: 1.5rem;
         background: #ffffff;
     }
 
     .detail-box {
-        padding-bottom: 0.5rem;
-        border-bottom: 1px dashed #f1f5f9;
+        padding: 0.75rem;
+        border-radius: 8px;
+        background: #fdfdfd;
+        border: 1px solid #f1f5f9;
     }
 
     .detail-box label {
         display: block;
-        font-size: 0.75rem;
-        font-weight: 700;
-        color: #94a3b8;
+        font-size: 0.7rem;
+        font-weight: 800;
+        color: #64748b;
         text-transform: uppercase;
-        margin-bottom: 0.25rem;
+        margin-bottom: 0.4rem;
+        letter-spacing: 0.025em;
     }
 
     .detail-box p {
-        font-size: 0.95rem;
+        font-size: 0.9rem;
         color: #334155;
-        line-height: 1.4;
+        line-height: 1.5;
+        margin: 0;
     }
 
-    /* Textarea de Evaluación */
+    /* Destacado para el área de evaluación */
     .evaluation-container {
         padding: 1.5rem;
         background: #f8fafc;
-        border-top: 1px solid var(--border-color);
+        border-top: 2px solid var(--primary);
     }
 
     .evaluation-label {
@@ -156,7 +158,6 @@
     .btn-save:hover {
         background: var(--primary-dark);
         transform: translateY(-2px);
-        box-shadow: 0 6px 15px rgba(245, 158, 11, 0.4);
     }
 </style>
 
@@ -198,6 +199,7 @@
             <div class="adjustment-card">
                 <div class="card-header">
                     <span class="area-badge">{{ $adj->area }}</span>
+                    <span style="font-size: 0.75rem; font-weight: 600; color: #b45309;">DOCENTE: {{ $adj->teacher->name ?? 'N/A' }}</span>
                 </div>
 
                 <div class="grid-details">
@@ -209,6 +211,7 @@
                         <label>Barrera Identificada</label>
                         <p>{{ $adj->barrera }}</p>
                     </div>
+
                     <div class="detail-box">
                         <label>Ajuste Curricular</label>
                         <p>{{ $adj->ajuste_curricular }}</p>
@@ -217,23 +220,36 @@
                         <label>Metodología</label>
                         <p>{{ $adj->ajuste_metodologico }}</p>
                     </div>
+
                     <div class="detail-box">
-                        <label>Convivencia y Socialización</label>
-                        <p>{{ $adj->convivencia }} / {{ $adj->socializacion }}</p>
+                        <label>Convivencia</label>
+                        <p>{{ $adj->convivencia }}</p>
                     </div>
                     <div class="detail-box">
-                        <label>Autonomía y Autocontrol</label>
-                        <p>{{ $adj->autonomia }} / {{ $adj->autocontrol }}</p>
+                        <label>Socialización</label>
+                        <p>{{ $adj->socializacion }}</p>
+                    </div>
+                    <div class="detail-box">
+                        <label>Participación</label>
+                        <p>{{ $adj->participacion }}</p>
+                    </div>
+                    <div class="detail-box">
+                        <label>Autonomía</label>
+                        <p>{{ $adj->autonomia }}</p>
+                    </div>
+                    <div class="detail-box" style="grid-column: span 2;">
+                        <label>Autocontrol</label>
+                        <p>{{ $adj->autocontrol }}</p>
                     </div>
                 </div>
 
                 <div class="evaluation-container">
                     <div class="evaluation-label">
                         <i class="bi bi-pencil-square" style="color: var(--primary)"></i>
-                        Evaluación del Logro
+                        Evaluación del Logro para {{ $adj->area }}
                     </div>
                     <input type="hidden" name="adjustment_id[]" value="{{ $adj->id }}">
-                    <textarea name="evaluacion[]" class="form-control" placeholder="Escriba aquí los avances o dificultades observadas..." rows="4">{{ old('evaluacion.' . $loop->index, $adj->evaluacion) }}</textarea>
+                    <textarea name="evaluacion[]" class="form-control" placeholder="Describa el nivel de logro alcanzado, dificultades y recomendaciones..." rows="4">{{ old('evaluacion.' . $loop->index, $adj->evaluacion) }}</textarea>
                 </div>
             </div>
             @endforeach
@@ -241,7 +257,7 @@
 
         <div style="text-align:right; margin-bottom: 4rem;">
             <button type="submit" class="btn-save">
-                <i class="bi bi-check-lg"></i> GUARDAR EVALUACIÓN
+                <i class="bi bi-cloud-arrow-up-fill" style="margin-right: 0.5rem;"></i> GUARDAR TODAS LAS EVALUACIONES
             </button>
         </div>
     </form>

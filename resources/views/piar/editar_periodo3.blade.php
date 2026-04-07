@@ -5,197 +5,267 @@
 @section('content')
 
 <style>
-.container-piar{
-max-width:1100px;
-margin:auto;
-}
+    :root {
+        --brand-blue: #2563eb;
+        --brand-blue-dark: #1e40af;
+        --success: #16a34a;
+        --border-gray: #e2e8f0;
+        --text-main: #1e293b;
+    }
 
-.box-section{
-border:2px solid #000;
-border-radius:8px;
-padding:20px;
-margin-bottom:30px;
-background:#f7f7f7;
-}
+    .container-piar {
+        max-width: 1100px;
+        margin: 2rem auto;
+        padding: 0 1.5rem;
+        font-family: 'Inter', sans-serif;
+    }
 
-.box-title{
-background:#2563eb;
-color:white;
-font-weight:bold;
-padding:8px 15px;
-border-radius:6px;
-margin-bottom:20px;
-}
+    /* Botón Volver */
+    .btn-back {
+        display: inline-flex;
+        align-items: center;
+        color: #64748b;
+        text-decoration: none;
+        margin-bottom: 1.5rem;
+        transition: all 0.2s;
+        font-weight: 500;
+    }
+    .btn-back:hover { color: var(--brand-blue); transform: translateX(-5px); }
 
-.form-control{
-border:2px solid #000;
-border-radius:6px;
-padding:8px;
-width:100%;
-}
+    /* Tarjeta Principal de Ajuste */
+    .adjustment-editor-card {
+        background: white;
+        border-radius: 16px;
+        border: 1px solid var(--border-gray);
+        box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05);
+        margin-bottom: 3rem;
+        overflow: hidden;
+    }
 
-textarea.form-control{
-height:70px;
-resize:none;
-}
+    .card-header {
+        background: linear-gradient(to right, #eff6ff, #ffffff);
+        padding: 1.25rem 2rem;
+        border-bottom: 1px solid #dbeafe;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
 
-.btn-save{
-background:#16a34a;
-color:white;
-font-weight:bold;
-padding:12px 40px;
-border:none;
-border-radius:6px;
-}
+    .area-label {
+        font-size: 0.75rem;
+        font-weight: 800;
+        color: var(--brand-blue);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
 
-table{
-width:100%;
-border-collapse:collapse;
-}
+    .area-name {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: #0f172a;
+        display: block;
+    }
 
-th, td{
-border:1px solid #000;
-padding:8px;
-vertical-align:top;
-background:#fff;
-font-size:12px;
-}
+    /* Grid de Formulario */
+    .form-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.5rem;
+        padding: 2rem;
+    }
 
-th{
-background:#f3f4f6;
-font-weight:bold;
-width:20%;
-}
+    .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
 
-.separador{
-background:#ddd;
-height:6px;
-}
+    .form-group.full-width {
+        grid-column: span 2;
+    }
+
+    .form-group label {
+        font-size: 0.8rem;
+        font-weight: 700;
+        color: #475569;
+        text-transform: uppercase;
+    }
+
+    /* Estilo de Inputs */
+    .form-control {
+        border: 1.5px solid var(--border-gray);
+        border-radius: 10px;
+        padding: 0.8rem 1rem;
+        font-size: 0.95rem;
+        color: var(--text-main);
+        transition: all 0.2s;
+        background: #fcfcfc;
+    }
+
+    .form-control:focus {
+        outline: none;
+        border-color: var(--brand-blue);
+        background: white;
+        box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+    }
+
+    textarea.form-control {
+        min-height: 100px;
+        resize: vertical;
+    }
+
+    /* Campo de Solo Lectura */
+    .form-control[readonly] {
+        background: #f1f5f9;
+        color: #64748b;
+        cursor: not-allowed;
+        border-style: dashed;
+    }
+
+    .readonly-badge {
+        font-size: 0.65rem;
+        background: #e2e8f0;
+        padding: 2px 6px;
+        border-radius: 4px;
+        margin-left: 8px;
+    }
+
+    /* Botón Guardar */
+    .btn-save-container {
+        position: sticky;
+        bottom: 2rem;
+        text-align: right;
+        margin-top: 2rem;
+        z-index: 50;
+    }
+
+    .btn-save {
+        background: var(--success);
+        color: white;
+        font-weight: 700;
+        padding: 1rem 3rem;
+        border-radius: 12px;
+        border: none;
+        cursor: pointer;
+        transition: all 0.3s;
+        box-shadow: 0 10px 15px -3px rgba(22, 163, 74, 0.3);
+        display: inline-flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .btn-save:hover {
+        background: #15803d;
+        transform: translateY(-2px);
+        box-shadow: 0 20px 25px -5px rgba(22, 163, 74, 0.4);
+    }
 </style>
 
-<button onclick="history.back()" style="background: none; border: none; cursor: pointer;">
-    <i class="bi bi-arrow-left" style="font-size: 2rem;"></i>
-</button>
+<div class="container-piar">
+    
+    <a href="javascript:history.back()" class="btn-back">
+        <i class="bi bi-arrow-left-circle-fill" style="font-size: 1.5rem; margin-right: 0.5rem;"></i>
+        <span>Volver sin guardar</span>
+    </a>
 
-<div class="container container-piar">
+    <div class="flex items-center justify-between mb-8">
+        <h2 style="font-weight: 800; color: #0f172a; font-size: 1.8rem;">
+            Editar Ajustes <span style="color: var(--brand-blue)">Periodo 3</span>
+        </h2>
+    </div>
 
-<h3>Editar Periodo 3</h3>
+    <form action="{{ route('piar.update.periodo3') }}" method="POST">
+        @csrf
+        @method('PUT')
+        <input type="hidden" name="piar_id" value="{{ $piar_id }}">
 
-<form action="{{ route('piar.update.periodo3') }}" method="POST">
-@csrf
-@method('PUT')
+        @if($adjustments->isEmpty())
+            <div class="adjustment-editor-card" style="padding: 4rem; text-align: center;">
+                <i class="bi bi-clipboard-x" style="font-size: 3rem; color: #cbd5e1;"></i>
+                <p style="color: #94a3b8; margin-top: 1rem;">No hay registros para editar en este periodo.</p>
+            </div>
+        @else
+            @foreach($adjustments as $adj)
+            <input type="hidden" name="adjustment_id[]" value="{{ $adj->id }}">
+            
+            <div class="adjustment-editor-card">
+                <div class="card-header">
+                    <div>
+                        <span class="area-label">Módulo de Área</span>
+                        <span class="area-name">{{ $adj->area }}</span>
+                    </div>
+                    <div style="text-align: right">
+                        <i class="bi bi-pencil-square" style="color: #bfdbfe; font-size: 1.5rem;"></i>
+                    </div>
+                </div>
 
-<input type="hidden" name="piar_id" value="{{ $piar_id }}">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Objetivo de Aprendizaje</label>
+                        <textarea name="objetivo[]" class="form-control" placeholder="Define el objetivo...">{{ $adj->objetivo }}</textarea>
+                    </div>
 
-<div class="box-section">
-<div class="box-title">Ajustes del Periodo</div>
+                    <div class="form-group">
+                        <label>Barreras Identificadas</label>
+                        <textarea name="barrera[]" class="form-control" placeholder="Describe las barreras...">{{ $adj->barrera }}</textarea>
+                    </div>
 
-@if($adjustments->isEmpty())
-<p>No hay registros para editar.</p>
-@else
+                    <div class="form-group">
+                        <label>Ajuste Curricular</label>
+                        <textarea name="ajuste_curricular[]" class="form-control">{{ $adj->ajuste_curricular }}</textarea>
+                    </div>
 
-<table>
-<tbody>
+                    <div class="form-group">
+                        <label>Ajuste Metodológico</label>
+                        <textarea name="ajuste_metodologico[]" class="form-control">{{ $adj->ajuste_metodologico }}</textarea>
+                    </div>
 
-@foreach($adjustments as $adj)
+                    <div class="form-group">
+                        <label>Ajuste Evaluativo</label>
+                        <textarea name="ajuste_evaluativo[]" class="form-control">{{ $adj->ajuste_evaluativo }}</textarea>
+                    </div>
 
-<input type="hidden" name="adjustment_id[]" value="{{ $adj->id }}">
+                    <div class="form-group">
+                        <label>Convivencia</label>
+                        <textarea name="convivencia[]" class="form-control">{{ $adj->convivencia }}</textarea>
+                    </div>
 
-<!-- FILA 1 -->
-<tr>
-<th>Área</th>
-<td>{{ $adj->area }}</td>
+                    <div class="form-group">
+                        <label>Socialización</label>
+                        <textarea name="socializacion[]" class="form-control">{{ $adj->socializacion }}</textarea>
+                    </div>
 
-<th>Objetivo</th>
-<td>
-<textarea name="objetivo[]" class="form-control">{{ $adj->objetivo }}</textarea>
-</td>
-</tr>
+                    <div class="form-group">
+                        <label>Participación</label>
+                        <textarea name="participacion[]" class="form-control">{{ $adj->participacion }}</textarea>
+                    </div>
 
-<!-- FILA 2 -->
-<tr>
-<th>Barrera</th>
-<td>
-<textarea name="barrera[]" class="form-control">{{ $adj->barrera }}</textarea>
-</td>
+                    <div class="form-group">
+                        <label>Autonomía</label>
+                        <textarea name="autonomia[]" class="form-control">{{ $adj->autonomia }}</textarea>
+                    </div>
 
-<th>Ajuste Curricular</th>
-<td>
-<textarea name="ajuste_curricular[]" class="form-control">{{ $adj->ajuste_curricular }}</textarea>
-</td>
-</tr>
+                    <div class="form-group">
+                        <label>Autocontrol</label>
+                        <textarea name="autocontrol[]" class="form-control">{{ $adj->autocontrol }}</textarea>
+                    </div>
 
-<!-- FILA 3 -->
-<tr>
-<th>Ajuste Metodológico</th>
-<td>
-<textarea name="ajuste_metodologico[]" class="form-control">{{ $adj->ajuste_metodologico }}</textarea>
-</td>
+                    <div class="form-group full-width">
+                        <label>Evaluación  <span class="readonly-badge">SÓLO LECTURA</span></label>
+                        <textarea class="form-control" readonly placeholder="No hay evaluación registrada aún.">{{ $adj->evaluacion }}</textarea>
+                    </div>
+                </div>
+            </div>
+            @endforeach
+        @endif
 
-<th>Ajuste Evaluativo</th>
-<td>
-<textarea name="ajuste_evaluativo[]" class="form-control">{{ $adj->ajuste_evaluativo }}</textarea>
-</td>
-</tr>
-
-<!-- FILA 4 -->
-<tr>
-<th>Convivencia</th>
-<td>
-<textarea name="convivencia[]" class="form-control">{{ $adj->convivencia }}</textarea>
-</td>
-
-<th>Socialización</th>
-<td>
-<textarea name="socializacion[]" class="form-control">{{ $adj->socializacion }}</textarea>
-</td>
-</tr>
-
-<!-- FILA 5 -->
-<tr>
-<th>Participación</th>
-<td>
-<textarea name="participacion[]" class="form-control">{{ $adj->participacion }}</textarea>
-</td>
-
-<th>Autonomía</th>
-<td>
-<textarea name="autonomia[]" class="form-control">{{ $adj->autonomia }}</textarea>
-</td>
-</tr>
-
-<!-- FILA 6 -->
-<tr>
-<th>Autocontrol</th>
-<td>
-<textarea name="autocontrol[]" class="form-control">{{ $adj->autocontrol }}</textarea>
-</td>
-
-<th>Evaluación (solo lectura)</th>
-<td>
-<textarea class="form-control" readonly>{{ $adj->evaluacion }}</textarea>
-</td>
-</tr>
-
-<tr>
-<td colspan="4" class="separador"></td>
-</tr>
-
-@endforeach
-
-</tbody>
-</table>
-
-@endif
-
-</div>
-
-<div style="text-align:right">
-<button type="submit" class="btn-save">Guardar Cambios</button>
-</div>
-
-</form>
-
+        <div class="btn-save-container">
+            <button type="submit" class="btn-save">
+                <i class="bi bi-cloud-check-fill"></i>
+                GUARDAR TODOS LOS CAMBIOS
+            </button>
+        </div>
+    </form>
 </div>
 
 @endsection

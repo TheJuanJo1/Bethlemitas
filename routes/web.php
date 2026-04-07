@@ -256,6 +256,12 @@ Route::middleware(['auth'])->group(function () {
             ->name('piar.psico.ajustes.edit');
         Route::post('/piar/ajustes/store', [PiarController::class, 'psicoGuardarAjustes'])
             ->name('piar.psico.ajustes.store');
+
+        Route::get('/psico/estudiante/historial-periodos/{id}', [PsicoController::class, 'show_piar_periods_history'])
+        ->name('piar.periodos.historial');
+        // Ruta para generar el PDF de un periodo específico del historial
+        Route::get('/psico/estudiante/pdf-periodo/{piar}/{adjustment}', [PsicoController::class, 'generate_period_pdf'])
+        ->name('piar.pdf.period');
     });
 
 });
