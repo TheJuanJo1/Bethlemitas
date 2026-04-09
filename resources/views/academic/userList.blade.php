@@ -1,183 +1,208 @@
 @extends('layout.masterPage')
 
-@section('title', 'Lista de Usuarios')
+@section('title', 'Gestión de Usuarios | PiarManager')
 
 @section('content')
 
-{{-- LOADER --}}
-<div id="loader"
-     class="fixed inset-0 z-50 flex items-center justify-center bg-white transition-opacity duration-500">
-    <div class="flex flex-col items-center gap-3">
-        <div class="w-12 h-12 border-4 border-purple-300 border-t-purple-700 rounded-full animate-spin"></div>
-        <span class="text-sm text-gray-600">Cargando usuarios...</span>
+{{-- LOADER CON EFECTO GLASSMORPHISM --}}
+<div id="loader" class="fixed inset-0 z-[100] flex items-center justify-center bg-slate-50/80 backdrop-blur-sm transition-opacity duration-500">
+    <div class="flex flex-col items-center">
+        <div class="relative w-16 h-16">
+            <div class="absolute inset-0 border-4 border-indigo-100 rounded-full"></div>
+            <div class="absolute inset-0 border-4 border-indigo-600 rounded-full border-t-transparent animate-spin"></div>
+        </div>
+        <span class="mt-4 text-sm font-bold text-indigo-900 tracking-widest uppercase animate-pulse">Cargando Datos</span>
     </div>
 </div>
 
-<div id="content" class="p-4 opacity-0 transition-opacity duration-500">
+<div id="content" class="p-6 lg:p-10 opacity-0 transition-opacity duration-700 bg-[#f8fafc] min-h-screen">
 
-    <!-- Encabezado -->
-    <div class="sticky top-0 flex flex-col gap-3 mb-4 lg:flex-row lg:items-center lg:justify-between">
-        <h2 class="text-xl font-semibold">Lista de usuarios</h2>
+    <div class="flex flex-col mb-8 gap-6 lg:flex-row lg:items-end lg:justify-between border-b border-slate-200 pb-8">
+        <div>
+            <nav class="flex mb-2 text-xs font-semibold text-slate-400 uppercase tracking-wider">
+                <span>Administración</span>
+                <span class="mx-2">/</span>
+                <span class="text-indigo-600">Usuarios</span>
+            </nav>
+            <h2 class="text-3xl font-extrabold text-slate-900 tracking-tight">Lista de Usuarios</h2>
+            <p class="text-slate-500 mt-1">Gestiona los permisos y roles del personal educativo.</p>
+        </div>
 
-        <form id="filterForm" action="{{ route('index.users') }}" method="GET" class="flex gap-2">
-
-            <input
-                id="searchInput"
-                type="search"
-                name="search"
-                class="py-2 pl-4 pr-3 border rounded-lg shadow-sm focus:outline-none"
-                placeholder="Buscar..."
-                value="{{ request('search') }}"
-            >
+        <form id="filterForm" action="{{ route('index.users') }}" method="GET" class="flex flex-col sm:flex-row gap-3">
+            <div class="relative group">
+                <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400 group-focus-within:text-indigo-500 transition-colors">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                </span>
+                <input
+                    id="searchInput"
+                    type="search"
+                    name="search"
+                    class="block w-full sm:w-72 pl-10 pr-4 py-2.5 bg-white border border-slate-200 rounded-xl text-sm shadow-sm placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all"
+                    placeholder="Nombre o identificación..."
+                    value="{{ request('search') }}"
+                >
+            </div>
 
             <select id="estadoFilter"
                     name="estado"
-                    class="px-3 py-2 border rounded-lg shadow-sm focus:outline-none">
-
-                <option value="todos" {{ request('estado') == 'todos' ? 'selected' : '' }}>
-                    Todos
-                </option>
-
-                <option value="activo" {{ request('estado') == 'activo' ? 'selected' : '' }}>
-                    Activos
-                </option>
+                    class="block w-full sm:w-44 px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-sm font-medium text-slate-700 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 cursor-pointer appearance-none transition-all">
+                <option value="todos" {{ request('estado') == 'todos' ? 'selected' : '' }}>Todos los estados</option>
+                <option value="activo" {{ request('estado') == 'activo' ? 'selected' : '' }}>Solo Activos</option>
             </select>
         </form>
     </div>
 
-    <!-- TABLA (IMPORTANTE ID PARA AJAX) -->
-    <div id="tableContainer" class="overflow-x-auto">
-        <table class="min-w-full bg-white rounded-lg shadow-md">
-            <thead class="bg-gray-200">
-                <tr>
-                    <th class="px-6 py-3 text-xs font-medium text-left uppercase">Nombre completo</th>
-                    <th class="px-6 py-3 text-xs font-medium text-left uppercase">Documento</th>
-                    <th class="px-6 py-3 text-xs font-medium text-left uppercase">Áreas</th>
-                    <th class="px-6 py-3 text-xs font-medium text-left uppercase">Grupos a cargo</th>
-                    <th class="px-6 py-3 text-xs font-medium text-left uppercase">Director de grupo</th>
-                    <th class="px-6 py-3 text-xs font-medium text-left uppercase">Rol</th>
-                    <th class="px-6 py-3 text-xs font-medium text-left uppercase">Estado</th>
-                    <th class="px-6 py-3 text-xs font-medium text-left uppercase">Acciones</th>
-                </tr>
-            </thead>
+    <div id="tableContainer" class="bg-white rounded-2xl border border-slate-200 shadow-xl shadow-slate-200/50 overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+                <thead>
+                    <tr class="bg-slate-50/50 border-b border-slate-200">
+                        <th class="px-6 py-4 text-[11px] font-bold text-slate-500 uppercase tracking-widest">Información Personal</th>
+                        <th class="px-6 py-4 text-[11px] font-bold text-slate-500 uppercase tracking-widest">Asignación Académica</th>
+                        <th class="px-6 py-4 text-[11px] font-bold text-slate-500 uppercase tracking-widest text-center">Rol del Sistema</th>
+                        <th class="px-6 py-4 text-[11px] font-bold text-slate-500 uppercase tracking-widest text-center">Estado</th>
+                        <th class="px-6 py-4 text-[11px] font-bold text-slate-500 uppercase tracking-widest text-right">Acciones</th>
+                    </tr>
+                </thead>
 
-            <tbody class="divide-y">
-                @forelse ($users as $user)
-                    <tr class="transition {{ $user->id_state == 2 ? 'bg-red-50 hover:bg-red-100' : 'hover:bg-gray-50' }}">
-                        <td class="px-6 py-4">{{ $user->name }} {{ $user->last_name }}</td>
-                        <td class="px-6 py-4">{{ $user->number_documment }}</td>
+                <tbody class="divide-y divide-slate-100">
+                    @forelse ($users as $user)
+                        <tr class="group hover:bg-slate-50/80 transition-all {{ $user->id_state == 2 ? 'bg-red-50/30' : '' }}">
+                            
+                            <td class="px-6 py-5">
+                                <div class="flex items-center gap-4">
+                                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white font-bold shadow-md shadow-indigo-200 uppercase">
+                                        {{ substr($user->name, 0, 1) }}{{ substr($user->last_name, 0, 1) }}
+                                    </div>
+                                    <div>
+                                        <div class="text-sm font-bold text-slate-800">{{ $user->name }} {{ $user->last_name }}</div>
+                                        <div class="text-[12px] text-slate-400 font-medium tracking-tight">Doc: {{ $user->number_documment }}</div>
+                                    </div>
+                                </div>
+                            </td>
 
-                        <td class="px-6 py-4">
-                            @if ($user->hasRole('docente') && $user->areas->isNotEmpty())
-                                {{ $user->areas->unique('id')->pluck('name_area')->implode(', ') }}
-                            @else
-                                <span class="text-gray-400">Sin Áreas</span>
-                            @endif
-                        </td>
+                            <td class="px-6 py-5">
+                                <div class="flex flex-col gap-1.5">
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-[10px] font-bold text-slate-400 uppercase">Áreas:</span>
+                                        <span class="text-[12px] text-slate-600 font-medium">
+                                            {{ $user->hasRole('docente') && $user->areas->isNotEmpty() ? $user->areas->unique('id')->pluck('name_area')->implode(', ') : '---' }}
+                                        </span>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-[10px] font-bold text-slate-400 uppercase">Grupos:</span>
+                                        <span class="text-[12px] text-slate-600">
+                                            @if ($user->hasRole('docente') && $user->groups->isNotEmpty())
+                                                {{ $user->groups->pluck('group')->implode(', ') }}
+                                            @elseif ($user->hasRole('psicoorientador') && $user->loadDegrees->isNotEmpty())
+                                                {{ $user->loadDegrees->pluck('degree.degree')->filter()->implode(', ') }}
+                                            @else
+                                                <span class="text-slate-300 italic">Sin asignación</span>
+                                            @endif
+                                        </span>
+                                    </div>
+                                    {{-- DIRECCIÓN DE GRUPO --}}
+                                    <div class="flex items-center gap-2 mt-0.5">
+                                        <span class="text-[10px] font-bold text-indigo-400 uppercase">Dir. Grupo:</span>
+                                        <span class="text-[12px] font-bold {{ optional($user->director)->group ? 'text-indigo-600' : 'text-slate-400 font-normal italic' }}">
+                                            {{ optional($user->director)->group ?? 'No asignado' }}
+                                        </span>
+                                    </div>
+                                </div>
+                            </td>
 
-                        <td class="px-6 py-4">
-                            @if ($user->hasRole('docente') && $user->groups->isNotEmpty())
-                                {{ $user->groups->pluck('group')->implode(', ') }}
-                            @elseif ($user->hasRole('psicoorientador') && $user->loadDegrees->isNotEmpty())
-                                {{ $user->loadDegrees->pluck('degree.degree')->filter()->implode(', ') }}
-                            @else
-                                <span class="text-gray-400">Sin Asignación</span>
-                            @endif
-                        </td>
-
-                        <td class="px-6 py-4">
-                            {{ optional($user->director)->group ?? 'Sin Grupo' }}
-                        </td>
-
-                        <td class="px-6 py-4">
-                            @if (!empty($userRoles[$user->id]))
-                                {{ is_array($userRoles[$user->id])
-                                    ? implode(', ', $userRoles[$user->id])
-                                    : $userRoles[$user->id] }}
-                            @else
-                                Sin Rol
-                            @endif
-                        </td>
-
-                        <td class="px-6 py-4">
-                            @if($user->id_state == 1)
-                                <span class="px-2 py-1 text-xs font-semibold text-green-700 bg-green-100 rounded">
-                                    Activo
+                            <td class="px-6 py-5 text-center">
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-md text-[10px] font-bold bg-slate-100 text-slate-600 border border-slate-200 uppercase tracking-tight">
+                                    {{ is_array($userRoles[$user->id] ?? null) ? implode(', ', $userRoles[$user->id]) : ($userRoles[$user->id] ?? 'Sin Rol') }}
                                 </span>
-                            @else
-                                <span class="px-2 py-1 text-xs font-semibold text-red-700 bg-red-100 rounded">
-                                    Bloqueado
-                                </span>
-                            @endif
-                        </td>
+                            </td>
 
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <a href="{{ route('edit.user', $user->id) }}"
-                               class="text-blue-600 hover:underline">
-                                Editar
-                            </a>
-
-                            <span class="mx-2">|</span>
-
-                            <form action="{{ route('destroy.user', $user->id) }}"
-                                  method="POST"
-                                  class="inline">
-                                @csrf
-                                @method('PUT')
-
+                            <td class="px-6 py-5 text-center">
                                 @if($user->id_state == 1)
-                                    <button type="submit"
-                                            class="text-red-600 hover:underline"
-                                            onclick="return confirm('¿Estás seguro de bloquear este usuario?')">
-                                        Bloquear
-                                    </button>
+                                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-100">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                                        Activo
+                                    </span>
                                 @else
-                                    <button type="submit"
-                                            class="text-green-600 hover:underline"
-                                            onclick="return confirm('¿Deseas activar nuevamente este usuario?')">
-                                        Desbloquear
-                                    </button>
+                                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold bg-red-50 text-red-700 border border-red-100">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-red-500"></span>
+                                        Bloqueado
+                                    </span>
                                 @endif
-                            </form>
-                        </td>
-                    </tr>
-                @empty
-                    <tr>
-                        <td colspan="8" class="px-6 py-6 text-center text-gray-500">
-                            No hay usuarios registrados
-                        </td>
-                    </tr>
-                @endforelse
-            </tbody>
-        </table>
+                            </td>
 
-        <div class="mt-4">
+                            <td class="px-6 py-5 text-right space-x-3">
+                                <a href="{{ route('edit.user', $user->id) }}" 
+                                   class="inline-flex items-center text-sm font-bold text-indigo-600 hover:text-indigo-800 transition-colors">
+                                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
+                                    Editar
+                                </a>
+
+                                <form action="{{ route('destroy.user', $user->id) }}" method="POST" class="inline">
+                                    @csrf @method('PUT')
+                                    <button type="submit" 
+                                            class="inline-flex items-center text-sm font-bold {{ $user->id_state == 1 ? 'text-rose-500 hover:text-rose-700' : 'text-emerald-500 hover:text-emerald-700' }} transition-colors"
+                                            onclick="return confirm('¿Seguro que desea cambiar el estado?')">
+                                        @if($user->id_state == 1)
+                                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+                                            Bloquear
+                                        @else
+                                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z"/></svg>
+                                            Activar
+                                        @endif
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="5" class="px-6 py-20 text-center">
+                                <div class="flex flex-col items-center">
+                                    <div class="p-4 bg-slate-50 rounded-full mb-4 text-slate-300">
+                                        <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+                                    </div>
+                                    <h3 class="text-lg font-bold text-slate-700">No hay registros</h3>
+                                    <p class="text-slate-400 text-sm">No encontramos usuarios con los criterios actuales.</p>
+                                </div>
+                            </td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+
+        <div class="px-6 py-4 bg-slate-50/50 border-t border-slate-200">
             {{ $users->links() }}
         </div>
     </div>
 </div>
 
-{{-- SCRIPT AJAX PRO --}}
 <script>
     const loader = document.getElementById('loader');
     const content = document.getElementById('content');
     const form = document.getElementById('filterForm');
-    const estadoFilter = document.getElementById('estadoFilter');
-    const searchInput = document.getElementById('searchInput');
     const tableContainer = document.getElementById('tableContainer');
 
-    function showLoader() {
-        loader.style.display = 'flex';
-        loader.classList.remove('opacity-0');
+    function removeLoader() {
+        if (loader && !loader.classList.contains('opacity-0')) {
+            loader.classList.add('opacity-0');
+            setTimeout(() => {
+                loader.style.display = 'none';
+                if (content) content.classList.remove('opacity-0');
+            }, 500);
+        }
     }
 
-    function hideLoader() {
-        loader.classList.add('opacity-0');
-        setTimeout(() => loader.style.display = 'none', 300);
-    }
+    // Disparadores de salida
+    document.addEventListener('DOMContentLoaded', () => {
+        setTimeout(removeLoader, 100); 
+    });
+
+    window.addEventListener('load', removeLoader);
+    setTimeout(removeLoader, 2500); // Seguro de vida de 2.5 seg
 
     function fetchUsers(url = null) {
-        showLoader();
+        if(tableContainer) tableContainer.style.opacity = '0.6';
 
         const formData = new FormData(form);
         const params = new URLSearchParams(formData).toString();
@@ -189,38 +214,42 @@
                 const parser = new DOMParser();
                 const doc = parser.parseFromString(html, 'text/html');
                 const newTable = doc.getElementById('tableContainer');
-                tableContainer.innerHTML = newTable.innerHTML;
-                hideLoader();
+                if (newTable && tableContainer) {
+                    tableContainer.innerHTML = newTable.innerHTML;
+                }
+                tableContainer.style.opacity = '1';
             })
-            .catch(() => hideLoader());
+            .catch(error => {
+                console.error('Error:', error);
+                if(tableContainer) tableContainer.style.opacity = '1';
+            });
     }
 
-    estadoFilter.addEventListener('change', () => fetchUsers());
+    if(document.getElementById('estadoFilter')) {
+        document.getElementById('estadoFilter').addEventListener('change', () => fetchUsers());
+    }
 
     let debounceTimer;
-    searchInput.addEventListener('input', () => {
-        clearTimeout(debounceTimer);
-        debounceTimer = setTimeout(() => fetchUsers(), 600);
-    });
+    if(document.getElementById('searchInput')) {
+        document.getElementById('searchInput').addEventListener('input', () => {
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(() => fetchUsers(), 600);
+        });
+    }
 
-    form.addEventListener('submit', e => {
-        e.preventDefault();
-        fetchUsers();
-    });
+    if(form) {
+        form.addEventListener('submit', e => {
+            e.preventDefault();
+            fetchUsers();
+        });
+    }
 
     document.addEventListener('click', function(e) {
-        if (e.target.closest('.pagination a')) {
+        const link = e.target.closest('.pagination a');
+        if (link) {
             e.preventDefault();
-            fetchUsers(e.target.closest('a').href);
+            fetchUsers(link.href);
         }
-    });
-
-    window.addEventListener('load', () => {
-        loader.classList.add('opacity-0');
-        setTimeout(() => {
-            loader.style.display = 'none';
-            content.classList.remove('opacity-0');
-        }, 500);
     });
 </script>
 
