@@ -14,10 +14,10 @@
     }
 @endphp
 
-<div class="max-w-6xl bg-white rounded-xl shadow p-10 ml-6">
+<div class="max-w-6xl bg-white rounded-2xl shadow-xl shadow-slate-200/50 p-10 ml-6 border border-slate-100">
 
     {{-- TÍTULO --}}
-    <h2 class="text-2xl font-bold mb-8">
+    <h2 class="text-2xl font-extrabold text-slate-800 tracking-tight mb-8">
         Mi perfil
     </h2>
 
@@ -29,14 +29,15 @@
             <img
                 id="previewImage"
                 src="{{ $photoPath ?? asset('img/default-user.png') }}"
-                class="w-32 h-32 rounded-full object-cover border shadow"
+                class="w-32 h-32 rounded-full object-cover border-4 border-white shadow-lg ring-1 ring-slate-200"
                 alt="Foto de perfil">
 
             @if ($photoPath)
-            <form method="POST" action="{{ route('profile.delete.photo') }}">
+            {{-- SE AÑADIÓ ONSUBMIT PARA CONFIRMACIÓN --}}
+            <form method="POST" action="{{ route('profile.delete.photo') }}" onsubmit="return confirmDeletePhoto()">
                 @csrf
                 @method('DELETE')
-                <button class="bg-red-600 text-white px-4 py-1 rounded hover:bg-red-700 text-sm">
+                <button class="bg-rose-600 text-white px-4 py-1.5 rounded-xl hover:bg-rose-700 text-xs font-bold transition-all shadow-lg shadow-rose-100">
                     Eliminar foto
                 </button>
             </form>
@@ -52,7 +53,7 @@
                 @csrf
                 @method('PUT')
 
-                <label class="cursor-pointer inline-block bg-gray-200 text-gray-700 px-4 py-2 rounded hover:bg-gray-300 text-sm w-fit">
+                <label class="cursor-pointer inline-block bg-slate-100 text-slate-700 px-4 py-2 rounded-xl border border-slate-200 hover:bg-slate-200 text-sm font-bold w-fit transition-all">
                     Seleccionar foto
                     <input
                         type="file"
@@ -63,21 +64,21 @@
                         onchange="previewPhoto(event)">
                 </label>
 
-                <p class="text-xs text-gray-500">
+                <p class="text-xs text-slate-500 font-medium">
                     JPG, JPEG o PNG — máximo 2 MB
                 </p>
 
                 @error('photo')
-                    <p class="text-sm text-red-600">{{ $message }}</p>
+                    <p class="text-sm text-rose-500 font-medium">{{ $message }}</p>
                 @enderror
 
                 <div class="flex gap-3">
-                    <button class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+                    <button class="bg-indigo-600 text-white px-5 py-2 rounded-xl font-bold hover:bg-indigo-700 shadow-lg shadow-indigo-100 transition-all text-sm">
                         Guardar foto
                     </button>
 
                     <a href="{{ route('profile') }}"
-                       class="bg-gray-400 text-white px-4 py-2 rounded hover:bg-gray-500">
+                       class="bg-slate-400 text-white px-5 py-2 rounded-xl font-bold hover:bg-slate-500 transition-all text-sm">
                         Cancelar
                     </a>
                 </div>
@@ -88,19 +89,19 @@
     {{-- DATOS DEL USUARIO --}}
     <div class="grid grid-cols-1 md:grid-cols-2 gap-10 mb-10">
 
-        <div>
-            <p class="font-semibold text-gray-700">Nombre</p>
-            <p class="text-lg">{{ $user->name }}</p>
+        <div class="space-y-1">
+            <p class="text-[11px] font-bold text-slate-400 uppercase tracking-widest">Nombre</p>
+            <p class="text-lg font-bold text-slate-700">{{ $user->name }}</p>
         </div>
 
-        <div>
-            <p class="font-semibold text-gray-700">Apellidos</p>
-            <p class="text-lg">{{ $user->last_name }}</p>
+        <div class="space-y-1">
+            <p class="text-[11px] font-bold text-slate-400 uppercase tracking-widest">Apellidos</p>
+            <p class="text-lg font-bold text-slate-700">{{ $user->last_name }}</p>
         </div>
 
         {{-- ACTUALIZAR CORREO --}}
         <div class="md:col-span-2">
-            <p class="font-semibold text-gray-700 mb-3">
+            <p class="font-bold text-slate-700 mb-4 text-sm uppercase tracking-wide">
                 Actualizar correo
             </p>
 
@@ -111,84 +112,90 @@
                 @method('PUT')
 
                 <div class="lg:col-span-2">
-                    <label class="text-sm text-gray-600">Correo</label>
+                    <label class="text-xs font-bold text-slate-500 ml-1">Correo</label>
                     <input
                         type="email"
                         name="email"
                         value="{{ old('email', $user->email) }}"
-                        class="border rounded px-3 py-2 w-full"
+                        class="block w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all"
                         required>
                 </div>
 
                 <div>
-                    <label class="text-sm text-gray-600">Contraseña</label>
+                    <label class="text-xs font-bold text-slate-500 ml-1">Contraseña</label>
                     <input
                         type="password"
                         name="password"
-                        class="border rounded px-3 py-2 w-full"
+                        class="block w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all"
                         required>
                 </div>
 
-                <button class="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 h-fit">
+                <button class="bg-indigo-600 text-white px-6 py-2.5 rounded-xl font-bold hover:bg-indigo-700 shadow-lg shadow-indigo-100 transition-all h-[42px] text-sm">
                     Guardar
                 </button>
             </form>
 
             @error('email')
-                <p class="text-sm text-red-600 mt-2">{{ $message }}</p>
+                <p class="text-sm text-rose-500 font-medium mt-2">{{ $message }}</p>
             @enderror
 
             @error('password')
-                <p class="text-sm text-red-600 mt-2">{{ $message }}</p>
+                <p class="text-sm text-rose-500 font-medium mt-2">{{ $message }}</p>
             @enderror
         </div>
 
         {{-- ROLES --}}
-        <div>
-            <p class="font-semibold text-gray-700">Cargo</p>
-            <p class="capitalize">{{ implode(', ', $roles) }}</p>
+        <div class="space-y-1">
+            <p class="text-[11px] font-bold text-slate-400 uppercase tracking-widest">Cargo</p>
+            <p class="text-lg font-bold text-indigo-600 capitalize">{{ implode(', ', $roles) }}</p>
         </div>
 
         {{-- GRADOS --}}
         <div class="md:col-span-2">
-            <p class="font-semibold text-gray-700">Grupos / grados a cargo</p>
+            <p class="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-2">Grupos / grados a cargo</p>
 
             @if ($degrees->count())
-                <ul class="list-disc ml-6 mt-2">
+                <ul class="list-disc ml-6 mt-2 text-slate-600 font-medium space-y-1">
                     @foreach ($degrees as $degree)
                         <li>{{ $degree }}</li>
                     @endforeach
                 </ul>
             @else
-                <p class="italic text-gray-500">No tiene grados asignados</p>
+                <p class="italic text-slate-400 text-sm">No tiene grados asignados</p>
             @endif
         </div>
 
         {{-- DIRECTOR DE GRUPO --}}
         <div class="md:col-span-2">
-            <p class="font-semibold text-gray-700">Director de grupo</p>
+            <p class="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-1">Director de grupo</p>
 
             @if ($directorGroup)
-                <p>
-                    Sí – Grupo
-                    <strong>{{  optional($directorGroup->director)->group ?? 'No es director de grupo'  }}</strong>
+                <p class="text-slate-700">
+                    Sí – Grupo 
+                    <strong class="text-indigo-600">{{ optional($directorGroup->director)->group ?? 'No es director de grupo' }}</strong>
                 </p>
             @else
-                <p class="italic text-gray-500">No es director de grupo</p>
+                <p class="italic text-slate-400 text-sm">No es director de grupo</p>
             @endif
         </div>
 
     </div>
 </div>
 
-{{-- PREVIEW FOTO --}}
+{{-- SCRIPTS --}}
 <script>
+// Función para previsualizar la foto
 function previewPhoto(event) {
     const reader = new FileReader();
     reader.onload = function () {
         document.getElementById('previewImage').src = reader.result;
     };
     reader.readAsDataURL(event.target.files[0]);
+}
+
+// Función de confirmación para eliminar
+function confirmDeletePhoto() {
+    return confirm('¿Estás seguro de que deseas eliminar tu foto de perfil? Esta acción no se puede deshacer.');
 }
 </script>
 
