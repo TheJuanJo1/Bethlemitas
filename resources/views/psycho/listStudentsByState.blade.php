@@ -11,7 +11,7 @@
 <div class="flex justify-center p-1">
     <div class="w-full bg-white rounded-lg shadow-md max-h-[80vh] overflow-auto">
 
-        <div class="p-4 border-b bg-white sticky top-0 shadow-md w-full">
+        <div class="p-4 border-b bg-white sticky top-0 shadow-md w-full z-50">
             <h1 class="text-xl md:text-2xl lg:text-3xl font-bold text-gray-700">
                 Estudiantes {{ $stateLabel }}
             </h1>
