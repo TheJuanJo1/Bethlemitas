@@ -122,173 +122,46 @@
                               </a>
 
                               <!-- Opciones de interfaz para el rol Coordinador -->
-                              @if (Auth::user()->hasRole('coordinador'))
-                                 <!-- Usuarios -->
-                                 <div x-data="{ isOpen: false}">
-                                    <a @click="isOpen = !isOpen" class="flex items-center px-5 py-2 mt-4 hover:bg-[#95A5A6] hover:text-gray-900 hover:rounded-lg font-medium cursor-pointer">
-                                       <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                          <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4z"></path>
-                                          <path d="M6 18c0-2.21 3.58-4 6-4s6 1.79 6 4"></path>
-                                      </svg>
-                                      <span class="mx-3">Usuarios</span>
-                                      <svg class="w-6 h-6 ml-auto" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                       <polygon points="12 16, 6 8, 18 8" />
-                                   </svg>
-                                    </a>
+                              @if ($user->hasRole('coordinador'))
+                <div class="pt-4 pb-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">Gestión Administrativa</div>
+                <div x-data="{ open: false }">
+                    <button @click="open = !open" class="flex items-center w-full p-3 text-gray-900 transition rounded-lg hover:bg-[#95A5A6] group">
+                        <i class="bi bi-people-fill text-xl mr-3"></i>
+                        <span class="flex-1 text-left whitespace-nowrap">Usuarios</span>
+                        <i class="bi" :class="open ? 'bi-chevron-up' : 'bi-chevron-down'"></i>
+                    </button>
+                    <div x-show="open" class="py-2 space-y-2 ml-6">
+                        <a href="{{ route('create.user') }}" class="flex items-center p-2 text-gray-700 transition rounded-lg hover:bg-gray-200">Crear usuario</a>
+                        <a href="{{ route('index.users') }}" class="flex items-center p-2 text-gray-700 transition rounded-lg hover:bg-gray-200">Listar usuarios</a>
+                    </div>
+                </div>
+                <a href="{{ route('create.area') }}" class="flex items-center p-3 text-gray-900 rounded-lg hover:bg-[#95A5A6]"><i class="bi bi-book-half text-xl mr-3"></i>Areas</a>
+                <a href="{{ route('create.group') }}" class="flex items-center p-3 text-gray-900 rounded-lg hover:bg-[#95A5A6]"><i class="bi bi-microsoft-teams text-xl mr-3"></i>Grupos</a>
+            @endif
 
-                                    <div x-show="isOpen" class="ml-10">
-                                       <a href="{{ route('create.user') }}"
-                                       class="flex items-center px-3  mt-2 hover:bg-[#95A5A6] hover:text-gray-900 hover:rounded-lg font-medium">
-                                             <!-- Icono si es necesario -->
-                                             <span class="mx-3">• Crear usuario</span>
-                                       </a>
+            @if ($user->hasRole('docente'))
+                <div class="pt-4 pb-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">Módulo Docente</div>
+                <a href="{{ route('create.referral') }}" class="flex items-center p-3 text-gray-900 rounded-lg hover:bg-[#95A5A6]"><i class="bi bi-person-plus-fill text-xl mr-3"></i>Remitir estudiante</a>
+                <a href="{{ route('index.student.remitted') }}" class="flex items-center p-3 text-gray-900 rounded-lg hover:bg-[#95A5A6]"><i class="bi bi-list-check text-xl mr-3"></i>Estudiantes remitidos</a>
+                <a href="{{ route('addMinutes') }}" class="flex items-center p-3 text-gray-900 rounded-lg hover:bg-[#95A5A6]"><i class="bi bi-file-earmark-text-fill text-xl mr-3"></i>Estudiantes en PIAR</a>
+            @endif
 
-                                       <a href="{{ route('index.users') }}"
-                                       class="flex items-center px-3  mt-2 hover:bg-[#95A5A6] hover:text-gray-900 hover:rounded-lg font-medium">
-                                          <!-- Icono si es necesario -->
-                                          <span class="mx-3">• Listar usuarios</span>
-                                       </a>
-                                    </div>
-                                 </div>
-
-                                 <!-- Areas -->
-                                 <div>
-                                    <a href="{{ route('create.area') }}" class="flex items-center px-5 py-2 mt-4 hover:bg-[#95A5A6] hover:text-gray-900 hover:rounded-lg font-medium cursor-pointer">
-                                       <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                          <path d="M2 4h6a2 2 0 0 1 2 2v12a2 2 0 0 0-2 2H2z"></path>
-                                          <path d="M22 4h-6a2 2 0 0 0-2 2v12a2 2 0 0 1 2 2h6z"></path>
-                                          <line x1="10" y1="6" x2="14" y2="6"></line>
-                                          <line x1="10" y1="10" x2="14" y2="10"></line>
-                                          <line x1="10" y1="14" x2="14" y2="14"></line>
-                                      </svg>
-                                      <span class="mx-3">Areas</span>
-                                    </a>
-                                 </div>
-
-                                 {{-- <!-- Grados -->
-                                 <div>
-                                    <a href="{{ route('create.degree') }}" class="flex items-center px-5 py-2 mt-4 hover:bg-[#95A5A6] hover:text-gray-900 hover:rounded-lg font-medium cursor-pointer">
-                                       <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                          <line x1="3" y1="16" x2="21" y2="16"></line>
-                                      </svg>
-                                      <span class="mx-3">Grados</span>
-                                    </a>
-                                 </div> --}}
-
-                                 <!-- Grupos -->
-                                 <div>
-                                    <a href="{{ route('create.group') }}" class="flex items-center px-5 py-2 mt-4 hover:bg-[#95A5A6] hover:text-gray-900 hover:rounded-lg font-medium cursor-pointer">
-                                       <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                          <!-- Persona central -->
-                                          <circle cx="12" cy="8" r="3"></circle>
-                                          <path d="M10 16c0-2 2-3 2-3s2 1 2 3"></path>
-                                      
-                                          <!-- Persona izquierda -->
-                                          <circle cx="6" cy="9" r="2"></circle>
-                                          <path d="M4.5 16c0-1.5 1.5-2.5 1.5-2.5s1.5 1 1.5 2.5"></path>
-                                      
-                                          <!-- Persona derecha -->
-                                          <circle cx="18" cy="9" r="2"></circle>
-                                          <path d="M16.5 16c0-1.5 1.5-2.5 1.5-2.5s1.5 1 1.5 2.5"></path>
-                                      </svg>
-                                      <span class="mx-3">Grupos</span>
-                                    </a>
-                                 </div>
-                              @endif
-                              
-                              <!-- Opciones de interfaz para el rol docente -->
-                              @if (Auth::user()->hasRole('docente'))
-                                 <!-- Remitir estudiante -->
-                                 <div>
-                                    <a href="{{ route('create.referral') }}" class="flex items-center px-5 py-2 mt-4 hover:bg-[#95A5A6] hover:text-gray-900 hover:rounded-lg font-medium cursor-pointer">
-                                       <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                          <path d="M9 17l-5-5 5-5"></path>
-                                          <path d="M22 12H4"></path>
-                                          <circle cx="16" cy="12" r="2"></circle>
-                                        </svg>
-                                      <span class="mx-3">Remitir estudiante</span>
-                                    </a>
-                                 </div>
-
-                                 <!-- Listar estudiantes -->
-                                 <div>
-                                    <a href="{{ route('index.student.remitted') }}" class="flex items-center px-5 py-2 mt-4 hover:bg-[#95A5A6] hover:text-gray-900 hover:rounded-lg font-medium cursor-pointer">
-                                       <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                          <!-- Persona central -->
-                                          <circle cx="12" cy="8" r="3"></circle>
-                                          <path d="M10 16c0-2 2-3 2-3s2 1 2 3"></path>
-                                      
-                                          <!-- Persona izquierda -->
-                                          <circle cx="6" cy="9" r="2"></circle>
-                                          <path d="M4.5 16c0-1.5 1.5-2.5 1.5-2.5s1.5 1 1.5 2.5"></path>
-                                      
-                                          <!-- Persona derecha -->
-                                          <circle cx="18" cy="9" r="2"></circle>
-                                          <path d="M16.5 16c0-1.5 1.5-2.5 1.5-2.5s1.5 1 1.5 2.5"></path>
-                                       </svg>
-                                      <span class="mx-3">Listar estudiantes remitidos</span>
-                                    </a>
-                                 </div>
-                                 <!-- Aqui se van a listar los estudiantes que ya se encuentran en proceso PIAR para añadirles un acta -->
-                                 <div>
-                                    <a href="{{ route('addMinutes') }}" class="flex items-center px-5 py-2 mt-4 hover:bg-[#95A5A6] hover:text-gray-900 hover:rounded-lg font-medium cursor-pointer">
-                                       <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                          <path d="M8 2h8a2 2 0 0 1 2 2v16a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z"></path>
-                                          <line x1="12" y1="8" x2="12" y2="16"></line>
-                                          <line x1="8" y1="12" x2="16" y2="12"></line>
-                                        </svg>
-                                      <span class="mx-3">Estudiantes en Piar</span>
-                                    </a>
-                                 </div>
-                              @endif
-
-                              <!-- Opciones de interfaz para el rol psicoorientador -->
-                              @if (Auth::user()->hasRole('psicoorientador'))
-                                  <!-- Remitir estudiante -->
-                                  <div>
-                                    <a href="{{ route('create.referral') }}" class="flex items-center px-5 py-2 mt-4 hover:bg-[#95A5A6] hover:text-gray-900 hover:rounded-lg font-medium cursor-pointer">
-                                       <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                          <path d="M9 17l-5-5 5-5"></path>
-                                          <path d="M22 12H4"></path>
-                                          <circle cx="16" cy="12" r="2"></circle>
-                                        </svg>
-                                      <span class="mx-3">Remitir estudiante</span>
-                                    </a>
-                                 </div>
-
-                                 <!-- Listar Estudiantes -->
-                                 <div x-data="{ isOpen: false}">
-                                    <a @click="isOpen = !isOpen" class="flex items-center px-5 py-2 mt-4 hover:bg-[#95A5A6] hover:text-gray-900 hover:rounded-lg font-medium cursor-pointer">
-                                       <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                          <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4z"></path>
-                                          <path d="M6 18c0-2.21 3.58-4 6-4s6 1.79 6 4"></path>
-                                      </svg>
-                                      <span class="mx-3">Listar estudiantes</span>
-                                      <svg class="w-6 h-6 ml-auto" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                       <polygon points="12 16, 6 8, 18 8" />
-                                   </svg>
-                                    </a>
-
-                                    <div x-show="isOpen" class="ml-10">
-
-                                          <a href="{{ route('index.student.remitted.psico') }}"
-                                          class="flex items-center px-3 mt-2 hover:bg-[#95A5A6] hover:rounded-lg">
-                                          <span class="mx-3">• Remitidos</span>
-                                          </a>
-
-                                          <a href="{{ route('psico.students.piar') }}"
-                                          class="flex items-center px-3 mt-2 hover:bg-[#95A5A6] hover:rounded-lg">
-                                          <span class="mx-3">• En PIAR</span>
-                                          </a>
-
-                                          <a href="{{ route('psico.students.active') }}"
-                                          class="flex items-center px-3 mt-2 hover:bg-[#95A5A6] hover:rounded-lg">
-                                          <span class="mx-3">• Activos</span>
-                                          </a>
-
-                                       </div>
-                                 </div>
-                              @endif
+            @if ($user->hasRole('psicoorientador'))
+                <div class="pt-4 pb-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">Psicopedagogía</div>
+                <a href="{{ route('create.referral') }}" class="flex items-center p-3 text-gray-900 rounded-lg hover:bg-[#95A5A6]"><i class="bi bi-arrow-left-right text-xl mr-3"></i>Remitir estudiante</a>
+                <div x-data="{ open: false }">
+                    <button @click="open = !open" class="flex items-center w-full p-3 text-gray-900 transition rounded-lg hover:bg-[#95A5A6]">
+                        <i class="bi bi-person-badge-fill text-xl mr-3"></i>
+                        <span class="flex-1 text-left whitespace-nowrap">Estudiantes</span>
+                        <i class="bi" :class="open ? 'bi-chevron-up' : 'bi-chevron-down'"></i>
+                    </button>
+                    <div x-show="open" class="py-2 space-y-2 ml-6 text-sm">
+                        <a href="{{ route('index.student.remitted.psico') }}" class="block p-2 text-gray-700 hover:bg-gray-200 rounded">• Remitidos</a>
+                        <a href="{{ route('psico.students.piar') }}" class="block p-2 text-gray-700 hover:bg-gray-200 rounded">• En PIAR</a>
+                        <a href="{{ route('psico.students.active') }}" class="block p-2 text-gray-700 hover:bg-gray-200 rounded">• Activos</a>
+                    </div>
+                </div>
+            @endif
                               
                            </li>
                         </div>
