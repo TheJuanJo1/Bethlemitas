@@ -6,10 +6,11 @@
 
 <style>
     :root {
-        --primary: #1e40af; /* Un azul un poco más oscuro */
+        --primary: #1e40af; 
         --primary-hover: #1e3a8a;
+        --secondary: #0d9488; /* Verde para el Anexo 3 */
         --bg-light: #f1f5f9;
-        --border-strong: #94a3b8; /* Gris más oscuro para que se marquen las líneas */
+        --border-strong: #94a3b8; 
         --text-main: #1e293b;
     }
 
@@ -21,14 +22,13 @@
         padding: 0 15px;
     }
 
-    /* Estilo de los bloques */
     .box-section {
         background: #ffffff;
         border-radius: 8px;
         padding: 25px;
         margin-bottom: 30px;
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-        border: 1.5px solid var(--border-strong); /* Borde de sección más definido */
+        border: 1.5px solid var(--border-strong);
     }
 
     .box-title {
@@ -44,9 +44,8 @@
         letter-spacing: 1px;
     }
 
-    /* Inputs y Textareas con bordes definidos */
     .form-control {
-        border: 1.5px solid var(--border-strong); /* Líneas de inputs más marcadas */
+        border: 1.5px solid var(--border-strong);
         border-radius: 4px;
         padding: 8px;
         width: 100%;
@@ -59,7 +58,7 @@
         outline: none;
         border-color: var(--primary);
         box-shadow: 0 0 0 2px rgba(30, 64, 175, 0.2);
-        background-color: #fefce8; /* Un toque de color al escribir */
+        background-color: #fefce8;
     }
 
     textarea.form-control {
@@ -67,7 +66,6 @@
         resize: vertical;
     }
 
-    /* Tabla con líneas Fuertes */
     .table-responsive {
         overflow-x: auto;
         border: 1.5px solid var(--border-strong);
@@ -82,27 +80,25 @@
     }
 
     th {
-        background: #e2e8f0; /* Fondo de encabezado más oscuro */
+        background: #e2e8f0;
         color: #0f172a;
         font-weight: 700;
         text-transform: uppercase;
         padding: 12px 8px;
-        border: 1.5px solid var(--border-strong); /* Línea de tabla gruesa */
+        border: 1.5px solid var(--border-strong);
     }
 
     td {
-        border: 1.5px solid var(--border-strong); /* Línea de tabla gruesa */
+        border: 1.5px solid var(--border-strong);
         padding: 8px;
         vertical-align: top;
         background-color: #ffffff;
     }
 
-    /* Fila cebra para no perder la vista */
     tbody tr:nth-child(even) {
         background-color: #f8fafc;
     }
 
-    /* Botones */
     .btn-back {
         background: white;
         border: 2px solid var(--border-strong);
@@ -133,12 +129,23 @@
         border-radius: 6px;
         cursor: pointer;
         transition: transform 0.1s, background 0.2s;
-        box-shadow: 0 4px 0px #173671; /* Efecto 3D simple */
+        box-shadow: 0 4px 0px #173671;
     }
 
     .btn-save:active {
         transform: translateY(3px);
         box-shadow: none;
+    }
+
+    .btn-add-row {
+        background: var(--secondary);
+        color: white;
+        padding: 8px 15px;
+        font-size: 11px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        box-shadow: 0 3px 0px #064e4b;
     }
 
     .student-info {
@@ -176,7 +183,6 @@
 
         <div class="box-section">
             <div class="box-title">Matriz de Ajustes</div>
-            
             <div class="table-responsive">
                 <table>
                     <thead>
@@ -224,6 +230,48 @@
             </div>
         </div>
 
+        <div class="box-section" style="border-left: 8px solid var(--secondary);">
+            <div class="box-title" style="background: var(--secondary);">Anexo 3 - Plan de Trabajo con la Familia</div>
+            <p style="font-size: 0.85rem; color: #64748b; margin-bottom: 15px;">
+                Registre las actividades, estrategias y frecuencia de apoyo desde el hogar.
+            </p>
+
+            <div class="table-responsive">
+                <table id="tabla-anexo3">
+                    <thead>
+                        <tr>
+                            <th style="width: 25%;">Nombre actividad</th>
+                            <th>Descripción de la estrategia</th>
+                            <th style="width: 20%;">Frecuencia (D, S, P)</th>
+                            <th style="width: 50px;"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <input type="text" name="anexo3_actividad[]" class="form-control" placeholder="Ej: Lectura en casa" required>
+                            </td>
+                            <td>
+                                <textarea name="anexo3_estrategia[]" class="form-control" style="height: 60px;" placeholder="Descripción de la estrategia..." required></textarea>
+                            </td>
+                            <td>
+                                <select name="anexo3_frecuencia[]" class="form-control" required>
+                                    <option value="D">D (Diaria)</option>
+                                    <option value="S">S (Semanal)</option>
+                                    <option value="P">P (Permanente)</option>
+                                </select>
+                            </td>
+                            <td></td> </tr>
+                    </tbody>
+                </table>
+                <div style="margin-top: 15px;">
+                    <button type="button" onclick="agregarFilaAnexo()" class="btn-add-row">
+                        <i class="bi bi-plus-circle"></i> AGREGAR ACTIVIDAD PARA LA FAMILIA
+                    </button>
+                </div>
+            </div>
+        </div>
+
         <div style="text-align:right; margin: 40px 0;">
             <button type="submit" class="btn-save">
                 <i class="bi bi-device-ssd"></i> GUARDAR INFORMACIÓN - PERIODO 1
@@ -231,5 +279,30 @@
         </div>
     </form>
 </div>
+
+<script>
+    function agregarFilaAnexo() {
+        const tbody = document.querySelector('#tabla-anexo3 tbody');
+        const nuevaFila = document.createElement('tr');
+        
+        nuevaFila.innerHTML = `
+            <td><input type="text" name="anexo3_actividad[]" class="form-control"></td>
+            <td><textarea name="anexo3_estrategia[]" class="form-control" style="height: 60px;"></textarea></td>
+            <td>
+                <select name="anexo3_frecuencia[]" class="form-control">
+                    <option value="D">D (Diaria)</option>
+                    <option value="S">S (Semanal)</option>
+                    <option value="P">P (Permanente)</option>
+                </select>
+            </td>
+            <td style="text-align:center; vertical-align:middle;">
+                <button type="button" onclick="this.parentElement.parentElement.remove()" class="btn" style="color: #ef4444;">
+                    <i class="bi bi-trash"></i>
+                </button>
+            </td>
+        `;
+        tbody.appendChild(nuevaFila);
+    }
+</script>
 
 @endsection

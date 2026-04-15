@@ -279,7 +279,6 @@ class PiarController extends Controller
 
                     'evaluacion' => null,
 
-                    'start_date' => now(),
                 ];
 
                 $baseQuery = PiarAdjustment::query()
@@ -300,7 +299,6 @@ class PiarController extends Controller
                         'ajuste_curricular' => $values['ajuste_curricular'],
                         'ajuste_metodologico' => $values['ajuste_metodologico'],
                         'ajuste_evaluativo' => $values['ajuste_evaluativo'],
-                        'start_date' => DB::raw('COALESCE(start_date, NOW())'),
 
                         'convivencia' => $values['convivencia'],
                         'socializacion' => $values['socializacion'],
@@ -899,6 +897,24 @@ class PiarController extends Controller
             ->with('success', 'Ajustes actualizados correctamente.');
     }
 
+    public function showAnexo3(Request $request, $piar_id, $periodo)
+    {
+        $piar = DB::table('piar')->where('id', $piar_id)->first();
+        $estudiante = DB::table('users_students')->where('id', $piar->student_id)->first();
+        $datos = DB::table('piar_adjustments')
+                    ->where('piar_id', $piar_id)
+                    ->where('period', $periodo)
+                    ->first();
+
+        // Si el usuario hizo clic en descargar
+        if ($request->has('download')) {
+            return view('psycho.pdf_anexo3', compact('piar', 'estudiante', 'datos'))
+                ->with('periodo_actual', $periodo);
+        }
+
+        return view('psycho.anexo3acta', compact('piar', 'estudiante', 'datos'))
+            ->with('periodo_actual', $periodo);
+    }
     // #endregion Psico - Edición de Ajustes Razonables
 
 

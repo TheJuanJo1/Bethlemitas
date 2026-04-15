@@ -11,7 +11,7 @@
 <div class="flex justify-center p-1">
     <div class="w-full bg-white rounded-lg shadow-md max-h-[80vh] overflow-auto">
 
-        <div class="p-4 border-b bg-white sticky top-0 shadow-md w-full z-50">
+         <div class="p-4 border-b bg-white sticky top-0 shadow-md w-full z-50">
             <h1 class="text-xl md:text-2xl lg:text-3xl font-bold text-gray-700">
                 Estudiantes {{ $stateLabel }}
             </h1>
@@ -120,6 +120,19 @@
                                    class="px-3 py-1 text-xs md:text-sm text-white bg-slate-600 rounded hover:bg-slate-800"
                                    title="Ver periodos de años pasados">
                                    Cronologia de Periodos </a>
+
+                                @if($student->piar)
+                                    <a href="{{ route('piar.anexo3', ['piar' => $student->piar->id, 'periodo' => 1]) }}"
+                                    class="px-3 py-1 text-xs md:text-sm text-white bg-green-600 rounded hover:bg-green-800"
+                                    title="Anexo 3">
+                                    Anexo 3
+                                    </a>
+                                @else
+                                    <button class="px-3 py-1 text-xs md:text-sm text-white bg-gray-400 rounded cursor-not-allowed" 
+                                            title="Este estudiante aún no tiene un PIAR creado" disabled>
+                                        Anexo 3
+                                    </button>
+                                @endif
                             </div>
                         </td>
                     </tr>
