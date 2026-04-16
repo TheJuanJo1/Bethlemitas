@@ -899,21 +899,36 @@ class PiarController extends Controller
 
     public function showAnexo3(Request $request, $piar_id, $periodo)
     {
-        $piar = DB::table('piar')->where('id', $piar_id)->first();
-        $estudiante = DB::table('users_students')->where('id', $piar->student_id)->first();
-        $datos = DB::table('piar_adjustments')
-                    ->where('piar_id', $piar_id)
-                    ->where('period', $periodo)
-                    ->first();
+        $piar = Piar::with(['student.degree', 'student.group'])->findOrFail($piar_id);
+        $estudiante = $piar->student;
+        
+        // Capturamos lo que viene por URL (lo que escribiste en el input)
+        $familiar_manual = $request->query('familiar', $estudiante->acudiente);
+        $parentesco_manual = $request->query('parentesco', $estudiante->parentesco_acudiente);
 
-        // Si el usuario hizo clic en descargar
+        $adjustments = PiarAdjustment::where('piar_id', $piar_id)
+            ->where('period', $periodo)
+            ->get();
+
+        $docentesIds = $adjustments->pluck('teacher_id')->unique();
+        $docentes = \App\Models\Users_teacher::whereIn('id', $docentesIds)->get();
+
+        $datos = PiarAdjustment::where('piar_id', $piar_id)
+            ->where('period', $periodo)
+            ->first();
+
+        $periodo_actual = $periodo;
+
         if ($request->has('download')) {
-            return view('psycho.pdf_anexo3', compact('piar', 'estudiante', 'datos'))
-                ->with('periodo_actual', $periodo);
+            return view('psycho.pdf_anexo3', compact(
+                'piar', 'estudiante', 'docentes', 'datos', 'periodo_actual', 
+                'familiar_manual', 'parentesco_manual' // Enviamos estos dos nuevos
+            ));
         }
 
-        return view('psycho.anexo3acta', compact('piar', 'estudiante', 'datos'))
-            ->with('periodo_actual', $periodo);
+        return view('psycho.anexo3acta', compact(
+            'piar', 'estudiante', 'docentes', 'datos', 'periodo_actual'
+        ));
     }
     // #endregion Psico - Edición de Ajustes Razonables
 
