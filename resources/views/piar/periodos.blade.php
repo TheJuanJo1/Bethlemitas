@@ -214,6 +214,9 @@
     @endphp
 
     @foreach($periodos as $p)
+    @php 
+        $status = $periodData[$p['id']]; 
+    @endphp
     <div class="period-card">
         <div class="period-info">
             <div class="period-num">{{ $p['id'] }}</div>
@@ -224,6 +227,10 @@
                 @else
                     <span class="badge-status bg-pending">Sin registros</span>
                 @endif
+
+                @if($status['isLocked'])
+                    <span class="badge-status" style="background: #fee2e2; color: #b91c1c;">Cerrado</span>
+                @endif
             </div>
         </div>
 
@@ -232,20 +239,23 @@
                 <a href="{{ route('piar.pdf.'.$p['slug'], $piar->id) }}" target="_blank" class="btn-action btn-pdf">
                     <i class="bi bi-file-earmark-pdf-fill"></i> PDF
                 </a>
-                <a href="{{ route('piar.evaluacion', [$piar->id, $p['id']]) }}" class="btn-action btn-eval">
-                    <i class="bi bi-journal-check"></i> Evaluar
-                </a>
-                <a href="{{ route('piar.editar.'.$p['slug'], $piar->id) }}" class="btn-action btn-edit">
-                    <i class="bi bi-pencil-fill"></i> Editar
-                </a>
+                
+                @if(!$status['isLocked'])
+                    <a href="{{ route('piar.evaluacion', [$piar->id, $p['id']]) }}" class="btn-action btn-eval">
+                        <i class="bi bi-journal-check"></i> Evaluar
+                    </a>
+                    <a href="{{ route('piar.editar.'.$p['slug'], $piar->id) }}" class="btn-action btn-edit">
+                        <i class="bi bi-pencil-fill"></i> Editar
+                    </a>
+                @endif
             @endif
 
-            @if($ready && (!isset($diasRestantes) || $diasRestantes >= 0))
+            @if($ready && !$status['isLocked'])
                 <a href="{{ route('piar.'.$p['slug'], $piar->id) }}" class="btn-action btn-primary">
                     {{ $p['data'] ? 'Añadir más' : 'Abrir Periodo' }}
                 </a>
             @else
-                <button class="btn-action btn-disabled" disabled>
+                <button class="btn-action btn-disabled" disabled title="El plazo de edición ha finalizado">
                     <i class="bi bi-lock-fill"></i> Bloqueado
                 </button>
             @endif

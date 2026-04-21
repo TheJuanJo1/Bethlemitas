@@ -134,16 +134,57 @@ class PiarController extends Controller
         $piar = Piar::with('student.degree', 'characteristics')->findOrFail($piar_id);
         $ready = (bool) $piar->characteristics;
 
-        $period1 = PiarAdjustment::where('piar_id',$piar_id)->where('period',1)->exists();
-        $period2 = PiarAdjustment::where('piar_id',$piar_id)->where('period',2)->exists();
-        $period3 = PiarAdjustment::where('piar_id',$piar_id)->where('period',3)->exists();
+        $periodAdjustments = PiarAdjustment::where('piar_id', $piar_id)->get();
+        
+        $periodData = [];
+        $diasRestantesGlobal = null;
+        $horasRestantesGlobal = null;
 
-        // 🔥 CONTADOR 30 DÍAS
-        $fechaInicio = Carbon::parse($piar->created_at);
-        $fechaLimite = $fechaInicio->copy()->addDays(30);
-        $hoy = Carbon::now();
+        // Calculamos el estado de cada periodo
+        for ($i = 1; $i <= 3; $i++) {
+            $adjustments = $periodAdjustments->where('period', $i);
+            $hasData = $adjustments->isNotEmpty();
+            $isLocked = false;
+            $daysLeft = null;
+            $hoursLeft = null;
 
-        $diasRestantes = $hoy->diffInDays($fechaLimite, false);
+            if ($hasData) {
+                // Buscamos la fecha de inicio o creación más antigua
+                $startDate = $adjustments->whereNotNull('start_date')->min('start_date') 
+                             ?? $adjustments->min('created_at');
+                
+                if ($startDate) {
+                    $fechaInicio = Carbon::parse($startDate);
+                    $fechaLimite = $fechaInicio->copy()->addDays(30);
+                    $hoy = Carbon::now();
+                    
+                    $daysLeft = (int) $hoy->diffInDays($fechaLimite, false);
+                    $hoursLeft = (int) $hoy->diffInHours($fechaLimite, false);
+                    
+                    if ($daysLeft < 0) {
+                        $isLocked = true;
+                    }
+                    
+                    // El contador global mostrará la información del periodo más reciente que se esté trabajando
+                    $diasRestantesGlobal = $daysLeft;
+                    $horasRestantesGlobal = $hoursLeft;
+                }
+            }
+
+            $periodData[$i] = [
+                'hasData' => $hasData,
+                'isLocked' => $isLocked,
+                'daysLeft' => $daysLeft,
+                'hoursLeft' => $hoursLeft
+            ];
+        }
+
+        $period1 = $periodData[1]['hasData'];
+        $period2 = $periodData[2]['hasData'];
+        $period3 = $periodData[3]['hasData'];
+        
+        $diasRestantes = $diasRestantesGlobal;
+        $horasRestantes = $horasRestantesGlobal;
 
         return view('piar.periodos', compact(
             'piar',
@@ -151,25 +192,10 @@ class PiarController extends Controller
             'period2',
             'period3',
             'ready',
-            'diasRestantes'
+            'diasRestantes',
+            'horasRestantes',
+            'periodData'
         ));
-
-        // 🔥 FECHA INICIO PERIODO 1 (primera que exista)
-        $inicioPeriodo = PiarAdjustment::where('piar_id', $piar_id)
-        ->where('period', 1)
-        ->whereNotNull('start_date')
-        ->orderBy('start_date')
-        ->value('start_date');
-
-        if ($inicioPeriodo) {
-        $fechaInicio = Carbon::parse($inicioPeriodo);
-        $fechaLimite = $fechaInicio->copy()->addDays(30);
-        $hoy = Carbon::now();
-
-        $diasRestantes = $hoy->diffInDays($fechaLimite, false);
-        } else {
-        $diasRestantes = null; // aún no inicia
-        }
     }
 
     //Periodo Uno
@@ -199,69 +225,25 @@ class PiarController extends Controller
 
     public function storePeriodo1(Request $request)
     {
-        // #region agent log
-        @file_put_contents(
-            base_path('debug-99f4e2.log'),
-            json_encode([
-                'sessionId' => '99f4e2',
-                'runId' => 'updated',
-                'hypothesisId' => 'H1',
-                'location' => 'app/Http/Controllers/PiarController.php:storePeriodo1',
-                'message' => 'storePeriodo1 called',
-                'data' => [
-                    'piar_id' => (int) ($request->piar_id ?? 0),
-                    'areas_count' => is_array($request->area ?? null) ? count($request->area) : null,
-                ],
-                'timestamp' => (int) round(microtime(true) * 1000),
-            ]) . PHP_EOL,
-            FILE_APPEND
-        );
-        // #endregion agent log
+        $piarId = (int) $request->piar_id;
+        $teacherId = (int) auth()->id();
+
+        // Si ya existe una fecha de inicio para este periodo, la usamos, de lo contrario hoy es el día 1
+        $existingStartDate = PiarAdjustment::where('piar_id', $piarId)
+            ->where('period', 1)
+            ->whereNotNull('start_date')
+            ->value('start_date') ?? Carbon::now();
 
         foreach ($request->area as $index => $area) {
 
             if ($area != null) {
-
-                $piarId = (int) $request->piar_id;
-                $teacherId = (int) auth()->id();
-
-                // #region agent log (duplicados)
-                $existingCount = PiarAdjustment::query()
-                    ->where('piar_id', $piarId)
-                    ->where('period', 1)
-                    ->where('teacher_id', $teacherId)
-                    ->where('area', $area)
-                    ->count();
-
-                if ($existingCount > 0) {
-                    @file_put_contents(
-                        base_path('debug-99f4e2.log'),
-                        json_encode([
-                            'sessionId' => '99f4e2',
-                            'runId' => 'updated',
-                            'hypothesisId' => 'H-dup-create',
-                            'location' => 'storePeriodo1:dupCheck',
-                            'message' => 'existing adjustment found',
-                            'data' => [
-                                'piar_id' => $piarId,
-                                'period' => 1,
-                                'teacher_id' => $teacherId,
-                                'area' => $area,
-                                'existingCount' => $existingCount,
-                                'index' => $index,
-                            ],
-                            'timestamp' => (int) round(microtime(true) * 1000),
-                        ]) . PHP_EOL,
-                        FILE_APPEND
-                    );
-                }
-                // #endregion agent log
 
                 // 🔥 NUEVOS CAMPOS
                 $values = [
                     'piar_id' => $piarId,
                     'period' => 1,
                     'teacher_id' => $teacherId,
+                    'start_date' => $existingStartDate,
 
                     'area' => $area,
                     'objetivo' => $request->objetivo[$index] ?? null,
@@ -307,6 +289,7 @@ class PiarController extends Controller
                         'autocontrol' => $values['autocontrol'],
 
                         'evaluacion' => null,
+                        // No actualizamos start_date en update para no reiniciar el contador
                     ]);
 
                     // 🧹 eliminar duplicados dejando uno
@@ -435,20 +418,26 @@ class PiarController extends Controller
 
     public function storePeriodo2(Request $request)
     {
+        $piarId = (int) $request->piar_id;
+        $teacherId = (int) auth()->id();
+
+        $existingStartDate = PiarAdjustment::where('piar_id', $piarId)
+            ->where('period', 2)
+            ->whereNotNull('start_date')
+            ->value('start_date') ?? Carbon::now();
+
         foreach ($request->area as $index => $area) {
             if ($area != null) {
-                $piarId = (int) $request->piar_id;
-                $teacherId = (int) auth()->id();
 
-                // Preparamos los valores (Asegúrate que estos nombres coincidan con tu base de datos)
+                // Preparamos los valores
                 $values = [
                     'piar_id' => $piarId,
                     'period' => 2,
                     'teacher_id' => $teacherId,
+                    'start_date' => $existingStartDate,
                     'area' => $area,
                     'objetivo' => $request->objetivo[$index] ?? null,
                     'barrera' => $request->barrera[$index] ?? null,
-                    // Usamos los mismos campos que en Periodo 1
                     'ajuste_curricular' => $request->ajuste_curricular[$index] ?? null,
                     'ajuste_metodologico' => $request->ajuste_metodologico[$index] ?? null,
                     'ajuste_evaluativo' => $request->ajuste_evaluativo[$index] ?? null,
@@ -469,8 +458,6 @@ class PiarController extends Controller
                 $existingIds = $baseQuery->orderBy('id')->pluck('id');
 
                 if ($existingIds->isNotEmpty()) {
-                    // UPDATE: Eliminamos 'start_date' del update para evitar el error SQL 
-                    // si la columna no existe en la DB.
                     $baseQuery->update([
                         'objetivo' => $values['objetivo'],
                         'barrera' => $values['barrera'],
@@ -489,9 +476,6 @@ class PiarController extends Controller
                     $keepId = $existingIds->first();
                     $baseQuery->where('id', '!=', $keepId)->delete();
                 } else {
-                    // CREATE: Si vas a usar create, asegúrate que 'start_date' 
-                    // esté en el array $values SOLO SI la columna existe.
-                    // Si no existe, quítala también de la definición de $values arriba.
                     PiarAdjustment::create($values);
                 }
             }
@@ -596,25 +580,29 @@ class PiarController extends Controller
 
     public function storePeriodo3(Request $request)
     {
+        $piarId = (int) $request->piar_id;
+        $teacherId = (int) auth()->id();
+
+        $existingStartDate = PiarAdjustment::where('piar_id', $piarId)
+            ->where('period', 3)
+            ->whereNotNull('start_date')
+            ->value('start_date') ?? Carbon::now();
+
         foreach ($request->area as $index => $area) {
             if ($area != null) {
-                $piarId = (int) $request->piar_id;
-                $teacherId = (int) auth()->id();
 
-                // Mapeamos los valores exactos que vienen de tu formulario
+                // Mapeamos los valores exactos
                 $values = [
                     'piar_id' => $piarId,
                     'period' => 3,
                     'teacher_id' => $teacherId,
+                    'start_date' => $existingStartDate,
                     'area' => $area,
                     'objetivo' => $request->objetivo[$index] ?? null,
                     'barrera' => $request->barrera[$index] ?? null,
-                    
-                    // IMPORTANTE: Cambiado de 'ajuste' a la estructura detallada
                     'ajuste_curricular' => $request->ajuste_curricular[$index] ?? null,
                     'ajuste_metodologico' => $request->ajuste_metodologico[$index] ?? null,
                     'ajuste_evaluativo' => $request->ajuste_evaluativo[$index] ?? null,
-                    
                     'convivencia' => $request->convivencia[$index] ?? null,
                     'socializacion' => $request->socializacion[$index] ?? null,
                     'participacion' => $request->participacion[$index] ?? null,
@@ -632,7 +620,6 @@ class PiarController extends Controller
                 $existingIds = $baseQuery->orderBy('id')->pluck('id');
 
                 if ($existingIds->isNotEmpty()) {
-                    // UPDATE: Quitamos 'start_date' para que no de error 1054
                     $baseQuery->update([
                         'objetivo' => $values['objetivo'],
                         'barrera' => $values['barrera'],
@@ -651,8 +638,6 @@ class PiarController extends Controller
                     $keepId = $existingIds->first();
                     $baseQuery->where('id', '!=', $keepId)->delete();
                 } else {
-                    // CREATE: Laravel ignorará campos que no estén en $fillable, 
-                    // pero si 'start_date' no está en la DB, quítalo del array $values arriba.
                     PiarAdjustment::create($values);
                 }
             }

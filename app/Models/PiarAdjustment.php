@@ -25,6 +25,7 @@ class PiarAdjustment extends Model
         'autonomia',
         'autocontrol',
         'evaluacion',
+        'start_date',
     ];
 
     public function piar()
