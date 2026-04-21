@@ -1,6 +1,44 @@
 @extends('layout.homePage')
 
 @section('content')
+<style>
+    :root {
+        --primary: #2563eb;
+        --success: #16a34a;
+        --warning: #f59e0b;
+        --danger: #dc2626;
+        --gray-bg: #f8fafc;
+        --border-color: #e2e8f0;
+    }
+
+    /* Botón Volver */
+    .boton-volver {
+        background: white;
+        border: 1px solid var(--border-color);
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        color: #64748b;
+        font-size: 13px;
+        font-weight: 600;
+        padding: 8px 16px;
+        border-radius: 10px;
+        margin-bottom: 1.5rem;
+        transition: all 0.2s;
+        text-decoration: none;
+    }
+    .boton-volver:hover {
+        background: #f1f5f9;
+        color: var(--primary);
+        transform: translateX(-4px);
+    }
+</style>
+
+<a href="/psico/students/active" class="boton-volver">
+        <i class="bi bi-chevron-left"></i> Volver al listado
+</a>
+
 <div class="container mx-auto p-4 no-print">
     <div class="mb-6 bg-slate-50 p-4 rounded-lg border border-slate-200 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
@@ -191,7 +229,7 @@
         * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
         thead { display: table-header-group; } /* Esto repite el logo arriba */
     }
-</style>
+</styl>
 
 <script>
     // Lógica para capturar lo que escribes y mandarlo al controlador
