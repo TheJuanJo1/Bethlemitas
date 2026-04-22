@@ -47,3 +47,5 @@
 {"sessionId":"99f4e2","runId":"updated","hypothesisId":"H1","location":"app\/Http\/Controllers\/PiarController.php:storePeriodo1","message":"storePeriodo1 called","data":{"piar_id":2,"areas_count":1},"timestamp":1776252990955}
 {"sessionId":"99f4e2","runId":"updated","hypothesisId":"H-dup-create","location":"storePeriodo1:dupCheck","message":"existing adjustment found","data":{"piar_id":2,"period":1,"teacher_id":5,"area":"Qu\u00edmica","existingCount":1,"index":0},"timestamp":1776252990963}
 {"sessionId":"99f4e2","runId":"updated","hypothesisId":"H1","location":"storePeriodo1","message":"redirecting","data":{"piar_id":2},"timestamp":1776252990972}
+{"sessionId":"99f4e2","runId":"pre-fix","hypothesisId":"H-create-1","location":"app\/Http\/Controllers\/PiarController.php:create","message":"PIAR create accessed by psico","data":{"student_id":6,"has_piar":true},"timestamp":1776803395047}
+{"sessionId":"99f4e2","runId":"updated","hypothesisId":"H1","location":"storePeriodo1","message":"redirecting","data":{"piar_id":1},"timestamp":1776870399551}

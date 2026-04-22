@@ -9,18 +9,10 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up()
+    public function up(): void
     {
         Schema::table('piar_adjustments', function (Blueprint $table) {
-            $table->text('ajuste_curricular')->nullable();
-            $table->text('ajuste_metodologico')->nullable();
-            $table->text('ajuste_evaluativo')->nullable();
-    
-            $table->text('convivencia')->nullable();
-            $table->text('socializacion')->nullable();
-            $table->text('participacion')->nullable();
-            $table->text('autonomia')->nullable();
-            $table->text('autocontrol')->nullable();
+            $table->string('teacher_signature')->nullable()->after('evaluacion');
         });
     }
 
@@ -30,7 +22,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('piar_adjustments', function (Blueprint $table) {
-            //
+            $table->dropColumn('teacher_signature');
         });
     }
 };

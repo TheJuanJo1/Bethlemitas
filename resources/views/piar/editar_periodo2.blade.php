@@ -174,7 +174,7 @@
         </h2>
     </div>
 
-    <form action="{{ route('piar.update.periodo2') }}" method="POST">
+    <form action="{{ route('piar.update.periodo2') }}" method="POST" enctype="multipart/form-data">
         @csrf
         @method('PUT')
         <input type="hidden" name="piar_id" value="{{ $piar_id }}">
@@ -259,6 +259,44 @@
             @endforeach
         @endif
 
+        @php
+            $firstAdj = $adjustments->first();
+            $currentSignature = $firstAdj->teacher_signature ?? null;
+        @endphp
+
+        <div class="adjustment-editor-card" style="margin-top: 2rem; border-left: 5px solid #1e293b;">
+            <div class="card-header" style="background: #f8fafc;">
+                <div>
+                    <span class="area-label" style="color: #1e293b;">Firma del Docente</span>
+                    <span class="area-name" style="font-size: 0.9rem;">Actualizar o registrar firma para este periodo</span>
+                </div>
+            </div>
+            <div class="p-8">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
+                    <div class="form-group">
+                        <label>Subir nueva firma (Imagen)</label>
+                        <input type="file" name="teacher_signature" accept="image/*" onchange="previewSignature(event)"
+                               class="form-control" style="padding: 0.5rem;">
+                        <p style="font-size: 0.7rem; color: #64748b; margin-top: 0.5rem;">
+                            * Si no selecciona un archivo nuevo, se mantendrá la firma actual.
+                        </p>
+                    </div>
+                    <div class="flex flex-col items-center">
+                        <span style="font-size: 0.7rem; font-weight: 700; color: #94a3b8; text-transform: uppercase; margin-bottom: 0.5rem;">Vista Previa / Firma Actual</span>
+                        <div style="width: 200px; height: 100px; border: 2px dashed #e2e8f0; border-radius: 12px; display: flex; align-items: center; justify-content: center; background: #f8fafc; overflow: hidden;">
+                            @if($currentSignature)
+                                <img id="signature-preview" src="{{ asset('storage/' . $currentSignature) }}" 
+                                     style="max-width: 100%; max-height: 100%; object-fit: contain;">
+                            @else
+                                <img id="signature-preview" src="#" style="max-width: 100%; max-height: 100%; display: none; object-fit: contain;">
+                                <span id="preview-text" style="color: #cbd5e1; font-size: 0.8rem; font-style: italic;">Sin firma</span>
+                            @endif
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div class="btn-save-container">
             <button type="submit" class="btn-save">
                 <i class="bi bi-cloud-check-fill"></i>
@@ -267,5 +305,23 @@
         </div>
     </form>
 </div>
+
+<script>
+    function previewSignature(event) {
+        const reader = new FileReader();
+        const preview = document.getElementById('signature-preview');
+        const text = document.getElementById('preview-text');
+
+        reader.onload = function() {
+            preview.src = reader.result;
+            preview.style.display = 'block';
+            if (text) text.style.display = 'none';
+        }
+
+        if (event.target.files[0]) {
+            reader.readAsDataURL(event.target.files[0]);
+        }
+    }
+</script>
 
 @endsection

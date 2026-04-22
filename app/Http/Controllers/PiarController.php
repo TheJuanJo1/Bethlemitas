@@ -225,8 +225,23 @@ class PiarController extends Controller
 
     public function storePeriodo1(Request $request)
     {
+        $request->validate([
+            'teacher_signature' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+        ]);
+
         $piarId = (int) $request->piar_id;
         $teacherId = (int) auth()->id();
+
+        $signaturePath = null;
+        if ($request->hasFile('teacher_signature')) {
+            $signaturePath = $request->file('teacher_signature')->store('signatures', 'public');
+        } else {
+            $signaturePath = PiarAdjustment::where('piar_id', $piarId)
+                ->where('period', 1)
+                ->where('teacher_id', $teacherId)
+                ->whereNotNull('teacher_signature')
+                ->value('teacher_signature');
+        }
 
         // Si ya existe una fecha de inicio para este periodo, la usamos, de lo contrario hoy es el día 1
         $existingStartDate = PiarAdjustment::where('piar_id', $piarId)
@@ -260,7 +275,7 @@ class PiarController extends Controller
                     'autocontrol' => $request->autocontrol[$index] ?? null,
 
                     'evaluacion' => null,
-
+                    'teacher_signature' => $signaturePath,
                 ];
 
                 $baseQuery = PiarAdjustment::query()
@@ -289,7 +304,7 @@ class PiarController extends Controller
                         'autocontrol' => $values['autocontrol'],
 
                         'evaluacion' => null,
-                        // No actualizamos start_date en update para no reiniciar el contador
+                        'teacher_signature' => $signaturePath,
                     ]);
 
                     // 🧹 eliminar duplicados dejando uno
@@ -365,27 +380,38 @@ class PiarController extends Controller
 
     public function updatePeriodo1(Request $request)
     {
+        $request->validate([
+            'teacher_signature' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+        ]);
+
+        $signaturePath = null;
+        if ($request->hasFile('teacher_signature')) {
+            $signaturePath = $request->file('teacher_signature')->store('signatures', 'public');
+        }
+
         foreach ($request->adjustment_id as $index => $id) {
 
             $adj = PiarAdjustment::find($id);
 
             if ($adj) {
-                $adj->update([
-                    // ❌ quitar area (NO viene del form)
-
+                $updateData = [
                     'objetivo' => $request->objetivo[$index] ?? null,
                     'barrera' => $request->barrera[$index] ?? null,
-
                     'ajuste_curricular' => $request->ajuste_curricular[$index] ?? null,
                     'ajuste_metodologico' => $request->ajuste_metodologico[$index] ?? null,
                     'ajuste_evaluativo' => $request->ajuste_evaluativo[$index] ?? null,
-
                     'convivencia' => $request->convivencia[$index] ?? null,
                     'socializacion' => $request->socializacion[$index] ?? null,
                     'participacion' => $request->participacion[$index] ?? null,
                     'autonomia' => $request->autonomia[$index] ?? null,
                     'autocontrol' => $request->autocontrol[$index] ?? null,
-                ]);
+                ];
+
+                if ($signaturePath) {
+                    $updateData['teacher_signature'] = $signaturePath;
+                }
+
+                $adj->update($updateData);
             }
         }
 
@@ -418,8 +444,24 @@ class PiarController extends Controller
 
     public function storePeriodo2(Request $request)
     {
+        $request->validate([
+            'teacher_signature' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+        ]);
+
         $piarId = (int) $request->piar_id;
         $teacherId = (int) auth()->id();
+
+        $signaturePath = null;
+        if ($request->hasFile('teacher_signature')) {
+            $signaturePath = $request->file('teacher_signature')->store('signatures', 'public');
+        } else {
+            // Si no subió una nueva, buscamos si ya existía una para este periodo/docente
+            $signaturePath = PiarAdjustment::where('piar_id', $piarId)
+                ->where('period', 2)
+                ->where('teacher_id', $teacherId)
+                ->whereNotNull('teacher_signature')
+                ->value('teacher_signature');
+        }
 
         $existingStartDate = PiarAdjustment::where('piar_id', $piarId)
             ->where('period', 2)
@@ -447,6 +489,7 @@ class PiarController extends Controller
                     'autonomia' => $request->autonomia[$index] ?? null,
                     'autocontrol' => $request->autocontrol[$index] ?? null,
                     'evaluacion' => null,
+                    'teacher_signature' => $signaturePath,
                 ];
 
                 $baseQuery = PiarAdjustment::query()
@@ -470,6 +513,7 @@ class PiarController extends Controller
                         'autonomia' => $values['autonomia'],
                         'autocontrol' => $values['autocontrol'],
                         'evaluacion' => null,
+                        'teacher_signature' => $signaturePath,
                     ]);
 
                     // Limpieza de duplicados
@@ -527,27 +571,38 @@ class PiarController extends Controller
 
     public function updatePeriodo2(Request $request)
     {
+        $request->validate([
+            'teacher_signature' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+        ]);
+
+        $signaturePath = null;
+        if ($request->hasFile('teacher_signature')) {
+            $signaturePath = $request->file('teacher_signature')->store('signatures', 'public');
+        }
+
         foreach ($request->adjustment_id as $index => $id) {
 
             $adj = PiarAdjustment::find($id);
 
             if ($adj) {
-                $adj->update([
-                    // ❌ quitar area (NO viene del form)
-
+                $updateData = [
                     'objetivo' => $request->objetivo[$index] ?? null,
                     'barrera' => $request->barrera[$index] ?? null,
-
                     'ajuste_curricular' => $request->ajuste_curricular[$index] ?? null,
                     'ajuste_metodologico' => $request->ajuste_metodologico[$index] ?? null,
                     'ajuste_evaluativo' => $request->ajuste_evaluativo[$index] ?? null,
-
                     'convivencia' => $request->convivencia[$index] ?? null,
                     'socializacion' => $request->socializacion[$index] ?? null,
                     'participacion' => $request->participacion[$index] ?? null,
                     'autonomia' => $request->autonomia[$index] ?? null,
                     'autocontrol' => $request->autocontrol[$index] ?? null,
-                ]);
+                ];
+
+                if ($signaturePath) {
+                    $updateData['teacher_signature'] = $signaturePath;
+                }
+
+                $adj->update($updateData);
             }
         }
 
@@ -580,8 +635,24 @@ class PiarController extends Controller
 
     public function storePeriodo3(Request $request)
     {
+        $request->validate([
+            'teacher_signature' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+        ]);
+
         $piarId = (int) $request->piar_id;
         $teacherId = (int) auth()->id();
+
+        $signaturePath = null;
+        if ($request->hasFile('teacher_signature')) {
+            $signaturePath = $request->file('teacher_signature')->store('signatures', 'public');
+        } else {
+            // Si no subió una nueva, buscamos si ya existía una para este periodo/docente
+            $signaturePath = PiarAdjustment::where('piar_id', $piarId)
+                ->where('period', 3)
+                ->where('teacher_id', $teacherId)
+                ->whereNotNull('teacher_signature')
+                ->value('teacher_signature');
+        }
 
         $existingStartDate = PiarAdjustment::where('piar_id', $piarId)
             ->where('period', 3)
@@ -609,6 +680,7 @@ class PiarController extends Controller
                     'autonomia' => $request->autonomia[$index] ?? null,
                     'autocontrol' => $request->autocontrol[$index] ?? null,
                     'evaluacion' => null,
+                    'teacher_signature' => $signaturePath,
                 ];
 
                 $baseQuery = PiarAdjustment::query()
@@ -632,6 +704,7 @@ class PiarController extends Controller
                         'autonomia' => $values['autonomia'],
                         'autocontrol' => $values['autocontrol'],
                         'evaluacion' => null,
+                        'teacher_signature' => $signaturePath,
                     ]);
 
                     // Limpiar duplicados
@@ -689,27 +762,38 @@ class PiarController extends Controller
     
     public function updatePeriodo3(Request $request)
     {
+        $request->validate([
+            'teacher_signature' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+        ]);
+
+        $signaturePath = null;
+        if ($request->hasFile('teacher_signature')) {
+            $signaturePath = $request->file('teacher_signature')->store('signatures', 'public');
+        }
+
         foreach ($request->adjustment_id as $index => $id) {
 
             $adj = PiarAdjustment::find($id);
 
             if ($adj) {
-                $adj->update([
-                    // ❌ quitar area (NO viene del form)
-
+                $updateData = [
                     'objetivo' => $request->objetivo[$index] ?? null,
                     'barrera' => $request->barrera[$index] ?? null,
-
                     'ajuste_curricular' => $request->ajuste_curricular[$index] ?? null,
                     'ajuste_metodologico' => $request->ajuste_metodologico[$index] ?? null,
                     'ajuste_evaluativo' => $request->ajuste_evaluativo[$index] ?? null,
-
                     'convivencia' => $request->convivencia[$index] ?? null,
                     'socializacion' => $request->socializacion[$index] ?? null,
                     'participacion' => $request->participacion[$index] ?? null,
                     'autonomia' => $request->autonomia[$index] ?? null,
                     'autocontrol' => $request->autocontrol[$index] ?? null,
-                ]);
+                ];
+
+                if ($signaturePath) {
+                    $updateData['teacher_signature'] = $signaturePath;
+                }
+
+                $adj->update($updateData);
             }
         }
 

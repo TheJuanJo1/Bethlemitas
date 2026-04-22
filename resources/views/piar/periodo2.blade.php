@@ -170,7 +170,7 @@
         PIAR - Ajustes Razonables (Periodo 2)
     </h2>
 
-    <form action="{{ route('piar.periodo2.store') }}" method="POST">
+    <form action="{{ route('piar.periodo2.store') }}" method="POST" enctype="multipart/form-data">
         @csrf
         <input type="hidden" name="piar_id" value="{{ $piar->id }}">
 
@@ -277,6 +277,26 @@
             </div>
         </div>
 
+        <div class="box-section">
+            <div class="box-title" style="background: #1e293b;">Firma del Docente</div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                <div>
+                    <label class="block text-sm font-bold text-slate-700 mb-2">
+                        Subir imagen de la firma (PNG, JPG)
+                    </label>
+                    <input type="file" name="teacher_signature" accept="image/*" onchange="previewSignature(event)"
+                        class="block w-full text-sm text-slate-500 file:mr-4 file:py-2.5 file:px-6 file:rounded-lg file:border-0 file:text-sm file:font-bold file:bg-blue-600 file:text-white hover:file:bg-blue-700 transition-all border border-slate-300 rounded-lg p-2 bg-slate-50">
+                    <p class="mt-2 text-xs text-slate-500 italic">
+                        * Se recomienda una imagen con fondo transparente o blanco.
+                    </p>
+                </div>
+                <div class="flex flex-col items-center justify-center p-4 bg-slate-50 border-2 border-dashed border-slate-300 rounded-xl min-h-[160px]">
+                    <span id="preview-text" class="text-slate-400 text-sm font-medium italic">Vista previa de la firma</span>
+                    <img id="signature-preview" src="#" alt="Vista previa" class="hidden max-w-full max-h-32 object-contain shadow-sm bg-white p-2">
+                </div>
+            </div>
+        </div>
+
         <div style="text-align:right; margin: 40px 0;">
             <button type="submit" class="btn-save">
                 <i class="bi bi-device-ssd"></i> GUARDAR INFORMACIÓN - PERIODO 2
@@ -286,6 +306,22 @@
 </div>
 
 <script>
+    function previewSignature(event) {
+        const reader = new FileReader();
+        const preview = document.getElementById('signature-preview');
+        const text = document.getElementById('preview-text');
+
+        reader.onload = function() {
+            preview.src = reader.result;
+            preview.classList.remove('hidden');
+            text.classList.add('hidden');
+        }
+
+        if (event.target.files[0]) {
+            reader.readAsDataURL(event.target.files[0]);
+        }
+    }
+
     function agregarFilaAnexo() {
         const tbody = document.querySelector('#tabla-anexo3 tbody');
         const nuevaFila = document.createElement('tr');
