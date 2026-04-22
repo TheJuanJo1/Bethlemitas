@@ -125,7 +125,7 @@
                 <th class="col-social">Partic.</th>
                 <th class="col-social">Auton.</th>
                 <th class="col-social">Autocont.</th>
-                <th class="col-eval">Evaluación Logro</th>
+                <th class="col-eval">Evaluación de los Ajustes</th>
             </tr>
         </thead>
         <tbody>

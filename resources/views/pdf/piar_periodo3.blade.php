@@ -125,7 +125,7 @@
                 <th class="col-social">Partic.</th>
                 <th class="col-social">Auton.</th>
                 <th class="col-social">Autocont.</th>
-                <th class="col-eval">Evaluación Logro</th>
+                <th class="col-eval">Evaluación de los Ajustes</th>
             </tr>
         </thead>
         <tbody>
@@ -151,6 +151,33 @@
             @endforeach
         </tbody>
     </table>
+
+    <div style="margin-top: 40px;">
+        <h3 style="font-size: 10px; color: #475569; text-transform: uppercase; border-bottom: 1px solid #e2e8f0; padding-bottom: 5px;">
+            Firmas de Responsabilidad (Periodo 3)
+        </h3>
+        <div style="display: flex; flex-wrap: wrap; gap: 40px; margin-top: 15px;">
+            @php
+                $uniqueTeachers = $adjustments->unique('teacher_id');
+            @endphp
+            @foreach($uniqueTeachers as $adj)
+                <div style="width: 250px; text-align: center;">
+                    @if($adj->teacher_signature)
+                        <img src="{{ public_path('storage/' . $adj->teacher_signature) }}" 
+                             style="max-width: 150px; max-height: 80px; display: block; margin: 0 auto 5px; border-bottom: 1px solid #333; padding-bottom: 2px;">
+                    @else
+                        <div style="height: 60px; border-bottom: 1px solid #333; margin-bottom: 5px; display: flex; align-items: center; justify-content: center; color: #94a3b8; font-style: italic;">
+                            Sin firma registrada
+                        </div>
+                    @endif
+                    <div style="font-weight: bold; text-transform: uppercase; font-size: 9px;">
+                        {{ $adj->teacher->name ?? 'DOCENTE' }} {{ $adj->teacher->last_name ?? '' }}
+                    </div>
+                    <div style="font-size: 8px; color: #64748b;">Docente Responsable</div>
+                </div>
+            @endforeach
+        </div>
+    </div>
 
     <div style="margin-top: 30px; font-size: 7px; color: #94a3b8; text-align: right;">
         Documento generado automáticamente - Colegio Bethlemitas
