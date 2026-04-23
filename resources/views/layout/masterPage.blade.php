@@ -55,46 +55,64 @@
 
                      </div>
                      <div class="flex items-center">
-                        <div class="flex items-center space-x-3 md:order-2 md:space-x-0 rtl:space-x-reverse">
-                           <span class="self-center mr-4 text-2xl whitespace-nowrap"><em>{{Auth::user()->name}} {{Auth::user()->last_name}}</em></span>
-                           <button
-                              type="button"
-                              class="flex text-sm rounded-full md:me-0 focus:ring-4 focus:ring-gray-300"
-                              id="user-menu-button"
-                              aria-expanded="false"
-                              data-dropdown-toggle="user-dropdown"
-                              data-dropdown-placement="bottom">
-                              <span class="sr-only">Open user menu</span>
-                              <img class="w-10 h-10 rounded-full object-cover border border-gray-400" src="{{ $photoPath ?? asset('img/icono-perfil.jpg') }}" alt="Foto de perfil">
-                           </button>
-                           <!-- Dropdown menu -->
-                           <div class="z-50 hidden my-4 text-base list-none bg-[#D5DBDB] divide-y divide-gray-100 rounded-lg shadow dark:divide-gray-600" id="user-dropdown">
-                              <div class="px-4 py-3">
-                                 <span class="block text-sm italic font-bold text-black-800">{{Auth::user()->name}} {{Auth::user()->last_name}}</span>
-                                 <span class="block text-sm truncate text-black-800 dark:text-gray-400">{{Auth::user()->email}}</span>
+                        <div class="flex items-center space-x-4 md:order-2" x-data="{ profileOpen: false }">
+                           <span class="hidden md:block self-center text-lg font-medium text-slate-700 italic">
+                              {{ Auth::user()->name }} {{ Auth::user()->last_name }}
+                           </span>
+                           
+                           <!-- Contenedor Relativo para el Dropdown -->
+                           <div class="relative">
+                              <button
+                                 @click="profileOpen = !profileOpen"
+                                 @click.away="profileOpen = false"
+                                 type="button"
+                                 class="flex text-sm rounded-full focus:ring-4 focus:ring-blue-300 transition-all duration-200 transform hover:scale-105"
+                                 id="user-menu-button">
+                                 <span class="sr-only">Open user menu</span>
+                                 <img class="w-11 h-11 rounded-full object-cover border-2 border-white shadow-sm" 
+                                      src="{{ $photoPath ?? asset('img/icono-perfil.jpg') }}" alt="Foto de perfil">
+                              </button>
+
+                              <!-- Dropdown menu corregido con z-index alto y posición absoluta -->
+                              <div 
+                                 x-show="profileOpen"
+                                 x-transition:enter="transition ease-out duration-100"
+                                 x-transition:enter-start="transform opacity-0 scale-95"
+                                 x-transition:enter-end="transform opacity-100 scale-100"
+                                 x-transition:leave="transition ease-in duration-75"
+                                 x-transition:leave-start="transform opacity-100 scale-100"
+                                 x-transition:leave-end="transform opacity-0 scale-95"
+                                 class="absolute right-0 mt-3 w-64 bg-white divide-y divide-slate-100 rounded-2xl shadow-2xl ring-1 ring-black ring-opacity-5 focus:outline-none z-[9999]" 
+                                 style="display: none;">
+                                 
+                                 <div class="px-5 py-4 bg-slate-50 rounded-t-2xl">
+                                    <p class="text-sm font-bold text-slate-900 truncate">{{ Auth::user()->name }} {{ Auth::user()->last_name }}</p>
+                                    <p class="text-xs font-medium text-slate-500 truncate mt-0.5">{{ Auth::user()->email }}</p>
+                                 </div>
+                                 
+                                 <ul class="py-2">
+                                    <li>
+                                       <a href="{{ route('profile') }}" class="group flex items-center px-5 py-2.5 text-sm text-slate-700 hover:bg-blue-50 transition-colors">
+                                          <div class="p-1.5 bg-blue-100 text-blue-600 rounded-lg mr-3 group-hover:bg-blue-600 group-hover:text-white transition-colors">
+                                             <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                                             </svg>
+                                          </div>
+                                          <span class="font-medium">Mi Perfil</span>
+                                       </a>
+                                    </li>
+                                    <li>
+                                       <a href="{{ route('logout') }}" class="group flex items-center px-5 py-2.5 text-sm text-red-600 hover:bg-red-50 transition-colors">
+                                          <div class="p-1.5 bg-red-100 text-red-600 rounded-lg mr-3 group-hover:bg-red-600 group-hover:text-white transition-colors">
+                                             <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
+                                             </svg>
+                                          </div>
+                                          <span class="font-medium">Cerrar Sesión</span>
+                                       </a>
+                                    </li>
+                                 </ul>
                               </div>
-                              <ul class="py-2" aria-labelledby="user-menu-button ">
-
-                                 <li class="flex items-center hover:bg-[#95A5A6]">
-                                    <a href="{{ route('profile') }}" class="flex items-center px-4 py-2 text-sm text-black-800">
-                                       <svg class="w-6 mr-2 6"  fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
-                                       </svg>
-                                       <span>Mi perfil</span>
-                                    </a>
-                                 </li>
-
-                                 <li class="flex items-center hover:bg-[#95A5A6]">
-                                    <a href="{{ route('logout')}}" class="flex items-center px-4 py-2 text-sm text-black-800">
-                                       <svg class="w-6 h-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
-                                       </svg>
-                                       <span>Cerrar sesión</span>
-                                    </a>
-                                 </li>
-
-                              </ul>
                            </div>
                         </div>
                      </div>

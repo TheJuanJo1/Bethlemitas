@@ -203,15 +203,28 @@
                 </div>
 
                 @foreach($docentes as $doc)
+                    @php
+                        // Intentamos buscar la firma en el perfil del docente o en sus registros de ajustes
+                        $signature = $doc->signature ?? \App\Models\PiarAdjustment::where('teacher_id', $doc->id)
+                            ->whereNotNull('teacher_signature')
+                            ->latest()
+                            ->value('teacher_signature');
+                    @endphp
                     <div class="text-center">
-                        <div class="border-b border-black w-full mb-1 h-8"></div>
-                        <p class="text-[9px] font-bold uppercase">
+                        <div class="border-b border-black w-full mb-1 h-16 flex flex-col items-center justify-end pb-1 overflow-hidden">
+                            @if($signature)
+                                {{-- Usamos Storage::url para obtener la ruta correcta --}}
+                                <img src="{{ asset('storage/' . $signature) }}" class="max-h-14 object-contain scale-125" alt="Firma">
+                            @else
+                                <div class="text-[7px] text-gray-300 italic mb-1 uppercase">Firma Digital no cargada</div>
+                            @endif
+                        </div>
+                        <p class="text-[9px] font-bold uppercase leading-none mt-1">
                             {{ $doc->id == $estudiante->id_teacher_director ? 'Director de Grupo' : 'Docente' }}
                         </p>
-                        <p class="text-[8px]">{{ $doc->name }}</p>
+                        <p class="text-[8px] font-bold text-gray-900">{{ $doc->name }} {{ $doc->last_name }}</p>
                     </div>
                 @endforeach
-
                 <div class="text-center">
                     <div class="border-b border-black w-full mb-1 h-8"></div>
                     <p class="text-[9px] font-bold uppercase">Directivo Docente / Rectoría</p>

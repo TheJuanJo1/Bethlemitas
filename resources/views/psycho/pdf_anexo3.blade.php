@@ -123,12 +123,26 @@
                                 </div>
 
                                 @foreach($docentes as $docente)
+                                @php
+                                    // Buscamos la firma del docente de forma global en su perfil o en ajustes
+                                    $signature = $docente->signature ?? \App\Models\PiarAdjustment::where('teacher_id', $docente->id)
+                                        ->whereNotNull('teacher_signature')
+                                        ->latest()
+                                        ->value('teacher_signature');
+                                @endphp
                                 <div class="text-center">
-                                    <div class="border-b border-black w-full h-12"></div>
-                                    <p class="text-[9px] font-bold mt-1 uppercase">
-                                        {{ $docente->id == $estudiante->id_teacher_director ? 'Dir. Grupo' : 'Docente' }}: {{ $docente->name }}
+                                    <div class="border-b border-black w-full h-16 flex flex-col items-center justify-end pb-1 overflow-hidden">
+                                        @if($signature)
+                                            {{-- asset() funciona bien para impresión por navegador window.print() --}}
+                                            <img src="{{ asset('storage/' . $signature) }}" class="max-h-14 object-contain scale-125">
+                                        @else
+                                            <div class="h-4 text-[6px] text-gray-300 italic">SIN FIRMA DIGITAL</div>
+                                        @endif
+                                    </div>
+                                    <p class="text-[9px] font-bold mt-1 uppercase leading-none">
+                                        {{ $docente->id == $estudiante->id_teacher_director ? 'Dir. Grupo' : 'Docente' }}: {{ $docente->name }} {{ $docente->last_name }}
                                     </p>
-                                    <p class="text-[8px] italic">Firma del Profesional</p>
+                                    <p class="text-[8px] italic leading-tight">Firma del Profesional</p>
                                 </div>
                                 @endforeach
 
