@@ -23,7 +23,7 @@
                   }
                }
             @endphp
-            <nav class="bg-[#D5DBDB]  border-b border-gray-200 fixed z-30 w-full">
+            <nav class="bg-[#D5DBDB] border-b border-gray-200 fixed z-[100] w-full">
                <div class="px-3 py-3 lg:px-5 lg:pl-3">
                   <div class="flex items-center justify-between">
                      <div class="flex items-center justify-start">
