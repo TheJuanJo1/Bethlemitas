@@ -12,12 +12,12 @@ class UserSeeder extends Seeder
     {
 
         $user1 = new Users_teacher;
-        $user1->number_documment = 123456789;
-        $user1->name = 'Sebastian';
-        $user1->last_name = 'Ramirez';
+        $user1->number_documment = 2222222222;
+        $user1->name = 'Administrador';
+        $user1->last_name = 'Bethlemitas';
         $user1->id_state = 1;
-        $user1->email = 'prueba@gmail.com';
-        $user1->password = bcrypt('123');
+        $user1->email = 'c.academica@bethlemitaspereira.edu.co';
+        $user1->password = bcrypt('2222222222');
         $user1->signature = null;
 
         // primero guardar

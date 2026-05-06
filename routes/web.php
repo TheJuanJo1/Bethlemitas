@@ -103,9 +103,6 @@ Route::middleware([PreventBackHistoryMiddleware::class])->group(function () {
             Route::get('/index/students/remitted', [CreateReferralController::class, 'index_student_remitted'])->name('index.student.remitted');
             Route::get('/addMinutes', [CreateReferralController::class, 'addMinutes'])->name('addMinutes');
 
-            // Gestión de PIAR por Periodos
-            Route::get('/piar/{piar}/periodos', [PiarController::class, 'periodos'])->name('piar.periodos');
-
             // Periodo 1
             Route::get('/piar/{piar}/periodo1', [PiarController::class, 'periodo1'])->name('piar.periodo1');
             Route::post('/piar/periodo1/store', [PiarController::class, 'storePeriodo1'])->name('piar.periodo1.store');
@@ -143,6 +140,9 @@ Route::middleware([PreventBackHistoryMiddleware::class])->group(function () {
             Route::get('/edit/student/{id}', [CreateReferralController::class, 'edit_student'])->name('edit.student');
             Route::put('/update/student/{id}', [CreateReferralController::class, 'update_student'])->name('update.student');
 
+            // Gestión de PIAR por Periodos
+            Route::get('/piar/{piar}/periodos', [PiarController::class, 'periodos'])->name('piar.periodos');
+
             // PDF completo PIAR
             Route::get('/piar/{id}/pdf', [PiarController::class, 'pdf'])->name('piar.pdf');
         });
@@ -172,6 +172,9 @@ Route::middleware([PreventBackHistoryMiddleware::class])->group(function () {
             // PIAR - caracterización inicial
             Route::get('/piar/create/{student}', [PiarController::class, 'create'])->name('piar.create');
             Route::post('/piar/store', [PiarController::class, 'store'])->name('piar.store');
+
+            // Habilitar fecha de periodo
+            Route::post('/piar/period/update-date', [PiarController::class, 'updatePeriodOpeningDate'])->name('piar.period.updateDate');
 
             // PIAR - Ajustes Razonables (edición por psico)
             Route::get('/piar/{piar}/editar-ajustes', [PiarController::class, 'psicoEditarAjustes'])->name('piar.psico.ajustes.edit');

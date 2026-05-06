@@ -187,9 +187,9 @@
                   </div>
                </div>
             </aside>
-            <div id="main-content" class="bg-[#D5DBDB] relative overflow-y-auto lg:ml-64 w-[100%] lg:w-[85%]" style="position:absolute; top:5rem">
-               <main>
-                  <div class="max-w-full max-h-full px-6 my-3" >
+            <div id="main-content" class="bg-[#D5DBDB] min-h-screen lg:ml-64 transition-all duration-300">
+               <main class="pt-20 pb-8">
+                  <div class="px-2 md:px-6">
                      @yield('content')
                   </div>
                </main>

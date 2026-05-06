@@ -545,4 +545,3 @@ class PsicoController extends Controller
         return $pdf->stream('Ajuste_PIAR_P' . $adjustment->period . '_' . $piar->student->name . '.pdf');
     }
 }
-    

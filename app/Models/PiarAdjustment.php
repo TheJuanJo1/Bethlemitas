@@ -15,6 +15,7 @@ class PiarAdjustment extends Model
         'ajuste',
         'teacher_id',
         'evaluacion',
+        'is_completed',
 
         'ajuste_curricular',
         'ajuste_metodologico',

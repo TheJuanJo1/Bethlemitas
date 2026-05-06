@@ -11,8 +11,12 @@ class Period extends Model
 
     protected $fillable = [
         'period',
+        'opening_date',
+        'closing_date',
     ];
 
-
-    
+    protected $casts = [
+        'opening_date' => 'datetime',
+        'closing_date' => 'datetime',
+    ];
 }

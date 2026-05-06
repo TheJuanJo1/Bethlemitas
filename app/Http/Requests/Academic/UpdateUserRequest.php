@@ -7,6 +7,7 @@ use App\Models\Users_load_degree;
 use App\Models\Users_teacher;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
+use Spatie\Permission\Models\Role;
 
 class UpdateUserRequest extends FormRequest
 {
@@ -18,10 +19,14 @@ class UpdateUserRequest extends FormRequest
     public function rules(): array
     {
         $id = (int) $this->route('id');
-        $user = Users_teacher::with('roles')->findOrFail($id);
-        $roleActual = $user->roles->first()?->name;
+        
+        // 🔹 Determinamos el rol OBJETIVO (el que viene en el request)
+        $roleId = $this->input('role');
+        $targetRole = Role::find($roleId);
+        $targetRoleName = $targetRole?->name;
 
         $base = [
+            'role' => ['required', 'exists:roles,id'],
             'number_documment' => [
                 'required',
                 'digits_between:1,20',
@@ -34,9 +39,11 @@ class UpdateUserRequest extends FormRequest
                 'email',
                 Rule::unique('users_teachers', 'email')->ignore($id),
             ],
+            'password' => ['nullable', 'string', 'min:6'],
         ];
 
-        if ($roleActual === 'docente') {
+        // 🔹 Reglas según el rol al que se quiere cambiar
+        if ($targetRoleName === 'docente') {
             return $base + [
                 'group_director' => [
                     'nullable',
@@ -54,7 +61,7 @@ class UpdateUserRequest extends FormRequest
             ];
         }
 
-        if ($roleActual === 'psicoorientador') {
+        if ($targetRoleName === 'psicoorientador') {
             return $base + [
                 'load_degree' => ['required', 'array', 'min:1'],
                 'load_degree.*' => ['integer', 'exists:degrees,id'],
@@ -68,10 +75,11 @@ class UpdateUserRequest extends FormRequest
     {
         $validator->after(function ($validator) {
             $id = (int) $this->route('id');
-            $user = Users_teacher::with('roles')->find($id);
-            $roleActual = $user?->roles?->first()?->name;
+            $roleId = $this->input('role');
+            $targetRole = Role::find($roleId);
+            $targetRoleName = $targetRole?->name;
 
-            if ($roleActual === 'psicoorientador') {
+            if ($targetRoleName === 'psicoorientador') {
                 foreach ((array) $this->input('load_degree', []) as $degreeId) {
                     $taken = Users_load_degree::where('id_degree', $degreeId)
                         ->where('id_user', '!=', $id)
@@ -88,7 +96,7 @@ class UpdateUserRequest extends FormRequest
                 return;
             }
 
-            if ($roleActual !== 'docente') {
+            if ($targetRoleName !== 'docente') {
                 return;
             }
 
@@ -115,15 +123,20 @@ class UpdateUserRequest extends FormRequest
                     continue;
                 }
                 foreach ((array) $groupsAsig[$areaId] as $groupId) {
-                    $conflict = Teachers_areas_group::where('id_area', $areaId)
-                        ->where('id_group', $groupId)
-                        ->where('id_teacher', '!=', $id)
-                        ->exists();
+                    $conflict = \DB::table('teachers_areas_groups as tag')
+                        ->join('users_teachers as u', 'u.id', '=', 'tag.id_teacher')
+                        ->join('areas as a', 'a.id', '=', 'tag.id_area')
+                        ->join('groups as g', 'g.id', '=', 'tag.id_group')
+                        ->select('u.name', 'u.last_name', 'a.name_area', 'g.group')
+                        ->where('tag.id_area', $areaId)
+                        ->where('tag.id_group', $groupId)
+                        ->where('tag.id_teacher', '!=', $id)
+                        ->first();
 
                     if ($conflict) {
                         $validator->errors()->add(
                             "groups_asig.$areaId",
-                            'Hay áreas ya impartidas en uno o más grupos por otro docente.'
+                            "El área '{$conflict->name_area}' ya la imparte el docente {$conflict->name} {$conflict->last_name} en el grupo {$conflict->group}."
                         );
                         return;
                     }
@@ -132,4 +145,3 @@ class UpdateUserRequest extends FormRequest
         });
     }
 }
-

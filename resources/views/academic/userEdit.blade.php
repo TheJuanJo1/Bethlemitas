@@ -17,7 +17,7 @@
             <div class="container-div">
                 <div class="form-group">
                     <div class="form-group-half">
-                        <label for="groups">Role *</label>
+                        <label for="role">Role *</label>
                         <select id="role" name="role" required>
                             <option value="">Seleccionar</option>
                             @foreach ($roles as $role)
@@ -34,8 +34,7 @@
                         <input type="text" id="number_documment" name="number_documment"
                             value="{{ $user->number_documment }}" placeholder="Número de documento" required>
                         @error('number_documment')
-                            <p class="mt-2 text-sm text-red-600 dark:text-red-500"><span class="font-medium">El número de
-                                    documento ya se encuentra registrado</span></p>
+                            <p class="mt-2 text-sm text-red-600 dark:text-red-500"><span class="font-medium">{{ $message }}</span></p>
                         @enderror
                     </div>
 
@@ -49,7 +48,7 @@
                     </div>
 
                     <div class="form-group-half">
-                        <label for="lastname">Apellido/s *</label>
+                        <label for="last_name">Apellido/s *</label>
                         <input type="text" id="last_name" name="last_name" value="{{ $user->last_name }}"
                             placeholder="Apellido" required>
                         @error('last_name')
@@ -86,7 +85,7 @@
                 <div class="form-group">
                     <div class="form-group-half" id="group_areas">
                         <label for="areas">Areas * (manten presionada la tecla Ctrl y seleciona las asignaturas):</label>
-                        <select id="areas" name="areas[]" multiple disabled>
+                        <select id="areas" name="areas[]" multiple>
                             <option value="">Seleccionar</option>
                             @foreach ($areas as $area)
                                 <option value="{{ $area->id }}" {{ in_array($area->id, array_column($selectedAreas ?? [], 'id'), true) ? 'selected' : '' }}>
@@ -103,7 +102,7 @@
                     <div class="form-group-half" id="group_load_group">
                         <label for="groups">Grupos a cargo * (manten presionada la tecla Ctrl y seleciona los
                             grupos):</label>
-                        <select id="groups" name="groups[]" multiple disabled>
+                        <select id="groups" name="groups[]" multiple>
                             <option value="">Seleccionar</option>
                             @foreach ($groups as $group)
                                 <option value="{{ $group->id }}" {{ in_array($group->id, $selectedGroups ?? [], true) ? 'selected' : '' }}>
@@ -119,7 +118,7 @@
 
                     <div class="form-group-half" id="group_group_director">
                         <label for="group_director">Director de grupo </label>
-                        <select id="group_director" name="group_director" disabled>
+                        <select id="group_director" name="group_director">
                             <option value="">Seleccionar</option>
                             @foreach ($groups as $group)
                                 <option value="{{ $group->id }}" {{ $user->group_director == $group->id ? 'selected' : '' }}>
@@ -136,7 +135,7 @@
                     <div class="form-group-half" id="group_load_degree">
                         <label for="load_degree">Grados a cargo * (manten presionada la tecla Ctrl y seleciona los
                             grados):</label>
-                        <select id="load_degree" name="load_degree[]" multiple disabled>
+                        <select id="load_degree" name="load_degree[]" multiple>
                             <option value="">Seleccionar</option>
                             @foreach ($degrees as $degree)
                                 <option value="{{ $degree->id }}" {{ in_array($degree->id, $selectedDegrees ?? [], true) ? 'selected' : '' }}>
@@ -167,6 +166,22 @@
         const dbOptionsGroups = @json($groups);
         const groupsForArea = @json($groupsForArea);
     </script>
-
     <script src=" {{ asset('scripts/userEdit.js') }} "></script>
+
+    {{-- Script para mostrar errores de validación en el Toast/Alert --}}
+    @if ($errors->any())
+        <script>
+            let errorMessages = "";
+            @foreach ($errors->all() as $error)
+                errorMessages += "{{ $error }}\n";
+            @endforeach
+            
+            Swal.fire({
+                icon: 'error',
+                title: 'Error de validación',
+                text: errorMessages,
+                confirmButtonColor: '#3085d6',
+            });
+        </script>
+    @endif
 @endsection

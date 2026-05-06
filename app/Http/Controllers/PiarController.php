@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 use App\Models\Area;
 use App\Models\Piar;
+use App\Models\Period;
 use Barryvdh\DomPDF\Facade\Pdf;
 use App\Models\PiarCharacteristic;
 use App\Models\PiarAdjustment;
@@ -129,53 +130,96 @@ class PiarController extends Controller
 
     
 
+    public function updatePeriodOpeningDate(Request $request)
+    {
+        $request->validate([
+            'period_id' => 'required|exists:periods,id',
+            'opening_date' => 'required|date',
+            'closing_date' => 'required|date|after:opening_date',
+        ]);
+
+        $period = Period::findOrFail($request->period_id);
+        $period->update([
+            'opening_date' => $request->opening_date,
+            'closing_date' => $request->closing_date,
+        ]);
+
+        return back()->with('success', 'Fechas actualizadas correctamente para el Periodo ' . $period->id);
+    }
+
     public function periodos($piar_id)
     {
         $piar = Piar::with('student.degree', 'characteristics')->findOrFail($piar_id);
         $ready = (bool) $piar->characteristics;
 
         $periodAdjustments = PiarAdjustment::where('piar_id', $piar_id)->get();
+        $globalPeriods = Period::all()->keyBy('id');
         
         $periodData = [];
         $diasRestantesGlobal = null;
         $horasRestantesGlobal = null;
+        $minutosRestantesGlobal = null;
+        $hoy = now();
 
         // Calculamos el estado de cada periodo
         for ($i = 1; $i <= 3; $i++) {
             $adjustments = $periodAdjustments->where('period', $i);
             $hasData = $adjustments->isNotEmpty();
-            $isLocked = false;
+            $isCompleted = $adjustments->where('is_completed', true)->isNotEmpty();
+            
+            $globalPeriod = $globalPeriods->get($i);
+            $openingDate = $globalPeriod ? $globalPeriod->opening_date : null;
+            $closingDate = $globalPeriod ? $globalPeriod->closing_date : null;
+            
+            $isOpenedByDate = $openingDate ? $hoy->greaterThanOrEqualTo($openingDate) : false;
+            $isClosedByDate = $closingDate ? $hoy->greaterThan($closingDate) : false;
+
+            // Lógica secuencial
+            $prevPeriodComplete = true;
+            if ($i > 1) {
+                $prevAdjustments = $periodAdjustments->where('period', $i - 1);
+                $prevPeriodComplete = $prevAdjustments->where('is_completed', true)->isNotEmpty();
+            }
+
+            // Un periodo está bloqueado si ya pasó su fecha de cierre
+            $isLocked = $isClosedByDate;
+            
             $daysLeft = null;
             $hoursLeft = null;
+            $minutesLeft = null;
 
-            if ($hasData) {
-                // Buscamos la fecha de inicio o creación más antigua
-                $startDate = $adjustments->whereNotNull('start_date')->min('start_date') 
-                             ?? $adjustments->min('created_at');
-                
-                if ($startDate) {
-                    $fechaInicio = Carbon::parse($startDate);
-                    $fechaLimite = $fechaInicio->copy()->addDays(30);
-                    $hoy = Carbon::now();
+            if ($closingDate) {
+                // Si la fecha de cierre es a futuro, calculamos cuánto falta
+                if ($closingDate->greaterThan($hoy)) {
+                    $daysLeft = (int) $hoy->diffInDays($closingDate);
+                    $hoursLeft = (int) $hoy->diffInHours($closingDate);
+                    $minutesLeft = (int) $hoy->diffInMinutes($closingDate);
                     
-                    $daysLeft = (int) $hoy->diffInDays($fechaLimite, false);
-                    $hoursLeft = (int) $hoy->diffInHours($fechaLimite, false);
-                    
-                    if ($daysLeft < 0) {
-                        $isLocked = true;
+                    // PRIORIDAD DEL CONTADOR GLOBAL:
+                    // Se muestra el tiempo del primer periodo que esté abierto y el docente deba trabajar.
+                    if (is_null($diasRestantesGlobal) && $isOpenedByDate && $prevPeriodComplete && !$isCompleted) {
+                        $diasRestantesGlobal = $daysLeft;
+                        $horasRestantesGlobal = $hoursLeft;
+                        $minutosRestantesGlobal = $minutesLeft;
                     }
-                    
-                    // El contador global mostrará la información del periodo más reciente que se esté trabajando
-                    $diasRestantesGlobal = $daysLeft;
-                    $horasRestantesGlobal = $hoursLeft;
+                } else {
+                    $daysLeft = -1;
+                    $hoursLeft = -1;
+                    $minutesLeft = -1;
                 }
             }
 
             $periodData[$i] = [
                 'hasData' => $hasData,
+                'isCompleted' => $isCompleted,
                 'isLocked' => $isLocked,
+                'isOpenedByDate' => $isOpenedByDate,
+                'openingDate' => $openingDate,
+                'closingDate' => $closingDate,
+                'prevPeriodComplete' => $prevPeriodComplete,
                 'daysLeft' => $daysLeft,
-                'hoursLeft' => $hoursLeft
+                'hoursLeft' => $hoursLeft,
+                'minutesLeft' => $minutesLeft
             ];
         }
 
@@ -185,6 +229,7 @@ class PiarController extends Controller
         
         $diasRestantes = $diasRestantesGlobal;
         $horasRestantes = $horasRestantesGlobal;
+        $minutosRestantes = $minutosRestantesGlobal;
 
         return view('piar.periodos', compact(
             'piar',
@@ -194,7 +239,9 @@ class PiarController extends Controller
             'ready',
             'diasRestantes',
             'horasRestantes',
-            'periodData'
+            'minutosRestantes',
+            'periodData',
+            'globalPeriods'
         ));
     }
 
@@ -862,6 +909,7 @@ class PiarController extends Controller
                 ->where('teacher_id', Auth::id())
                 ->update([
                     'evaluacion' => $evaluaciones[$i] ?? null,
+                    'is_completed' => true,
                 ]);
         }
 

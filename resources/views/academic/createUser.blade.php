@@ -15,7 +15,7 @@
             <span class="text-indigo-600">Nuevo</span>
         </nav>
         <h2 class="text-3xl font-extrabold text-slate-900 tracking-tight">Crear Nuevo Usuario</h2>
-        <p class="text-slate-500 mt-1">Registra personal docente o administrativo en la plataforma.</p>
+        <p class="text-slate-500 mt-1">Registra personal docente o psicoorientador.</p>
     </div>
 
     <form action="{{ route('store.user') }}" method="POST" class="max-w-5xl">
