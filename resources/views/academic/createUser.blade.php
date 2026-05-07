@@ -15,6 +15,18 @@
             <span class="text-indigo-600">Nuevo</span>
         </nav>
         <h2 class="text-3xl font-extrabold text-slate-900 tracking-tight">Crear Nuevo Usuario</h2>
+        @if(session('error'))
+            <div style="
+                background:#fee2e2;
+                color:#991b1b;
+                padding:15px;
+                border-radius:8px;
+                margin-bottom:20px;
+                font-weight:bold;
+            ">
+                {{ session('error') }}
+            </div>
+        @endi
         <p class="text-slate-500 mt-1">Registra personal docente o psicoorientador.</p>
     </div>
 
