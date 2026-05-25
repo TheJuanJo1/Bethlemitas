@@ -55,7 +55,7 @@
                     <div class="flex-grow h-px bg-slate-200"></div>
                 </div>
 
-                @if($periodo['datos']->isEmpty())
+                    @if($periodo['datos']->isEmpty())
                     <div class="bg-slate-100 border border-slate-200 rounded-lg p-6 text-center">
                         <p class="text-slate-500 italic text-sm">No hay ajustes registrados para este periodo.</p>
                     </div>
@@ -64,6 +64,31 @@
                         @csrf
                         <input type="hidden" name="piar_id" value="{{ $piar->id }}">
                         <input type="hidden" name="period" value="{{ $periodo['id'] }}">
+
+                        {{-- Campo: Fecha de Evaluación (una sola vez por periodo) --}}
+                        <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden mb-8">
+                            <div class="bg-indigo-50 px-6 py-3 border-b border-indigo-100 flex items-center">
+                                <div class="w-1 h-5 bg-indigo-500 rounded-full mr-3"></div>
+                                <span class="text-indigo-800 font-bold text-sm uppercase tracking-wide">
+                                    <i class="bi bi-calendar-check mr-1"></i> Fecha de Evaluación – Psicoorientadora
+                                </span>
+                            </div>
+                            <div class="p-6">
+                                <label class="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-2">
+                                    Fecha en que la psicoorientadora evalúa los ajustes
+                                </label>
+                                <input
+                                    type="date"
+                                    name="evaluation_date"
+                                    value="{{ $periodo['datos']->first()?->evaluation_date ?? '' }}"
+                                    class="block w-full max-w-xs rounded-lg border-slate-300 bg-slate-50 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-3 transition-colors hover:bg-white"
+                                >
+                                <p class="text-xs text-slate-400 mt-2">
+                                    <i class="bi bi-info-circle mr-1"></i>
+                                    Este campo aplica de manera general a todo el periodo {{ $periodo['titulo'] }}.
+                                </p>
+                            </div>
+                        </div>
 
                         <div class="space-y-8">
                             @foreach($periodo['datos'] as $adj)

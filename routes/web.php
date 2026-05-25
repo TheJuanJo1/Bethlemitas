@@ -62,6 +62,8 @@ Route::middleware([PreventBackHistoryMiddleware::class])->group(function () {
         Route::put('/mi-perfil/email', [ProfileController::class, 'updateEmail'])->name('profile.update.email');
         Route::put('/profile/photo', [ProfileController::class, 'updatePhoto'])->name('profile.update.photo');
         Route::delete('/profile/photo', [ProfileController::class, 'deletePhoto'])->name('profile.delete.photo');
+        Route::put('/profile/signature', [ProfileController::class, 'updateSignature'])->name('profile.update.signature');
+        Route::delete('/profile/signature', [ProfileController::class, 'deleteSignature'])->name('profile.delete.signature');
 
         /*
         |--------------------------------------------------------------------------

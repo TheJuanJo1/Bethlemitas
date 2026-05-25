@@ -259,43 +259,11 @@
             @endforeach
         @endif
 
-        @php
-            $firstAdj = $adjustments->first();
-            $currentSignature = $firstAdj->teacher_signature ?? null;
-        @endphp
 
-        <div class="adjustment-editor-card" style="margin-top: 2rem; border-left: 5px solid #1e293b;">
-            <div class="card-header" style="background: #f8fafc;">
-                <div>
-                    <span class="area-label" style="color: #1e293b;">Firma del Docente</span>
-                    <span class="area-name" style="font-size: 0.9rem;">Actualizar o registrar firma para este periodo</span>
-                </div>
-            </div>
-            <div class="p-8">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
-                    <div class="form-group">
-                        <label>Subir nueva firma (Imagen)</label>
-                        <input type="file" name="teacher_signature" accept="image/*" onchange="previewSignature(event)"
-                               class="form-control" style="padding: 0.5rem;">
-                        <p style="font-size: 0.7rem; color: #64748b; margin-top: 0.5rem;">
-                            * Si no selecciona un archivo nuevo, se mantendrá la firma actual.
-                        </p>
-                    </div>
-                    <div class="flex flex-col items-center">
-                        <span style="font-size: 0.7rem; font-weight: 700; color: #94a3b8; text-transform: uppercase; margin-bottom: 0.5rem;">Vista Previa / Firma Actual</span>
-                        <div style="width: 200px; height: 100px; border: 2px dashed #e2e8f0; border-radius: 12px; display: flex; align-items: center; justify-content: center; background: #f8fafc; overflow: hidden;">
-                            @if($currentSignature)
-                                <img id="signature-preview" src="{{ asset('storage/' . $currentSignature) }}" 
-                                     style="max-width: 100%; max-height: 100%; object-fit: contain;">
-                            @else
-                                <img id="signature-preview" src="#" style="max-width: 100%; max-height: 100%; display: none; object-fit: contain;">
-                                <span id="preview-text" style="color: #cbd5e1; font-size: 0.8rem; font-style: italic;">Sin firma</span>
-                            @endif
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+
+
+
+        
 
         <div class="btn-save-container">
             <button type="submit" class="btn-save">
@@ -321,6 +289,30 @@
         if (event.target.files[0]) {
             reader.readAsDataURL(event.target.files[0]);
         }
+    }
+
+    function agregarFilaAnexo() {
+        const tbody = document.querySelector('#tabla-anexo3 tbody');
+        const nuevaFila = document.createElement('tr');
+        
+        nuevaFila.innerHTML = `
+            <td style="padding: 1rem; border-bottom: 1px solid var(--border-gray);"><input type="text" name="anexo3_actividad[]" class="form-control" placeholder="Si no cumple escriba: N/A" required></td>
+            <td style="padding: 1rem; border-bottom: 1px solid var(--border-gray);"><textarea name="anexo3_estrategia[]" class="form-control" style="height: 60px;" placeholder="Si no cumple escriba: N/A" required></textarea></td>
+            <td style="padding: 1rem; border-bottom: 1px solid var(--border-gray);">
+                <select name="anexo3_frecuencia[]" class="form-control" required>
+                    <option value="D">D (Diaria)</option>
+                    <option value="S">S (Semanal)</option>
+                    <option value="P">P (Permanente)</option>
+                    <option value="N/A">N/A (No aplica)</option>
+                </select>
+            </td>
+            <td style="padding: 1rem; border-bottom: 1px solid var(--border-gray); text-align: center; vertical-align: middle;">
+                <button type="button" onclick="this.parentElement.parentElement.remove()" class="btn" style="color: #ef4444; background: none; border: none; cursor: pointer;">
+                    <i class="bi bi-trash" style="font-size: 1.25rem;"></i>
+                </button>
+            </td>
+        `;
+        tbody.appendChild(nuevaFila);
     }
 </script>
 

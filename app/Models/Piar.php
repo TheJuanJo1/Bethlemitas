@@ -36,4 +36,9 @@ class Piar extends Model
     {
         return $this->hasMany(PiarAdjustment::class);
     }
+
+    public function familyActivities()
+    {
+        return $this->hasMany(PiarFamilyActivity::class);
+    }
 }

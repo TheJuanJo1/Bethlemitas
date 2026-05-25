@@ -1,4 +1,29 @@
-document.getElementById('role').addEventListener('change', function() {
+document.addEventListener('DOMContentLoaded', function () {
+    const roleSelect = document.getElementById('role');
+    if (roleSelect) {
+        roleSelect.addEventListener('change', function() {
+            let selectedRole = this.options[this.selectedIndex].text.trim(); //obtiene el texto del rol seleccionado
+
+            let group_areas = document.getElementById('group_areas');
+            let group_load_group = document.getElementById('group_load_group');
+            let group_group_director = document.getElementById('group_group_director');
+            let group_load_degree =  document.getElementById('group_load_degree');
+            let load_degree = document.getElementById('load_degree');
+            let areas = document.getElementById('areas');
+            let groups = document.getElementById('groups');
+            let group_director = document.getElementById('group_director');
+
+            //Condicion para ocultar el div dependiendo el rol que escoja
+            // (aquí iría tu lógica de mostrar/ocultar)
+        });
+    }
+    const areasSelect = document.getElementById('areas');
+    if (areasSelect) {
+        areasSelect.addEventListener('change', function() {
+            // existing logic here (placeholder)
+        });
+    }
+});
     let selectedRole = this.options[this.selectedIndex].text.trim(); //obtiene el texto del rol seleccionado
 
     let group_areas = document.getElementById('group_areas');

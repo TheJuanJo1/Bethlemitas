@@ -246,23 +246,24 @@
                         <tr>
                             <th style="width: 25%;">Nombre actividad</th>
                             <th>Descripción de la estrategia</th>
-                            <th style="width: 20%;">Frecuencia (D, S, P)</th>
+                            <th style="width: 20%;">Frecuencia (D, S, P, N/A)</th>
                             <th style="width: 50px;"></th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
                             <td>
-                                <input type="text" name="anexo3_actividad[]" class="form-control" placeholder="Nombre actividad">
+                                <input type="text" name="anexo3_actividad[]" class="form-control" placeholder="Si no cumple escriba: N/A" required>
                             </td>
                             <td>
-                                <textarea name="anexo3_estrategia[]" class="form-control" style="height: 60px;" placeholder="¿Qué hará la familia?"></textarea>
+                                <textarea name="anexo3_estrategia[]" class="form-control" style="height: 60px;" placeholder="Si no cumple escriba: N/A" required></textarea>
                             </td>
                             <td>
-                                <select name="anexo3_frecuencia[]" class="form-control">
+                                <select name="anexo3_frecuencia[]" class="form-control" required>
                                     <option value="D">D (Diaria)</option>
                                     <option value="S">S (Semanal)</option>
                                     <option value="P">P (Permanente)</option>
+                                    <option value="N/A">N/A (No aplica)</option>
                                 </select>
                             </td>
                             <td></td>
@@ -327,13 +328,14 @@
         const nuevaFila = document.createElement('tr');
         
         nuevaFila.innerHTML = `
-            <td><input type="text" name="anexo3_actividad[]" class="form-control"></td>
-            <td><textarea name="anexo3_estrategia[]" class="form-control" style="height: 60px;"></textarea></td>
+            <td><input type="text" name="anexo3_actividad[]" class="form-control" placeholder="Si no cumple escriba: N/A" required></td>
+            <td><textarea name="anexo3_estrategia[]" class="form-control" style="height: 60px;" placeholder="Si no cumple escriba: N/A" required></textarea></td>
             <td>
-                <select name="anexo3_frecuencia[]" class="form-control">
+                <select name="anexo3_frecuencia[]" class="form-control" required>
                     <option value="D">D (Diaria)</option>
                     <option value="S">S (Semanal)</option>
                     <option value="P">P (Permanente)</option>
+                    <option value="N/A">N/A (No aplica)</option>
                 </select>
             </td>
             <td style="text-align:center; vertical-align:middle;">

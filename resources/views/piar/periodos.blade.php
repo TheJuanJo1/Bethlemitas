@@ -323,16 +323,14 @@
         </div>
 
         <div class="action-group">
-            @if(!$p['data'])
-                @if($canFillOrEdit)
-                    <a href="{{ route('piar.'.$p['slug'], $piar->id) }}" class="btn-action btn-primary">
-                        <i class="bi bi-plus-circle-fill"></i> Llenar
-                    </a>
-                @else
-                    <button class="btn-action btn-disabled" disabled title="{{ $lockMessage }}">
-                        <i class="bi bi-lock-fill"></i> Llenar
-                    </button>
-                @endif
+            @if($canFillOrEdit)
+                <a href="{{ route('piar.' . $p['slug'], $piar->id) }}" class="btn-action btn-primary">
+                    <i class="bi bi-plus-circle-fill"></i> Llenar
+                </a>
+            @else
+                <button class="btn-action btn-disabled" disabled title="{{ $lockMessage }}">
+                    <i class="bi bi-lock-fill"></i> Llenar
+                </button>
             @endif
 
             @if($p['data'])

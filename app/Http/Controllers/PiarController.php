@@ -364,6 +364,25 @@ class PiarController extends Controller
             }
         }
 
+        // Guardar actividades para la familia (Anexo 3)
+        \App\Models\PiarFamilyActivity::where('piar_id', $piarId)
+            ->where('period', 1)
+            ->delete();
+
+        if ($request->has('anexo3_actividad')) {
+            foreach ($request->anexo3_actividad as $index => $act) {
+                if ($act !== null && $act !== '') {
+                    \App\Models\PiarFamilyActivity::create([
+                        'piar_id' => $piarId,
+                        'period' => 1,
+                        'activity' => $act,
+                        'strategy' => $request->anexo3_estrategia[$index] ?? null,
+                        'frequency' => $request->anexo3_frecuencia[$index] ?? null,
+                    ]);
+                }
+            }
+        }
+
         // #region agent log
         @file_put_contents(
             base_path('debug-99f4e2.log'),
@@ -422,7 +441,11 @@ class PiarController extends Controller
                 ->with('error', 'No hay datos para editar en este periodo.');
         }
 
-        return view('piar.editar_periodo1', compact('adjustments', 'piar_id'));
+        $familyActivities = \App\Models\PiarFamilyActivity::where('piar_id', $piar_id)
+            ->where('period', 1)
+            ->get();
+
+        return view('piar.editar_periodo1', compact('adjustments', 'piar_id', 'familyActivities'));
     }
 
     public function updatePeriodo1(Request $request)
@@ -459,6 +482,26 @@ class PiarController extends Controller
                 }
 
                 $adj->update($updateData);
+            }
+        }
+
+        $piarId = (int) $request->piar_id;
+        // Guardar actividades para la familia (Anexo 3)
+        \App\Models\PiarFamilyActivity::where('piar_id', $piarId)
+            ->where('period', 1)
+            ->delete();
+
+        if ($request->has('anexo3_actividad')) {
+            foreach ($request->anexo3_actividad as $index => $act) {
+                if ($act !== null && $act !== '') {
+                    \App\Models\PiarFamilyActivity::create([
+                        'piar_id' => $piarId,
+                        'period' => 1,
+                        'activity' => $act,
+                        'strategy' => $request->anexo3_estrategia[$index] ?? null,
+                        'frequency' => $request->anexo3_frecuencia[$index] ?? null,
+                    ]);
+                }
             }
         }
 
@@ -572,6 +615,25 @@ class PiarController extends Controller
             }
         }
 
+        // Guardar actividades para la familia (Anexo 3)
+        \App\Models\PiarFamilyActivity::where('piar_id', $piarId)
+            ->where('period', 2)
+            ->delete();
+
+        if ($request->has('anexo3_actividad')) {
+            foreach ($request->anexo3_actividad as $index => $act) {
+                if ($act !== null && $act !== '') {
+                    \App\Models\PiarFamilyActivity::create([
+                        'piar_id' => $piarId,
+                        'period' => 2,
+                        'activity' => $act,
+                        'strategy' => $request->anexo3_estrategia[$index] ?? null,
+                        'frequency' => $request->anexo3_frecuencia[$index] ?? null,
+                    ]);
+                }
+            }
+        }
+
         return redirect()
             ->route('piar.periodos', (int) $request->piar_id)
             ->with('success', 'Periodo 2 guardado correctamente');
@@ -613,7 +675,11 @@ class PiarController extends Controller
                 ->with('error', 'No hay datos para editar en este periodo.');
         }
 
-        return view('piar.editar_periodo2', compact('adjustments', 'piar_id'));
+        $familyActivities = \App\Models\PiarFamilyActivity::where('piar_id', $piar_id)
+            ->where('period', 2)
+            ->get();
+
+        return view('piar.editar_periodo2', compact('adjustments', 'piar_id', 'familyActivities'));
     }
 
     public function updatePeriodo2(Request $request)
@@ -650,6 +716,26 @@ class PiarController extends Controller
                 }
 
                 $adj->update($updateData);
+            }
+        }
+
+        $piarId = (int) $request->piar_id;
+        // Guardar actividades para la familia (Anexo 3)
+        \App\Models\PiarFamilyActivity::where('piar_id', $piarId)
+            ->where('period', 2)
+            ->delete();
+
+        if ($request->has('anexo3_actividad')) {
+            foreach ($request->anexo3_actividad as $index => $act) {
+                if ($act !== null && $act !== '') {
+                    \App\Models\PiarFamilyActivity::create([
+                        'piar_id' => $piarId,
+                        'period' => 2,
+                        'activity' => $act,
+                        'strategy' => $request->anexo3_estrategia[$index] ?? null,
+                        'frequency' => $request->anexo3_frecuencia[$index] ?? null,
+                    ]);
+                }
             }
         }
 
@@ -763,6 +849,25 @@ class PiarController extends Controller
             }
         }
 
+        // Guardar actividades para la familia (Anexo 3)
+        \App\Models\PiarFamilyActivity::where('piar_id', $piarId)
+            ->where('period', 3)
+            ->delete();
+
+        if ($request->has('anexo3_actividad')) {
+            foreach ($request->anexo3_actividad as $index => $act) {
+                if ($act !== null && $act !== '') {
+                    \App\Models\PiarFamilyActivity::create([
+                        'piar_id' => $piarId,
+                        'period' => 3,
+                        'activity' => $act,
+                        'strategy' => $request->anexo3_estrategia[$index] ?? null,
+                        'frequency' => $request->anexo3_frecuencia[$index] ?? null,
+                    ]);
+                }
+            }
+        }
+
         return redirect()
             ->route('piar.periodos', (int) $request->piar_id)
             ->with('success', 'Periodo 3 guardado correctamente');
@@ -804,7 +909,11 @@ class PiarController extends Controller
                 ->with('error', 'No hay datos para editar en este periodo.');
         }
 
-        return view('piar.editar_periodo3', compact('adjustments', 'piar_id'));
+        $familyActivities = \App\Models\PiarFamilyActivity::where('piar_id', $piar_id)
+            ->where('period', 3)
+            ->get();
+
+        return view('piar.editar_periodo3', compact('adjustments', 'piar_id', 'familyActivities'));
     }
     
     public function updatePeriodo3(Request $request)
@@ -841,6 +950,26 @@ class PiarController extends Controller
                 }
 
                 $adj->update($updateData);
+            }
+        }
+
+        $piarId = (int) $request->piar_id;
+        // Guardar actividades para la familia (Anexo 3)
+        \App\Models\PiarFamilyActivity::where('piar_id', $piarId)
+            ->where('period', 3)
+            ->delete();
+
+        if ($request->has('anexo3_actividad')) {
+            foreach ($request->anexo3_actividad as $index => $act) {
+                if ($act !== null && $act !== '') {
+                    \App\Models\PiarFamilyActivity::create([
+                        'piar_id' => $piarId,
+                        'period' => 3,
+                        'activity' => $act,
+                        'strategy' => $request->anexo3_estrategia[$index] ?? null,
+                        'frequency' => $request->anexo3_frecuencia[$index] ?? null,
+                    ]);
+                }
             }
         }
 
@@ -979,21 +1108,36 @@ class PiarController extends Controller
     public function psicoGuardarAjustes(Request $request)
     {
         $data = $request->validate([
-            'piar_id' => ['required', 'integer'],
-            'period' => ['required', 'integer', 'in:1,2,3'],
-            'adjustment_id' => ['required', 'array'],
-            'adjustment_id.*' => ['required', 'integer'],
-            'objetivo' => ['required', 'array'],
-            'objetivo.*' => ['nullable', 'string'],
-            'barrera' => ['required', 'array'],
-            'barrera.*' => ['nullable', 'string'],
-            'ajuste' => ['required', 'array'],
-            'ajuste.*' => ['nullable', 'string'],
+            'piar_id'             => ['required', 'integer'],
+            'period'              => ['required', 'integer', 'in:1,2,3'],
+            'adjustment_id'       => ['required', 'array'],
+            'adjustment_id.*'     => ['required', 'integer'],
+            'objetivo'            => ['required', 'array'],
+            'objetivo.*'          => ['nullable', 'string'],
+            'barrera'             => ['required', 'array'],
+            'barrera.*'           => ['nullable', 'string'],
+            'ajuste_curricular'   => ['required', 'array'],
+            'ajuste_curricular.*' => ['nullable', 'string'],
+            'ajuste_metodologico'   => ['required', 'array'],
+            'ajuste_metodologico.*' => ['nullable', 'string'],
+            'ajuste_evaluativo'   => ['required', 'array'],
+            'ajuste_evaluativo.*' => ['nullable', 'string'],
+            'convivencia'         => ['required', 'array'],
+            'convivencia.*'       => ['nullable', 'string'],
+            'socializacion'       => ['required', 'array'],
+            'socializacion.*'     => ['nullable', 'string'],
+            'participacion'       => ['required', 'array'],
+            'participacion.*'     => ['nullable', 'string'],
+            'autonomia'           => ['required', 'array'],
+            'autonomia.*'         => ['nullable', 'string'],
+            'autocontrol'         => ['required', 'array'],
+            'autocontrol.*'       => ['nullable', 'string'],
+            'evaluation_date'     => ['nullable', 'date'],
         ]);
 
         $piarId = (int) $data['piar_id'];
         $period = (int) $data['period'];
-        $ids = $data['adjustment_id'];
+        $ids    = $data['adjustment_id'];
 
         foreach ($ids as $i => $adjId) {
             $adjId = (int) $adjId;
@@ -1003,9 +1147,17 @@ class PiarController extends Controller
                 ->where('piar_id', $piarId)
                 ->where('period', $period)
                 ->update([
-                    'objetivo' => $data['objetivo'][$i] ?? null,
-                    'barrera' => $data['barrera'][$i] ?? null,
-                    'ajuste' => $data['ajuste'][$i] ?? null,
+                    'objetivo'            => $data['objetivo'][$i]          ?? null,
+                    'barrera'             => $data['barrera'][$i]           ?? null,
+                    'ajuste_curricular'   => $data['ajuste_curricular'][$i] ?? null,
+                    'ajuste_metodologico' => $data['ajuste_metodologico'][$i] ?? null,
+                    'ajuste_evaluativo'   => $data['ajuste_evaluativo'][$i] ?? null,
+                    'convivencia'         => $data['convivencia'][$i]       ?? null,
+                    'socializacion'       => $data['socializacion'][$i]     ?? null,
+                    'participacion'       => $data['participacion'][$i]     ?? null,
+                    'autonomia'           => $data['autonomia'][$i]         ?? null,
+                    'autocontrol'         => $data['autocontrol'][$i]       ?? null,
+                    'evaluation_date'     => $data['evaluation_date']       ?? null,
                 ]);
         }
 
@@ -1034,17 +1186,21 @@ class PiarController extends Controller
             ->where('period', $periodo)
             ->first();
 
+        $familyActivities = \App\Models\PiarFamilyActivity::where('piar_id', $piar_id)
+            ->where('period', $periodo)
+            ->get();
+
         $periodo_actual = $periodo;
 
         if ($request->has('download')) {
             return view('psycho.pdf_anexo3', compact(
                 'piar', 'estudiante', 'docentes', 'datos', 'periodo_actual', 
-                'familiar_manual', 'parentesco_manual' // Enviamos estos dos nuevos
+                'familiar_manual', 'parentesco_manual', 'familyActivities' // Enviamos estos
             ));
         }
 
         return view('psycho.anexo3acta', compact(
-            'piar', 'estudiante', 'docentes', 'datos', 'periodo_actual'
+            'piar', 'estudiante', 'docentes', 'datos', 'periodo_actual', 'familyActivities'
         ));
     }
     // #endregion Psico - Edición de Ajustes Razonables

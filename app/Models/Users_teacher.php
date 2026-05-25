@@ -28,7 +28,7 @@ class Users_teacher extends Authenticatable
         'phone',
         'id_state',
         'group_director',
-
+        'signature',
         // Legacy (por si existen en tu BD / código antiguo)
         'lastname',
         'document',

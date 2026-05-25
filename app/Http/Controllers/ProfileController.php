@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Models\Users_load_degree;
 use App\Models\Users_teacher;
+use App\Http\Controllers\Controller;
 
 class ProfileController extends Controller
 {
@@ -111,5 +112,60 @@ class ProfileController extends Controller
         }
 
         return back()->with('success_photo', 'Foto de perfil eliminada correctamente.');
+    }
+
+    // 📜 SUBIR / REEMPLAZAR FIRMA
+    public function updateSignature(Request $request)
+    {
+        $request->validate([
+            'signature' => 'required|image|mimes:png,jpg,jpeg|max:2048',
+        ]);
+
+        $user = Auth::user();
+        $documento = $user->number_documment;
+
+        $folder = public_path('Imagenes_Firma');
+        if (!file_exists($folder)) {
+            mkdir($folder, 0755, true);
+        }
+
+        // Eliminar firmas anteriores
+        foreach (['png', 'jpg', 'jpeg'] as $ext) {
+            $oldFile = $folder . '/firma_' . $documento . '.' . $ext;
+            if (file_exists($oldFile)) {
+                unlink($oldFile);
+            }
+        }
+
+        $extension = $request->file('signature')->getClientOriginalExtension();
+        $fileName = 'firma_' . $documento . '.' . $extension;
+        $request->file('signature')->move($folder, $fileName);
+
+        // Guardar ruta en la base de datos
+        $user->signature = "Imagenes_Firma/" . $fileName;
+        $user->save();
+
+        return back()->with('success_signature', 'Firma actualizada correctamente.');
+    }
+
+    // 🗑️ ELIMINAR FIRMA
+    public function deleteSignature()
+    {
+        $user = Auth::user();
+        $documento = $user->number_documment;
+        $folder = public_path('Imagenes_Firma');
+
+        foreach (['png', 'jpg', 'jpeg'] as $ext) {
+            $file = $folder . '/firma_' . $documento . '.' . $ext;
+            if (file_exists($file)) {
+                unlink($file);
+            }
+        }
+
+        // Borrar referencia en BD
+        $user->signature = null;
+        $user->save();
+
+        return back()->with('success_signature', 'Firma eliminada correctamente.');
     }
 }

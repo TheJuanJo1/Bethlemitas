@@ -55,3 +55,7 @@
 {"sessionId":"99f4e2","runId":"pre-fix","hypothesisId":"H-create-1","location":"app\/Http\/Controllers\/PiarController.php:create","message":"PIAR create accessed by psico","data":{"student_id":4,"has_piar":false},"timestamp":1777382020166}
 {"sessionId":"99f4e2","runId":"pre-fix","hypothesisId":"H-create-1","location":"app\/Http\/Controllers\/PiarController.php:create","message":"PIAR create accessed by psico","data":{"student_id":6,"has_piar":true},"timestamp":1777476330823}
 {"sessionId":"99f4e2","runId":"pre-fix","hypothesisId":"H-create-1","location":"app\/Http\/Controllers\/PiarController.php:create","message":"PIAR create accessed by psico","data":{"student_id":6,"has_piar":true},"timestamp":1777577053586}
+{"sessionId":"99f4e2","runId":"pre-fix","hypothesisId":"H-create-1","location":"app\/Http\/Controllers\/PiarController.php:create","message":"PIAR create accessed by psico","data":{"student_id":1,"has_piar":false},"timestamp":1779477490166}
+{"sessionId":"99f4e2","runId":"updated","hypothesisId":"H1","location":"storePeriodo1","message":"redirecting","data":{"piar_id":1},"timestamp":1779477576425}
+{"sessionId":"99f4e2","runId":"pre-fix","hypothesisId":"H-create-1","location":"app\/Http\/Controllers\/PiarController.php:create","message":"PIAR create accessed by psico","data":{"student_id":2,"has_piar":false},"timestamp":1779711414884}
+{"sessionId":"99f4e2","runId":"updated","hypothesisId":"H1","location":"storePeriodo1","message":"redirecting","data":{"piar_id":2},"timestamp":1779727334238}

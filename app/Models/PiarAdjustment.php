@@ -28,6 +28,7 @@ class PiarAdjustment extends Model
         'evaluacion',
         'start_date',
         'teacher_signature',
+        'evaluation_date',
     ];
 
     public function piar()
