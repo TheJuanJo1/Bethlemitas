@@ -1206,12 +1206,12 @@ class PiarController extends Controller
         if ($request->has('download')) {
             return view('psycho.pdf_anexo3', compact(
                 'piar', 'estudiante', 'docentes', 'datos', 'periodo_actual', 
-                'familiar_manual', 'parentesco_manual', 'familyActivities', 'director' // Enviamos estos
+                'familiar_manual', 'parentesco_manual', 'familyActivities', 'director', 'adjustments' // Enviamos estos
             ));
         }
 
         return view('psycho.anexo3acta', compact(
-            'piar', 'estudiante', 'docentes', 'datos', 'periodo_actual', 'familyActivities', 'director'
+            'piar', 'estudiante', 'docentes', 'datos', 'periodo_actual', 'familyActivities', 'director', 'adjustments'
         ));
     }
     // #endregion Psico - Edición de Ajustes Razonables

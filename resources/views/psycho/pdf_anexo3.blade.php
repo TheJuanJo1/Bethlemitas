@@ -30,7 +30,7 @@
             <thead>
                 <tr>
                     <td class="w-2/3 p-2 text-center border-2 border-black">
-                        <img src="{{ asset('img/credencialesGo.jpg') }}" class="h-12 mx-auto object-contain">
+                        <img src="{{ asset('img/credencialesGo.png') }}" class="h-12 mx-auto object-contain">
                     </td>
                     <td class="w-1/3 p-2 text-center bg-official border-2 border-black">
                         <p class="font-bold text-[10px]">PIAR</p>
@@ -94,26 +94,79 @@
                         </table>
 
                         <div class="my-6 text-[10.5px] text-justify leading-tight space-y-3 px-1">
-                            <p>
-                                Según el <strong>Decreto 1421 de 2017</strong>, la educación inclusiva es un proceso permanente que reconoce, valora y responde a la diversidad de características, intereses, posibilidades y expectativas de los estudiantes, con el fin de promover su desarrollo, aprendizaje y participación en un ambiente de aprendizaje común, sin discriminación ni exclusión.
-                            </p>
-                            <p>
-                                La inclusión solo es posible cuando se unen los esfuerzos de la <strong>institución educativa, los docentes, los directivos, el estudiante y la familia</strong>. De ahí la importancia de formalizar, mediante la firma, la presente <strong>Acta de Acuerdo</strong>.
-                            </p>
-                            <p>
-                                El <strong>Establecimiento Educativo</strong> ha realizado la valoración pedagógica correspondiente y ha definido los ajustes razonables necesarios para facilitar el proceso educativo del estudiante.
-                            </p>
-                            <p>
-                                La <strong>Familia</strong> se compromete a cumplir y firmar los compromisos señalados en el PIAR y en las actas de acuerdo, con el fin de fortalecer los procesos escolares del estudiante, y en particular:
-                            </p>
+                            <p>Según el Decreto 1421 de 2017 la educación inclusiva es un proceso permanente que reconoce, valora y responde a la diversidad de características, intereses, posibilidades y expectativas de los estudiantes para promover su desarrollo, aprendizaje y participación, en un ambiente de aprendizaje común, sin discriminación o exclusión.</p>
+                            <p>La inclusión solo es posible cuando se unen los esfuerzos del colegio, el estudiante y la familia. De ahí la importancia de formalizar con las firmas, la presente Acta Acuerdo.</p>
+                            <p>El Establecimiento Educativo ha realizado la valoración y definido los ajustes razonables que facilitarán al estudiante su proceso educativo.</p>
+                            <p>La Familia se compromete a cumplir y firmar los compromisos señalados en el PIAR y en las actas de acuerdo, para fortalecer los procesos escolares del estudiante y en particular a:</p>
+                            <p>Los padres de familia se comprometen a:</p>
+                            <ul>
+                                <li><span class="font-bold">•</span> Tener continuidad con los procesos terapéuticos integrales (terapia ocupacional, fonoaudiología, psiquiatría y psicología) que el estudiante este desarrollando.</li>
+                                <br>
+                                <li><span class="font-bold">•</span> Presentar a la institución educativa los respectivos informes de terapias Integrales y citas de control.</li>
+                                <br>
+                                <li><span class="font-bold">•</span> Acudir a los respectivos llamados por parte de área de Psicoorientación.</li>
+                                <br>
+                                <li><span class="font-bold">•</span> Desarrollar las actividades propuestas para el acompañamiento en casa.</li>
+                                <br>
+                                <li><span class="font-bold">•</span> Los padres de familia y el estudiante comprenden de manera oportuna que el hecho de tener PIAR, no es un criterio para la promoción ni la omisión de la aplicación de las medidas correctivas de acuerdo con el manual de Convivencia de la institución.</li>
+                                <br>
+                            </ul>
+                            <p>Es de anotar, que la Institución Educativa NO SE HACE RESPONSABLE DE LA PERMANENCIA Y PROMOCIÓN DEL ESTUDIANTE, en caso de que se presente:</p>
+                            <ul>
+                                <li><span class="font-bold">•</span> Incumplimiento relevante en cualquiera de los compromisos pactados con la Institución Educativa</li>
+                                <br>
+                                <li><span class="font-bold">•</span> Poco o ningún acompañamiento familiar</li>
+                                <br>
+                                <li><span class="font-bold">•</span> Falta o ningún apoyo en las actividades escolares y/o planes caseros (Tareas, trabajos, revisión cuadernos, etc)</li>
+                                <br>
+                                <li><span class="font-bold">•</span> Ausencia reiterada y no justificada de la jornada escolar.</li>
+                                <br>
+                                <li><span class="font-bold">•</span> No presentar reportes de atención y/o tratamiento (Evaluación o Terapias) correspondientes según la necesidad del estudiante</li>
+                                <br>
+                                <li><span class="font-bold">•</span> Interrupción o no realización del tratamiento farmacológico, terapéutico y/o de control, según prescripción médica o del Especialista.</li>
+                                <br>
+                                <li><span class="font-bold">•</span> No asistir a los llamados institucionales y a los controles y seguimientos del Estudiante.</li>
+                                <br>
+                                <li><span class="font-bold">•</span> Alterar los certificados, reportes o recomendaciones médicas enviadas por los Profesionales Especialistas o Instancias Institucionales.</li>
+                                <br>
+                                <li><span class="font-bold">•</span> El tener PIAR no garantiza la promoción escolar. Si el estudiante no cumple con tareas, trabajos, acuerdos y plazos de entrega de estos, cuando falta a clase y no se pone al día, pierde de manera reiterada exámenes por desinterés y falta de compromiso, debe hacer el proceso de recuperación de acuerdo con el SIEE Institucional.</li>
+                                <br>
+                                <li><span class="font-bold">•</span> Y en casa apoyará con las siguientes actividades:</li>
+                                <br>
+                            </ul>               
                         </div>
 
-                        <div class="border-2 border-black p-3 min-h-[150px] mb-6 no-break">
-                            <p class="font-bold underline mb-1 uppercase text-[10px]">Compromisos específicos Periodo {{ $periodo_actual }}:</p>
-                            <div class="text-[11px] space-y-2">
-                                <p><strong>Ajustes Curriculares:</strong> {{ $datos->ajuste_curricular ?? 'N/R' }}</p>
-                                <p><strong>Otros Apoyos:</strong> {{ $datos->ajuste_metodologico ?? 'N/R' }}</p>
-                            </div>
+                        <div class="border-2 border-black p-4 min-h-[120px] mb-8 no-break">
+                            <p class="font-bold underline mb-1 uppercase text-[10px]">Anexo 3 - Actividades (Periodo {{ $periodo_actual }}):</p>
+                            <table class="w-full text-[10px] border-collapse mt-2">
+                                <thead>
+                                    <tr class="bg-gray-100 font-bold uppercase text-[9px]">
+                                        <th class="border border-black p-2 text-left w-1/3">Nombre Actividad</th>
+                                        <th class="border border-black p-2 text-left">Descripción de la estrategia / Compromiso</th>
+                                        <th class="border border-black p-2 text-center w-1/4">Frecuencia</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @forelse($familyActivities as $activity)
+                                    <tr>
+                                        <td class="border border-black p-2 align-top font-semibold">{{ $activity->activity }}</td>
+                                        <td class="border border-black p-2 align-top text-justify">{{ $activity->strategy }}</td>
+                                        <td class="border border-black p-2 align-top text-center font-semibold">
+                                            @if($activity->frequency == 'D') D (Diaria)
+                                            @elseif($activity->frequency == 'S') S (Semanal)
+                                            @elseif($activity->frequency == 'P') P (Permanente)
+                                            @elseif($activity->frequency == 'N/A') N/A (No aplica)
+                                            @else {{ $activity->frequency }}
+                                            @endif
+                                        </td>
+                                    </tr>
+                                    @empty
+                                    <tr>
+                                        <td colspan="3" class="border border-black p-2 text-center text-gray-400 italic">No se han registrado actividades de apoyo en el hogar para este periodo.</td>
+                                    </tr>
+                                    @endforelse
+                                </tbody>
+                            </table>
                         </div>
 
                         <div class="no-break mt-10">
