@@ -161,23 +161,29 @@
                 $uniqueTeachers = $adjustments->unique('teacher_id');
             @endphp
             @foreach($uniqueTeachers as $adj)
-                <div style="width: 250px; text-align: center;">
-@php
-                        $signaturePath = $adj->teacher_signature ?? $adj->teacher->signature ?? null;
-                    @endphp
-                    @if($signaturePath)
-                        <img src="{{ public_path('storage/' . $signaturePath) }}" 
-                             style="max-width: 150px; max-height: 80px; display: block; margin: 0 auto 5px; border-bottom: 1px solid #333; padding-bottom: 2px;">
-                    @else
-                        <div style="height: 60px; border-bottom: 1px solid #333; margin-bottom: 5px; display: flex; align-items: center; justify-content: center; color: #94a3b8; font-style: italic;">
-                            Sin firma registrada
-                        </div>
-                    @endif
-                    <div style="font-weight: bold; text-transform: uppercase; font-size: 9px;">
-                        {{ $adj->teacher->name ?? 'DOCENTE' }} {{ $adj->teacher->last_name ?? '' }}
-                    </div>
-                    <div style="font-size: 8px; color: #64748b;">Docente Responsable</div>
-                </div>
+    <div style="width: 250px; text-align: center;">
+        @php
+            $signaturePath = $adj->teacher_signature ?? null;
+            // Determine full public path. If stored via Laravel storage, prepend 'storage/'
+            $fullPath = $signaturePath;
+            if ($signaturePath && strpos($signaturePath, 'signatures/') === 0) {
+                $fullPath = 'storage/' . $signaturePath;
+            }
+        @endphp
+        @if($signaturePath && file_exists(public_path($fullPath)))
+            <img src="{{ public_path($fullPath) }}" style="max-width: 150px; max-height: 80px; display: block; margin: 0 auto 5px; border-bottom: 1px solid #333; padding-bottom: 2px;">
+        @else
+            <div style="height: 60px; border-bottom: 1px solid #333; margin-bottom: 5px; display: flex; align-items: center; justify-content: center; color: #94a3b8; font-style: italic;">
+                Sin firma registrada
+            </div>
+        @endif
+        <div style="font-weight: bold; text-transform: uppercase; font-size: 9px;">
+            {{ $adj->teacher_name ?? 'DOCENTE' }} {{ $adj->teacher_last_name ?? '' }}
+        </div>
+        <div style="font-size: 8px; color: #64748b;">
+            Docente Responsable
+        </div>
+    </div>
             @endforeach
         </div>
     </div>

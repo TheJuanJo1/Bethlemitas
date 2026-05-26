@@ -144,6 +144,8 @@ class ProfileController extends Controller
         // Guardar ruta en la base de datos
         $user->signature = "Imagenes_Firma/" . $fileName;
         $user->save();
+        // Propagar firma a los ajustes existentes del docente
+        \App\Models\PiarAdjustment::where('teacher_id', $user->id)->update(['teacher_signature' => $user->signature]);
 
         return back()->with('success_signature', 'Firma actualizada correctamente.');
     }
@@ -165,6 +167,8 @@ class ProfileController extends Controller
         // Borrar referencia en BD
         $user->signature = null;
         $user->save();
+        // Eliminar firma de los ajustes del docente
+        \App\Models\PiarAdjustment::where('teacher_id', $user->id)->update(['teacher_signature' => null]);
 
         return back()->with('success_signature', 'Firma eliminada correctamente.');
     }

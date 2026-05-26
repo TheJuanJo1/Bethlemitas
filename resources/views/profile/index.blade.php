@@ -21,6 +21,27 @@
         Mi perfil
     </h2>
 
+        @if (session('success_signature'))
+    <div class="bg-emerald-100 border border-emerald-300 text-emerald-800 px-4 py-2 rounded-md mb-4">
+        {{ session('success_signature') }}
+    </div>
+@endif
+@if (session('error_signature'))
+    <div class="bg-rose-100 border border-rose-300 text-rose-800 px-4 py-2 rounded-md mb-4">
+        {{ session('error_signature') }}
+    </div>
+@endif
+@if (session('success_photo'))
+    <div class="bg-emerald-100 border border-emerald-300 text-emerald-800 px-4 py-2 rounded-md mb-4">
+        {{ session('success_photo') }}
+    </div>
+@endif
+@if (session('error_photo'))
+    <div class="bg-rose-100 border border-rose-300 text-rose-800 px-4 py-2 rounded-md mb-4">
+        {{ session('error_photo') }}
+    </div>
+@endif
+
     {{-- FOTO DE PERFIL --}}
     <div class="flex flex-col lg:flex-row items-start gap-10 mb-10">
 
@@ -231,20 +252,21 @@
             @enderror
 
             <div class="flex gap-3">
-                <button class="bg-indigo-600 text-white px-5 py-2 rounded-xl font-bold hover:bg-indigo-700 shadow-lg shadow-indigo-100 transition-all text-sm">
+                <button type="submit" class="bg-indigo-600 text-white px-5 py-2 rounded-xl font-bold hover:bg-indigo-700 shadow-lg shadow-indigo-100 transition-all text-sm">
                     Guardar firma
                 </button>
-                @if ($signaturePath)
-                    <form method="POST" action="{{ route('profile.delete.signature') ?? '#' }}" onsubmit="return confirmDeleteSignature()" class="inline">
-                        @csrf
-                        @method('DELETE')
-                        <button class="bg-rose-600 text-white px-5 py-2 rounded-xl font-bold hover:bg-rose-700 shadow-lg shadow-rose-100 transition-all text-sm">
-                            Eliminar firma
-                        </button>
-                    </form>
-                @endif
             </div>
         </form>
+
+        @if ($signaturePath)
+            <form method="POST" action="{{ route('profile.delete.signature') }}" onsubmit="return confirmDeleteSignature()" class="inline">
+                @csrf
+                @method('DELETE')
+                <button type="submit" class="bg-rose-600 text-white px-5 py-2 rounded-xl font-bold hover:bg-rose-700 shadow-lg shadow-rose-100 transition-all text-sm">
+                    Eliminar firma
+                </button>
+            </form>
+        @endif
     </div>
 </div>
 
@@ -271,6 +293,10 @@ function previewSignature(event) {
 // Función de confirmación para eliminar
 function confirmDeletePhoto() {
     return confirm('¿Estás seguro de que deseas eliminar tu foto de perfil? Esta acción no se puede deshacer.');
+}
+
+function confirmDeleteSignature() {
+    return confirm('¿Estás seguro de que deseas eliminar tu firma? Esta acción no se puede deshacer.');
 }
 </script>
 
