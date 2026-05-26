@@ -83,10 +83,7 @@ class PiarController extends Controller
         $request->validate([
             'student_id' => 'required',
             'descripcion' => 'required|string',
-            'gustos' => 'required|string',
-            'expectativas' => 'required|string',
-            'habilidades' => 'required|string',
-            'apoyos' => 'required|string'
+            'habilidades' => 'required|string'
         ]);
 
         $student = Users_student::findOrFail($request->student_id);
@@ -113,10 +110,10 @@ class PiarController extends Controller
             PiarCharacteristic::create([
                 'piar_id'=>$piar->id,
                 'descripcion_estudiante'=>$request->descripcion,
-                'gustos_intereses'=>$request->gustos,
-                'expectativas_familia'=>$request->expectativas,
+                'gustos_intereses'=>'',
+                'expectativas_familia'=>'',
                 'habilidades'=>$request->habilidades,
-                'apoyos_requeridos'=>$request->apoyos
+                'apoyos_requeridos'=>''
             ]);
 
         }
@@ -252,17 +249,13 @@ class PiarController extends Controller
         $piar = Piar::with('student')->findOrFail($piar_id);
 
         $teacherId = Auth::id();
+        $studentGroupId = $piar->student->id_group;
         $areas = Area::query()
-            ->where(function ($q) use ($teacherId) {
-                $q->whereIn('id', function ($sub) use ($teacherId) {
-                    $sub->select('id_area')
-                        ->from('users_load_areas')
-                        ->where('id_user_teacher', $teacherId);
-                })->orWhereIn('id', function ($sub) use ($teacherId) {
-                    $sub->select('id_area')
-                        ->from('teachers_areas_groups')
-                        ->where('id_teacher', $teacherId);
-                });
+            ->whereIn('id', function ($sub) use ($teacherId, $studentGroupId) {
+                $sub->select('id_area')
+                    ->from('teachers_areas_groups')
+                    ->where('id_teacher', $teacherId)
+                    ->where('id_group', $studentGroupId);
             })
             ->orderBy('name_area')
             ->get();
@@ -514,17 +507,13 @@ class PiarController extends Controller
         $piar = Piar::with('student')->findOrFail($piar_id);
 
         $teacherId = Auth::id();
+        $studentGroupId = $piar->student->id_group;
         $areas = Area::query()
-            ->where(function ($q) use ($teacherId) {
-                $q->whereIn('id', function ($sub) use ($teacherId) {
-                    $sub->select('id_area')
-                        ->from('users_load_areas')
-                        ->where('id_user_teacher', $teacherId);
-                })->orWhereIn('id', function ($sub) use ($teacherId) {
-                    $sub->select('id_area')
-                        ->from('teachers_areas_groups')
-                        ->where('id_teacher', $teacherId);
-                });
+            ->whereIn('id', function ($sub) use ($teacherId, $studentGroupId) {
+                $sub->select('id_area')
+                    ->from('teachers_areas_groups')
+                    ->where('id_teacher', $teacherId)
+                    ->where('id_group', $studentGroupId);
             })
             ->orderBy('name_area')
             ->get();
@@ -748,17 +737,13 @@ class PiarController extends Controller
         $piar = Piar::with('student')->findOrFail($piar_id);
 
         $teacherId = Auth::id();
+        $studentGroupId = $piar->student->id_group;
         $areas = Area::query()
-            ->where(function ($q) use ($teacherId) {
-                $q->whereIn('id', function ($sub) use ($teacherId) {
-                    $sub->select('id_area')
-                        ->from('users_load_areas')
-                        ->where('id_user_teacher', $teacherId);
-                })->orWhereIn('id', function ($sub) use ($teacherId) {
-                    $sub->select('id_area')
-                        ->from('teachers_areas_groups')
-                        ->where('id_teacher', $teacherId);
-                });
+            ->whereIn('id', function ($sub) use ($teacherId, $studentGroupId) {
+                $sub->select('id_area')
+                    ->from('teachers_areas_groups')
+                    ->where('id_teacher', $teacherId)
+                    ->where('id_group', $studentGroupId);
             })
             ->orderBy('name_area')
             ->get();
@@ -1107,6 +1092,31 @@ class PiarController extends Controller
 
     public function psicoGuardarAjustes(Request $request)
     {
+        if ($request->has('seccion_characteristics')) {
+            $data = $request->validate([
+                'piar_id'                => ['required', 'integer'],
+                'descripcion_estudiante' => ['required', 'string'],
+                'habilidades'            => ['required', 'string'],
+            ]);
+
+            $piarId = (int) $data['piar_id'];
+
+            PiarCharacteristic::updateOrCreate(
+                ['piar_id' => $piarId],
+                [
+                    'descripcion_estudiante' => $data['descripcion_estudiante'],
+                    'gustos_intereses'       => '',
+                    'expectativas_familia'   => '',
+                    'habilidades'            => $data['habilidades'],
+                    'apoyos_requeridos'      => '',
+                ]
+            );
+
+            return redirect()
+                ->route('piar.psico.ajustes.edit', $piarId)
+                ->with('success', 'Características del estudiante actualizadas correctamente.');
+        }
+
         $data = $request->validate([
             'piar_id'             => ['required', 'integer'],
             'period'              => ['required', 'integer', 'in:1,2,3'],
@@ -1168,8 +1178,9 @@ class PiarController extends Controller
 
     public function showAnexo3(Request $request, $piar_id, $periodo)
     {
-        $piar = Piar::with(['student.degree', 'student.group'])->findOrFail($piar_id);
+        $piar = Piar::with(['student.degree', 'student.group.director'])->findOrFail($piar_id);
         $estudiante = $piar->student;
+        $director = $estudiante->group->director ?? null;
         
         // Capturamos lo que viene por URL (lo que escribiste en el input)
         $familiar_manual = $request->query('familiar', $estudiante->acudiente);
@@ -1195,12 +1206,12 @@ class PiarController extends Controller
         if ($request->has('download')) {
             return view('psycho.pdf_anexo3', compact(
                 'piar', 'estudiante', 'docentes', 'datos', 'periodo_actual', 
-                'familiar_manual', 'parentesco_manual', 'familyActivities' // Enviamos estos
+                'familiar_manual', 'parentesco_manual', 'familyActivities', 'director' // Enviamos estos
             ));
         }
 
         return view('psycho.anexo3acta', compact(
-            'piar', 'estudiante', 'docentes', 'datos', 'periodo_actual', 'familyActivities'
+            'piar', 'estudiante', 'docentes', 'datos', 'periodo_actual', 'familyActivities', 'director'
         ));
     }
     // #endregion Psico - Edición de Ajustes Razonables

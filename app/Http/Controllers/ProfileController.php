@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Models\Users_load_degree;
+use App\Models\Users_load_group;
 use App\Models\Users_teacher;
 use App\Http\Controllers\Controller;
 
@@ -18,11 +19,24 @@ class ProfileController extends Controller
         // Roles del usuario
         $roles = $user->roles->pluck('name')->toArray();
 
-        // Grados asignados (psicoorientador)
-        $degrees = Users_load_degree::where('id_user', $user->id)
-            ->with('degree')
-            ->get()
-            ->pluck('degree.degree');
+        // Grados y grupos asignados (según rol)
+        $degrees = collect();
+        if ($user->hasRole('psicoorientador')) {
+            $degrees = Users_load_degree::where('id_user', $user->id)
+                ->with('degree')
+                ->get()
+                ->pluck('degree.degree');
+        }
+
+        if ($user->hasRole('docente')) {
+            $teacherGroups = Users_load_group::where('id_user_teacher', $user->id)
+                ->with('group')
+                ->get()
+                ->pluck('group.group')
+                ->map(fn($g) => "Grupo " . $g);
+
+            $degrees = $degrees->concat($teacherGroups);
+        }
 
         // Grupo donde es director (si aplica)
         $directorGroup = Users_teacher::where('id', $user->id)

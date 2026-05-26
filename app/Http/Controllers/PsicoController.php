@@ -173,7 +173,7 @@ class PsicoController extends Controller
     public function update_details_referral(Request $request, string $id)
     {
         $request->validate([
-            'number_documment' => 'required|digits_between:1,20|unique:users_students,number_documment,' . $id,
+            'number_documment' => 'nullable|digits_between:1,20|unique:users_students,number_documment,' . $id,
             'name'             => 'required|string',
             'last_name'        => 'required|string',
             'degree'           => 'required|exists:degrees,id',
@@ -231,7 +231,7 @@ class PsicoController extends Controller
    public function store_report_student(Request $request, string $id)
     {
         $request->validate([
-            'number_documment' => 'required|digits_between:1,20|unique:users_students,number_documment,' . $id,
+            'number_documment' => 'nullable|digits_between:1,20|unique:users_students,number_documment,' . $id,
             'name'             => 'required|string',
             'last_name'        => 'required|string',
             'degree'           => 'required|exists:degrees,id',

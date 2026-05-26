@@ -39,6 +39,49 @@
             </div>
         </div>
 
+        {{-- Características del Estudiante (Sección 1 del Anexo 2) --}}
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden mb-10">
+            <div class="bg-indigo-900 px-6 py-3">
+                <h2 class="text-xs font-semibold text-slate-300 uppercase tracking-wider flex items-center">
+                    <i class="bi bi-clipboard-data mr-2"></i> 1. Características del Estudiante (Anexo 2)
+                </h2>
+            </div>
+            
+            <form action="{{ route('piar.psico.ajustes.store') }}" method="POST" class="p-6">
+                @csrf
+                <input type="hidden" name="piar_id" value="{{ $piar->id }}">
+                <input type="hidden" name="seccion_characteristics" value="1">
+
+                @if ($errors->any() && old('seccion_characteristics'))
+                    <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-4 rounded">
+                        <ul class="list-disc pl-5">
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
+
+                <div class="grid grid-cols-1 gap-6">
+                    <div class="space-y-2">
+                        <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider" style="line-height: 1.4;">1. Descripción general del estudiante con énfasis en gustos e intereses o aspectos que le desagradan, expectativas del estudiante y la familia:</label>
+                        <textarea name="descripcion_estudiante" rows="4" required class="block w-full rounded-lg border-slate-300 bg-slate-50 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-3 transition-colors hover:bg-white">{{ old('descripcion_estudiante', $piar->characteristics->descripcion_estudiante ?? '') }}</textarea>
+                    </div>
+
+                    <div class="space-y-2">
+                        <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider" style="line-height: 1.4;">2. Descripción en términos de lo que hace, puede hacer o requiere apoyo el estudiante para favorecer su proceso educativo. Indique las habilidades, competencias, cualidades y aprendizajes con los que cuenta el estudiante para el grado en el que fue matriculado:</label>
+                        <textarea name="habilidades" rows="4" required class="block w-full rounded-lg border-slate-300 bg-slate-50 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-3 transition-colors hover:bg-white">{{ old('habilidades', $piar->characteristics->habilidades ?? '') }}</textarea>
+                    </div>
+                </div>
+
+                <div class="mt-6 flex justify-end">
+                    <button type="submit" class="inline-flex items-center px-6 py-2.5 bg-indigo-600 border border-transparent rounded-lg font-bold text-white uppercase tracking-widest hover:bg-indigo-700 active:bg-indigo-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition-all shadow-md">
+                        <i class="bi bi-save mr-2"></i> Guardar Características
+                    </button>
+                </div>
+            </form>
+        </div>
+
         {{-- Periodos --}}
         @php
             $periodosData = [

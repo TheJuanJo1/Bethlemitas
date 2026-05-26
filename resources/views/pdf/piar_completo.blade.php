@@ -160,27 +160,33 @@
 
     <table>
         <tr>
-            <td colspan="2" class="titulo-seccion">1. Características del Estudiante</td>
+            <th class="titulo-seccion">1. Características del Estudiante</th>
+        </tr>
+    </table>
+
+    <table style="margin-top: 5px; table-layout: fixed; width: 100%;">
+        <tr>
+            <th style="text-align: left; background: #f2f2f2; font-size: 9px; padding: 6px; line-height: 1.4; font-weight: bold;">
+                Descripción general del estudiante con énfasis en gustos e intereses o aspectos que le desagradan, expectativas del estudiante y la familia:
+            </th>
         </tr>
         <tr>
-            <td class="campo">Descripción</td>
-            <td class="caja-grande">{{ $piar->characteristics->descripcion_estudiante ?? '' }}</td>
+            <td style="padding: 8px; min-height: 80px; font-size: 10px; line-height: 1.4;">
+                {!! nl2br(e($piar->characteristics->descripcion_estudiante ?? '')) !!}
+            </td>
+        </tr>
+    </table>
+
+    <table style="margin-top: 10px; table-layout: fixed; width: 100%;">
+        <tr>
+            <th style="text-align: left; background: #f2f2f2; font-size: 9px; padding: 6px; line-height: 1.4; font-weight: bold;">
+                Descripción en términos de lo que hace, puede hacer o requiere apoyo el estudiante para favorecer su proceso educativo. Indique las habilidades, competencias, cualidades y aprendizajes con los que cuenta el estudiante para el grado en el que fue matriculado:
+            </th>
         </tr>
         <tr>
-            <td class="campo">Gustos e intereses</td>
-            <td class="caja-grande">{{ $piar->characteristics->gustos_intereses ?? '' }}</td>
-        </tr>
-        <tr>
-            <td class="campo">Expectativas familia</td>
-            <td class="caja-grande">{{ $piar->characteristics->expectativas_familia ?? '' }}</td>
-        </tr>
-        <tr>
-            <td class="campo">Habilidades</td>
-            <td class="caja-grande">{{ $piar->characteristics->habilidades ?? '' }}</td>
-        </tr>
-        <tr>
-            <td class="campo">Apoyos requeridos</td>
-            <td class="caja-grande">{{ $piar->characteristics->apoyos_requeridos ?? '' }}</td>
+            <td style="padding: 8px; min-height: 80px; font-size: 10px; line-height: 1.4;">
+                {!! nl2br(e($piar->characteristics->habilidades ?? '')) !!}
+            </td>
         </tr>
     </table>
     @php

@@ -165,19 +165,6 @@
             $fullPath = 'storage/' . $signaturePath;
         }
     @endphp
-    @if($signaturePath && file_exists(public_path($fullPath)))
-        <img src="{{ public_path($fullPath) }}" style="max-width: 150px; max-height: 80px; display: block; margin: 0 auto 5px; border-bottom: 1px solid #333; padding-bottom: 2px;">
-    @else
-        <div style="height: 60px; border-bottom: 1px solid #333; margin-bottom: 5px; display: flex; align-items: center; justify-content: center; color: #94a3b8; font-style: italic;">
-            Sin firma registrada
-        </div>
-    @endif
-    <div style="font-weight: bold; text-transform: uppercase; font-size: 9px;">
-        {{ $adj->teacher_name ?? 'DOCENTE' }} {{ $adj->teacher_last_name ?? '' }}
-    </div>
-    <div style="font-size: 8px; color: #64748b;">
-        Docente Responsable
-    </div>
 </div>
 @endforeach
 <div style="margin-top: 30px; font-size: 7px; color: #94a3b8; text-align: right;">

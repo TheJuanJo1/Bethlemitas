@@ -59,3 +59,7 @@
 {"sessionId":"99f4e2","runId":"updated","hypothesisId":"H1","location":"storePeriodo1","message":"redirecting","data":{"piar_id":1},"timestamp":1779477576425}
 {"sessionId":"99f4e2","runId":"pre-fix","hypothesisId":"H-create-1","location":"app\/Http\/Controllers\/PiarController.php:create","message":"PIAR create accessed by psico","data":{"student_id":2,"has_piar":false},"timestamp":1779711414884}
 {"sessionId":"99f4e2","runId":"updated","hypothesisId":"H1","location":"storePeriodo1","message":"redirecting","data":{"piar_id":2},"timestamp":1779727334238}
+{"sessionId":"99f4e2","runId":"updated","hypothesisId":"H1","location":"storePeriodo1","message":"redirecting","data":{"piar_id":2},"timestamp":1779802572507}
+{"sessionId":"99f4e2","runId":"pre-fix","hypothesisId":"H2","location":"app\/Http\/Controllers\/PiarController.php:storeEvaluacion","message":"storeEvaluacion called","data":{"piar_id":2,"period":1,"rows":1},"timestamp":1779802588837}
+{"sessionId":"99f4e2","runId":"pre-fix","hypothesisId":"H2","location":"app\/Http\/Controllers\/PiarController.php:storeEvaluacion","message":"storeEvaluacion redirecting to periodos","data":{"to":"piar.periodos","piar_id":2},"timestamp":1779802588844}
+{"sessionId":"99f4e2","runId":"pre-fix","hypothesisId":"H-create-1","location":"app\/Http\/Controllers\/PiarController.php:create","message":"PIAR create accessed by psico","data":{"student_id":3,"has_piar":false},"timestamp":1779808377350}

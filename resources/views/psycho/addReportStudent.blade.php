@@ -46,8 +46,8 @@
                             class="block w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-slate-700 focus:ring-4 focus:ring-indigo-50 focus:border-indigo-500 transition-all outline-none">
                     </div>
                     <div class="space-y-1">
-                        <label class="block text-[10px] font-bold text-slate-400 uppercase ml-1">N° Documento *</label>
-                        <input type="number" name="number_documment" value="{{ $info_student->number_documment }}" required
+                        <label class="block text-[10px] font-bold text-slate-400 uppercase ml-1">N° Documento</label>
+                        <input type="number" name="number_documment" value="{{ $info_student->number_documment }}"
                             class="block w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-slate-700 focus:ring-4 focus:ring-indigo-50 focus:border-indigo-500 transition-all outline-none">
                     </div>
                 </div>

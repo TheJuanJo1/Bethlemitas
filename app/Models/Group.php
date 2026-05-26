@@ -35,4 +35,10 @@ class Group extends Model
     {
         return $this->belongsToMany(Users_teacher::class, 'users_load_groups', 'id_group', 'id_user_teacher');
     }
+
+    // Relación con el docente director del grupo
+    public function director()
+    {
+        return $this->hasOne(Users_teacher::class, 'group_director');
+    }
 } 

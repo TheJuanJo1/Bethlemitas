@@ -133,12 +133,29 @@
                 </td>
                 <td colspan="2" class="border border-black p-2">
                     <div class="grid grid-cols-2 gap-x-4">
-                        @if(isset($docentes) && $docentes->count() > 0)
-                            @foreach($docentes as $docente)
+                        @php
+                            $shownItems = [];
+                            if ($director) {
+                                $shownItems[] = [
+                                    'name' => $director->name . ' ' . $director->last_name,
+                                    'role' => 'Director de Grupo'
+                                ];
+                            }
+                            foreach ($docentes as $doc) {
+                                if (!$director || $doc->id != $director->id) {
+                                    $shownItems[] = [
+                                        'name' => $doc->name . ' ' . $doc->last_name,
+                                        'role' => 'Docente de Área'
+                                    ];
+                                }
+                            }
+                        @endphp
+                        @if(count($shownItems) > 0)
+                            @foreach($shownItems as $item)
                                 <p class="text-[10px] border-b border-gray-100 py-1">
-                                    • {{ $docente->name }} 
+                                    • {{ $item['name'] }} 
                                     <span class="text-[8px] text-gray-500 italic">
-                                        ({{ $docente->id == $estudiante->id_teacher_director ? 'Director de Grupo' : 'Docente de Área' }})
+                                        ({{ $item['role'] }})
                                     </span>
                                 </p>
                             @endforeach
@@ -202,28 +219,50 @@
                     <p class="text-[8px]">{{ $estudiante->name }} {{ $estudiante->last_name }}</p>
                 </div>
 
-                @foreach($docentes as $doc)
+                @if($director)
                     @php
-                        // Intentamos buscar la firma en el perfil del docente o en sus registros de ajustes
-                        $signature = $doc->signature ?? \App\Models\PiarAdjustment::where('teacher_id', $doc->id)
+                        $sigDirector = $director->signature ?? \App\Models\PiarAdjustment::where('teacher_id', $director->id)
                             ->whereNotNull('teacher_signature')
                             ->latest()
                             ->value('teacher_signature');
                     @endphp
                     <div class="text-center">
                         <div class="border-b border-black w-full mb-1 h-16 flex flex-col items-center justify-end pb-1 overflow-hidden">
-                            @if($signature)
-                                {{-- Usamos Storage::url para obtener la ruta correcta --}}
-                                <img src="{{ asset('storage/' . $signature) }}" class="max-h-14 object-contain scale-125" alt="Firma">
+                            @if($sigDirector)
+                                <img src="{{ asset('storage/' . $sigDirector) }}" class="max-h-14 object-contain scale-125" alt="Firma">
                             @else
                                 <div class="text-[7px] text-gray-300 italic mb-1 uppercase">Firma Digital no cargada</div>
                             @endif
                         </div>
                         <p class="text-[9px] font-bold uppercase leading-none mt-1">
-                            {{ $doc->id == $estudiante->id_teacher_director ? 'Director de Grupo' : 'Docente' }}
+                            Director de Grupo
+                        </p>
+                        <p class="text-[8px] font-bold text-gray-900">{{ $director->name }} {{ $director->last_name }}</p>
+                    </div>
+                @endif
+
+                @foreach($docentes as $doc)
+                    @if(!$director || $doc->id != $director->id)
+                    @php
+                        $sigDocente = $doc->signature ?? \App\Models\PiarAdjustment::where('teacher_id', $doc->id)
+                            ->whereNotNull('teacher_signature')
+                            ->latest()
+                            ->value('teacher_signature');
+                    @endphp
+                    <div class="text-center">
+                        <div class="border-b border-black w-full mb-1 h-16 flex flex-col items-center justify-end pb-1 overflow-hidden">
+                            @if($sigDocente)
+                                <img src="{{ asset('storage/' . $sigDocente) }}" class="max-h-14 object-contain scale-125" alt="Firma">
+                            @else
+                                <div class="text-[7px] text-gray-300 italic mb-1 uppercase">Firma Digital no cargada</div>
+                            @endif
+                        </div>
+                        <p class="text-[9px] font-bold uppercase leading-none mt-1">
+                            Docente
                         </p>
                         <p class="text-[8px] font-bold text-gray-900">{{ $doc->name }} {{ $doc->last_name }}</p>
                     </div>
+                    @endif
                 @endforeach
                 <div class="text-center">
                     <div class="border-b border-black w-full mb-1 h-8"></div>

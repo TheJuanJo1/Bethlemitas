@@ -224,30 +224,15 @@
                 <i class="bi bi-clipboard-data"></i>
                 <span>Características del Estudiante</span>
             </div>
-            <div class="fields-grid">
-                <div class="form-group">
-                    <label>Descripción del estudiante</label>
-                    <textarea name="descripcion" class="form-control textarea-small" placeholder="Personalidad, comportamiento general..." required>{{ old('descripcion') }}</textarea>
-                </div>
-
-                <div class="form-group">
-                    <label>Gustos e intereses</label>
-                    <textarea name="gustos" class="form-control textarea-small" placeholder="¿Qué le motiva al estudiante?" required>{{ old('gustos') }}</textarea>
-                </div>
-
-                <div class="form-group">
-                    <label>Expectativas de la familia</label>
-                    <textarea name="expectativas" class="form-control textarea-small" placeholder="¿Qué espera la familia lograr?" required>{{ old('expectativas') }}</textarea>
-                </div>
-
-                <div class="form-group">
-                    <label>Habilidades</label>
-                    <textarea name="habilidades" class="form-control textarea-small" placeholder="Fortalezas académicas o sociales..." required>{{ old('habilidades') }}</textarea>
-                </div>
-
+            <div class="fields-grid" style="grid-template-columns: 1fr;">
                 <div class="form-group" style="grid-column: span 2;">
-                    <label>Apoyos requeridos</label>
-                    <textarea name="apoyos" class="form-control textarea-small" placeholder="¿Qué herramientas o personas necesita para su proceso?" required>{{ old('apoyos') }}</textarea>
+                    <label style="line-height: 1.4; color: #1e293b;">1. Descripción general del estudiante con énfasis en gustos e intereses o aspectos que le desagradan, expectativas del estudiante y la familia:</label>
+                    <textarea name="descripcion" class="form-control" style="height: 120px; resize: vertical;" placeholder="Escriba la descripción general, gustos, intereses, aspectos que le desagradan y expectativas..." required>{{ old('descripcion') }}</textarea>
+                </div>
+
+                <div class="form-group" style="grid-column: span 2; margin-top: 1rem;">
+                    <label style="line-height: 1.4; color: #1e293b;">2. Descripción en términos de lo que hace, puede hacer o requiere apoyo el estudiante para favorecer su proceso educativo. Indique las habilidades, competencias, cualidades y aprendizajes con los que cuenta el estudiante para el grado en el que fue matriculado:</label>
+                    <textarea name="habilidades" class="form-control" style="height: 120px; resize: vertical;" placeholder="Escriba lo que hace, puede hacer, requiere apoyo, habilidades, competencias, cualidades y aprendizajes..." required>{{ old('habilidades') }}</textarea>
                 </div>
             </div>
         </div>

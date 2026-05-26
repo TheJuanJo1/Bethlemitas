@@ -23,8 +23,8 @@
     </div>
     <!-- Documento -->
     <div class="space-y-1.5">
-        <label for="number_documment" class="block text-xs font-bold text-slate-500 uppercase ml-1">N° Documento *</label>
-        <input type="number" id="number_documment" name="number_documment" value="{{ old('number_documment', optional($student)->number_documment) }}" required
+        <label for="number_documment" class="block text-xs font-bold text-slate-500 uppercase ml-1">N° Documento</label>
+        <input type="number" id="number_documment" name="number_documment" value="{{ old('number_documment', optional($student)->number_documment) }}"
             class="block w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-700 focus:ring-2 focus:ring-indigo-500 @error('number_documment') border-red-500 @enderror" />
         @error('number_documment')
             <p class="mt-1 text-[11px] text-red-500 font-medium italic">Documento inválido o ya registrado.</p>

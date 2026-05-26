@@ -73,11 +73,11 @@
                     />
                 </div>
                 <div>
-                    <label for="number_documment" class="block text-xs font-bold text-gray-600 uppercase mb-1">N° documento *</label>
+                    <label for="number_documment" class="block text-xs font-bold text-gray-600 uppercase mb-1">N° documento</label>
                     <input
                         type="number" id="number_documment" name="number_documment" value="{{ $info_student->number_documment }}"
                         class="block w-full p-2.5 bg-gray-50 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all font-mono"
-                        min="1" required
+                        min="1"
                     />
                     @error('number_documment')
                         <p class="mt-1 text-[10px] text-red-600 font-bold italic">{{ $message }}</p>

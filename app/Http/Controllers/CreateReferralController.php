@@ -35,7 +35,7 @@ class CreateReferralController extends Controller
         $state = State::where('state', 'activo')->firstOrFail(); // Obtener el estado 'activo'
 
         $request->validate([
-            'number_documment' => 'required|digits_between:1,20',
+            'number_documment' => 'nullable|digits_between:1,20',
             'name' => 'required',
             'last_name' => 'required',
             'degree' => 'required',
@@ -47,7 +47,10 @@ class CreateReferralController extends Controller
         ]);
 
         $input_number_documment = $request->number_documment;
-        $exist_student = Users_student::with('degree', 'group')->where('number_documment', $input_number_documment)->first();
+        $exist_student = null;
+        if (!empty($input_number_documment)) {
+            $exist_student = Users_student::with('degree', 'group')->where('number_documment', $input_number_documment)->first();
+        }
 
         $degreeLoad = Users_load_degree::where('id_degree', $request->input('degree'))->first();
 
@@ -172,7 +175,7 @@ class CreateReferralController extends Controller
     public function update_student(Request $request, string $id)
     {
         $request->validate([
-            'number_documment' => 'required|digits_between:1,20|unique:users_students,number_documment,' . $id,
+            'number_documment' => 'nullable|digits_between:1,20|unique:users_students,number_documment,' . $id,
             'name' => 'required|string',
             'last_name' => 'required|string',
             'degree' => 'required',
