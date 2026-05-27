@@ -190,11 +190,16 @@
                                         ->whereNotNull('teacher_signature')
                                         ->latest()
                                         ->value('teacher_signature');
+                                    
+                                    $directorSigUrl = '';
+                                    if ($sigDirector) {
+                                        $directorSigUrl = str_contains($sigDirector, 'Imagenes_Firma') ? asset($sigDirector) : asset('storage/' . $sigDirector);
+                                    }
                                 @endphp
                                 <div class="text-center">
                                     <div class="border-b border-black w-full h-16 flex flex-col items-center justify-end pb-1 overflow-hidden">
                                         @if($sigDirector)
-                                            <img src="{{ asset('storage/' . $sigDirector) }}" class="max-h-14 object-contain scale-125">
+                                            <img src="{{ $directorSigUrl }}" class="max-h-14 object-contain scale-125">
                                         @else
                                             <div class="h-4 text-[6px] text-gray-300 italic">SIN FIRMA DIGITAL</div>
                                         @endif
@@ -213,11 +218,16 @@
                                         ->whereNotNull('teacher_signature')
                                         ->latest()
                                         ->value('teacher_signature');
+                                    
+                                    $docenteSigUrl = '';
+                                    if ($sigDocente) {
+                                        $docenteSigUrl = str_contains($sigDocente, 'Imagenes_Firma') ? asset($sigDocente) : asset('storage/' . $sigDocente);
+                                    }
                                 @endphp
                                 <div class="text-center">
                                     <div class="border-b border-black w-full h-16 flex flex-col items-center justify-end pb-1 overflow-hidden">
                                         @if($sigDocente)
-                                            <img src="{{ asset('storage/' . $sigDocente) }}" class="max-h-14 object-contain scale-125">
+                                            <img src="{{ $docenteSigUrl }}" class="max-h-14 object-contain scale-125">
                                         @else
                                             <div class="h-4 text-[6px] text-gray-300 italic">SIN FIRMA DIGITAL</div>
                                         @endif

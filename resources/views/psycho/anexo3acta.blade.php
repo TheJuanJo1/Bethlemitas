@@ -281,11 +281,16 @@
                             ->whereNotNull('teacher_signature')
                             ->latest()
                             ->value('teacher_signature');
+                        
+                        $directorSigUrl = '';
+                        if ($sigDirector) {
+                            $directorSigUrl = str_contains($sigDirector, 'Imagenes_Firma') ? asset($sigDirector) : asset('storage/' . $sigDirector);
+                        }
                     @endphp
                     <div class="text-center">
                         <div class="border-b border-black w-full mb-1 h-16 flex flex-col items-center justify-end pb-1 overflow-hidden">
                             @if($sigDirector)
-                                <img src="{{ asset('storage/' . $sigDirector) }}" class="max-h-14 object-contain scale-125" alt="Firma">
+                                <img src="{{ $directorSigUrl }}" class="max-h-14 object-contain scale-125" alt="Firma">
                             @else
                                 <div class="text-[7px] text-gray-300 italic mb-1 uppercase">Firma Digital no cargada</div>
                             @endif
@@ -304,11 +309,16 @@
                             ->whereNotNull('teacher_signature')
                             ->latest()
                             ->value('teacher_signature');
+                        
+                        $docenteSigUrl = '';
+                        if ($sigDocente) {
+                            $docenteSigUrl = str_contains($sigDocente, 'Imagenes_Firma') ? asset($sigDocente) : asset('storage/' . $sigDocente);
+                        }
                     @endphp
                     <div class="text-center">
                         <div class="border-b border-black w-full mb-1 h-16 flex flex-col items-center justify-end pb-1 overflow-hidden">
                             @if($sigDocente)
-                                <img src="{{ asset('storage/' . $sigDocente) }}" class="max-h-14 object-contain scale-125" alt="Firma">
+                                <img src="{{ $docenteSigUrl }}" class="max-h-14 object-contain scale-125" alt="Firma">
                             @else
                                 <div class="text-[7px] text-gray-300 italic mb-1 uppercase">Firma Digital no cargada</div>
                             @endif
