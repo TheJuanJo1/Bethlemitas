@@ -26,7 +26,7 @@
             ">
                 {{ session('error') }}
             </div>
-        @endi
+        @endif
         <p class="text-slate-500 mt-1">Registra personal docente o psicoorientador.</p>
     </div>
 
