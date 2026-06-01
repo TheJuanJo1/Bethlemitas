@@ -52,10 +52,6 @@
         ANEXO 2
     </h1>
 
-    @php
-        $primerPeriodo = $periodosLista[0]['data'] ?? collect();
-    @endphp
-
     <table>
         <tr>
             <td class="campo">Fecha de elaboración:</td>
@@ -70,12 +66,14 @@
             <td>Diurna</td>
         </tr>
         <tr>
-            <td class="campo">Docentes que elaboran:</td>
-            <td colspan="3">
-                @if($primerPeriodo->count() > 0)
-                    {{ $primerPeriodo->first()->teacher->name ?? '' }}
-                    {{ $primerPeriodo->first()->teacher->last_name ?? '' }}
-                @endif
+            <td class="campo" style="vertical-align: top;">Docentes que elaboran:</td>
+            <td colspan="3" style="font-size: 10px; line-height: 1.4;">
+                @forelse($docentesElaboran ?? [] as $item)
+                    <strong>{{ $item['teacher']->name }} {{ $item['teacher']->last_name }}</strong>
+                    — Docente de {{ implode(', ', $item['areas']) }}<br>
+                @empty
+                    <span style="font-style: italic; color: #666;">Sin docentes registrados en los periodos del acta.</span>
+                @endforelse
             </td>
         </tr>
     </table>

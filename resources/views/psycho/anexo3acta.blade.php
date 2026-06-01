@@ -141,11 +141,21 @@
                                     'role' => 'Director de Grupo'
                                 ];
                             }
+                            $psicoEquipo = \App\Services\PiarFirmasResolver::psicorientadoraParaEstudiante($estudiante->id);
+                            if ($psicoEquipo) {
+                                $shownItems[] = [
+                                    'name' => $psicoEquipo->name . ' ' . $psicoEquipo->last_name,
+                                    'role' => 'Docente Orientadora'
+                                ];
+                            }
                             foreach ($docentes as $doc) {
-                                if (!$director || $doc->id != $director->id) {
+                                if ((!$director || $doc->id != $director->id) && (!$psicoEquipo || $doc->id != $psicoEquipo->id)) {
+                                    $areasDoc = $adjustments->where('teacher_id', $doc->id)->pluck('area')->filter()->unique()->values();
                                     $shownItems[] = [
                                         'name' => $doc->name . ' ' . $doc->last_name,
-                                        'role' => 'Docente de Área'
+                                        'role' => $areasDoc->isNotEmpty()
+                                            ? 'Docente de ' . $areasDoc->implode(', ')
+                                            : 'Docente de área'
                                     ];
                                 }
                             }
@@ -261,82 +271,7 @@
             </table>
         </div>
 
-        <div class="mt-12 no-break">
-            <div class="grid grid-cols-2 gap-x-16 gap-y-12">
-                <div class="text-center">
-                    <div class="border-b border-black w-full mb-1 h-8"></div>
-                    <p class="text-[9px] font-bold uppercase">Padre de Familia / Acudiente</p>
-                    <p id="acudiente_label" class="text-[8px] italic">{{ $estudiante->acudiente ?? '________________' }}</p>
-                </div>
-
-                <div class="text-center">
-                    <div class="border-b border-black w-full mb-1 h-8"></div>
-                    <p class="text-[9px] font-bold uppercase">Firma del Estudiante</p>
-                    <p class="text-[8px]">{{ $estudiante->name }} {{ $estudiante->last_name }}</p>
-                </div>
-
-                @if($director)
-                    @php
-                        $sigDirector = $director->signature ?? \App\Models\PiarAdjustment::where('teacher_id', $director->id)
-                            ->whereNotNull('teacher_signature')
-                            ->latest()
-                            ->value('teacher_signature');
-                        
-                        $directorSigUrl = '';
-                        if ($sigDirector) {
-                            $directorSigUrl = str_contains($sigDirector, 'Imagenes_Firma') ? asset($sigDirector) : asset('storage/' . $sigDirector);
-                        }
-                    @endphp
-                    <div class="text-center">
-                        <div class="border-b border-black w-full mb-1 h-16 flex flex-col items-center justify-end pb-1 overflow-hidden">
-                            @if($sigDirector)
-                                <img src="{{ $directorSigUrl }}" class="max-h-14 object-contain scale-125" alt="Firma">
-                            @else
-                                <div class="text-[7px] text-gray-300 italic mb-1 uppercase">Firma Digital no cargada</div>
-                            @endif
-                        </div>
-                        <p class="text-[9px] font-bold uppercase leading-none mt-1">
-                            Director de Grupo
-                        </p>
-                        <p class="text-[8px] font-bold text-gray-900">{{ $director->name }} {{ $director->last_name }}</p>
-                    </div>
-                @endif
-
-                @foreach($docentes as $doc)
-                    @if(!$director || $doc->id != $director->id)
-                    @php
-                        $sigDocente = $doc->signature ?? \App\Models\PiarAdjustment::where('teacher_id', $doc->id)
-                            ->whereNotNull('teacher_signature')
-                            ->latest()
-                            ->value('teacher_signature');
-                        
-                        $docenteSigUrl = '';
-                        if ($sigDocente) {
-                            $docenteSigUrl = str_contains($sigDocente, 'Imagenes_Firma') ? asset($sigDocente) : asset('storage/' . $sigDocente);
-                        }
-                    @endphp
-                    <div class="text-center">
-                        <div class="border-b border-black w-full mb-1 h-16 flex flex-col items-center justify-end pb-1 overflow-hidden">
-                            @if($sigDocente)
-                                <img src="{{ $docenteSigUrl }}" class="max-h-14 object-contain scale-125" alt="Firma">
-                            @else
-                                <div class="text-[7px] text-gray-300 italic mb-1 uppercase">Firma Digital no cargada</div>
-                            @endif
-                        </div>
-                        <p class="text-[9px] font-bold uppercase leading-none mt-1">
-                            Docente
-                        </p>
-                        <p class="text-[8px] font-bold text-gray-900">{{ $doc->name }} {{ $doc->last_name }}</p>
-                    </div>
-                    @endif
-                @endforeach
-                <div class="text-center">
-                    <div class="border-b border-black w-full mb-1 h-8"></div>
-                    <p class="text-[9px] font-bold uppercase">Directivo Docente / Rectoría</p>
-                    <p class="text-[8px]">I.E. Bethlemitas</p>
-                </div>
-            </div>
-        </div>
+        @include('psycho.partials.anexo3_firmas', ['firmasAnexo3' => $firmasAnexo3])
 
         <div class="mt-16 pt-2 border-t border-gray-300 text-center opacity-70">
             <p class="text-[8px] font-bold italic">V14.16/02/2018. - Ministerio de Educación Nacional – Decreto 1421 de 2017</p>

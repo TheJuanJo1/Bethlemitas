@@ -68,8 +68,12 @@
                     if ($director) {
                         $nombres[] = $director->name.' '.$director->last_name.' (Dir. Grupo)';
                     }
+                    $psicoEquipo = \App\Services\PiarFirmasResolver::psicorientadoraParaEstudiante($estudiante->id);
+                    if ($psicoEquipo) {
+                        $nombres[] = $psicoEquipo->name.' '.$psicoEquipo->last_name.' (Psicoorientación)';
+                    }
                     foreach ($bloque['docentes'] as $doc) {
-                        if (!$director || $doc->id != $director->id) {
+                        if ((!$director || $doc->id != $director->id) && (!$psicoEquipo || $doc->id != $psicoEquipo->id)) {
                             $nombres[] = $doc->name.' '.$doc->last_name.' (Docente)';
                         }
                     }
@@ -125,46 +129,7 @@
         @endforelse
     </table>
 
-    <table class="firma-grid no-break" style="margin-top: 20px; border: none;">
-        <tr>
-            <td>
-                <div class="firma-box"></div>
-                <div class="firma-label">Firma del Padre / Acudiente</div>
-                <div style="font-size: 8px;">{{ $familiar_manual ?? $estudiante->acudiente }}</div>
-            </td>
-            <td>
-                <div class="firma-box"></div>
-                <div class="firma-label">Firma del Estudiante</div>
-                <div style="font-size: 8px;">{{ $estudiante->name }} {{ $estudiante->last_name }}</div>
-            </td>
-        </tr>
-        @foreach(array_chunk($bloque['firmas'], 2) as $filaFirmas)
-        <tr>
-            @foreach($filaFirmas as $firma)
-            <td>
-                <div class="firma-box">
-                    @if($firma['image'])
-                        <img src="{{ $firma['image'] }}" alt="">
-                    @else
-                        <span style="font-size: 7px; color: #999;">SIN FIRMA DIGITAL</span>
-                    @endif
-                </div>
-                <div class="firma-label">{{ $firma['role'] }}: {{ $firma['name'] }}</div>
-                <div style="font-size: 8px; font-style: italic;">Firma del Profesional</div>
-            </td>
-            @endforeach
-            @if(count($filaFirmas) === 1)<td></td>@endif
-        </tr>
-        @endforeach
-        <tr>
-            <td>
-                <div class="firma-box"></div>
-                <div class="firma-label">Directivo Docente / Rectoría</div>
-                <div style="font-size: 8px;">I.E. Bethlemitas</div>
-            </td>
-            <td></td>
-        </tr>
-    </table>
+    @include('pdf.partials.anexo3_firmas', ['firmasAnexo3' => $bloque['firmasAnexo3']])
 
     <p class="text-center" style="font-size: 8px; margin-top: 16px;">V14.16/02/2018. - Ministerio de Educación Nacional – Decreto 1421 de 2017</p>
 @endforeach

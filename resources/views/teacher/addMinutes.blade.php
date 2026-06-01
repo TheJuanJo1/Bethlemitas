@@ -95,11 +95,7 @@
                                             <i class="bi bi-journal-check mr-1 md:mr-1.5"></i>
                                             Periodos
                                         </a>
-                                        <a href="{{ route('piar.pdf',$student->piar->id) }}" target="_blank"
-                                           class="inline-flex items-center justify-center px-2.5 py-1.5 md:px-3 md:py-2 text-[10px] md:text-xs font-bold text-white bg-emerald-600 rounded-lg hover:bg-emerald-700 shadow-sm transition-all btn-transition">
-                                            <i class="bi bi-file-earmark-pdf mr-1 md:mr-1.5"></i>
-                                            Descargar
-                                        </a>
+                                        <x-piar-acta-dropdown :piar-id="$student->piar->id" />
                                     @else
                                         <span class="inline-flex items-center justify-center px-3 py-1.5 md:px-4 md:py-2 rounded-lg bg-amber-50 text-amber-700 text-[10px] font-bold border border-amber-200">
                                             <i class="bi bi-hourglass-split mr-1 md:mr-1.5 animate-pulse"></i>

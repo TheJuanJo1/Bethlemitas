@@ -127,12 +127,17 @@
             <td>Diurna</td>
         </tr>
         <tr>
-            <td class="campo">Docentes que elaboran:</td>
-            <td colspan="3">
-                @if($periodo1->count() > 0)
-                    {{ $periodo1->first()->teacher->name ?? '' }}
-                    {{ $periodo1->first()->teacher->last_name ?? '' }}
-                @endif
+            <td class="campo" style="vertical-align: top;">Docentes que elaboran:</td>
+            <td colspan="3" style="font-size: 10px; line-height: 1.4;">
+                @php
+                    $docentesElaboranCompleto = \App\Services\PiarFirmasResolver::docentesConAreas($piar->id, [1, 2, 3]);
+                @endphp
+                @forelse($docentesElaboranCompleto as $item)
+                    <strong>{{ $item['teacher']->name }} {{ $item['teacher']->last_name }}</strong>
+                    — Docente de {{ implode(', ', $item['areas']) }}<br>
+                @empty
+                    Sin docentes registrados.
+                @endforelse
             </td>
         </tr>
     </table>

@@ -86,9 +86,20 @@ class PiarActaPdfService
             return null;
         }
 
-        $fullPath = Storage::disk('public')->path($report->annex_one);
+        $relative = ltrim(str_replace('\\', '/', $report->annex_one), '/');
 
-        return is_file($fullPath) ? $fullPath : null;
+        $candidates = [
+            Storage::disk('public')->path($relative),
+            storage_path('app/public/'.$relative),
+        ];
+
+        foreach ($candidates as $fullPath) {
+            if (is_file($fullPath)) {
+                return $fullPath;
+            }
+        }
+
+        return null;
     }
 
   /**
@@ -117,6 +128,7 @@ class PiarActaPdfService
             'piar' => $piar,
             'periodosLista' => $periodosLista,
             'mostrarCaracterizacion' => true,
+            'docentesElaboran' => PiarFirmasResolver::docentesConAreas($piar->id, $periodos),
         ])->output();
     }
 
@@ -145,7 +157,14 @@ class PiarActaPdfService
                 'periodo' => $p,
                 'docentes' => $docentes,
                 'familyActivities' => $familyActivities,
-                'firmas' => $this->buildFirmasData($director, $docentes, $piar->id, $p),
+                'firmasAnexo3' => PiarFirmasResolver::firmasAnexo3(
+                    $estudiante,
+                    $director,
+                    $piar->id,
+                    $p,
+                    $estudiante->acudiente,
+                    true
+                ),
             ];
         }
 
@@ -158,78 +177,6 @@ class PiarActaPdfService
             'parentesco_manual' => $estudiante->parentesco_acudiente,
             'logoPath' => PdfImageHelper::institutionalLogoDataUri(),
         ])->output();
-    }
-
-    /**
-     * @param  \Illuminate\Support\Collection<int, \App\Models\Users_teacher>  $docentes
-     * @return array<int, array{name: string, role: string, image: ?string}>
-     */
-    private function buildFirmasData($director, $docentes, int $piarId, int $period): array
-    {
-        $firmas = [];
-
-        if ($director) {
-            $firmas[] = [
-                'name' => trim($director->name.' '.$director->last_name),
-                'role' => 'Dir. Grupo',
-                'image' => $this->resolveSignatureDataUri($director, $piarId, $period),
-            ];
-        }
-
-        foreach ($docentes as $docente) {
-            if ($director && $docente->id === $director->id) {
-                continue;
-            }
-
-            $firmas[] = [
-                'name' => trim($docente->name.' '.$docente->last_name),
-                'role' => 'Docente',
-                'image' => $this->resolveSignatureDataUri($docente, $piarId, $period),
-            ];
-        }
-
-        return $firmas;
-    }
-
-    private function resolveSignatureDataUri(Users_teacher $teacher, int $piarId, int $period): ?string
-    {
-        $sig = PiarAdjustment::where('piar_id', $piarId)
-            ->where('period', $period)
-            ->where('teacher_id', $teacher->id)
-            ->whereNotNull('teacher_signature')
-            ->value('teacher_signature')
-            ?? $teacher->signature;
-
-        $filePath = $this->resolveSignatureFilePath($sig);
-
-        return $filePath ? PdfImageHelper::dataUriForDompdf($filePath) : null;
-    }
-
-    private function resolveSignatureFilePath(?string $sig): ?string
-    {
-        if (! $sig) {
-            return null;
-        }
-
-        $sig = str_replace('\\', '/', ltrim($sig, '/'));
-
-        $candidates = [];
-
-        if (str_contains($sig, 'Imagenes_Firma')) {
-            $candidates[] = public_path($sig);
-        } else {
-            $candidates[] = Storage::disk('public')->path($sig);
-            $candidates[] = storage_path('app/public/'.$sig);
-            $candidates[] = public_path($sig);
-        }
-
-        foreach ($candidates as $path) {
-            if (is_file($path)) {
-                return $path;
-            }
-        }
-
-        return null;
     }
 
     private function appendPdfFile(Fpdi $merger, string $filePath): void
