@@ -17,6 +17,14 @@
     .btn-transition:hover {
         transform: scale(1.05);
     }
+    details summary { list-style: none; }
+    table tbody td { overflow: visible; }
+    .acta-dropdown .acta-submenu { display: none; }
+    .acta-dropdown[open] .acta-submenu { display: flex; }
+    .acta-dropdown[open] > summary {
+        background-color: #a7f3d0;
+        border-color: #059669;
+    }
 </style>
 @endsection
 
@@ -50,7 +58,7 @@
         </div>
 
         <!-- Contenedor de Tabla con Scroll -->
-        <div class="flex-grow overflow-auto">
+        <div class="flex-grow overflow-auto overflow-x-auto">
             <table class="w-full border-collapse table-auto text-xs md:text-sm">
                 <thead>
                     <tr class="text-gray-700 uppercase bg-gray-50 border-b">
@@ -102,8 +110,8 @@
                             @endif
                         </td>
 
-                        <td class="px-3 py-4 text-center bg-gray-50/50">
-                            <div class="flex flex-wrap justify-center gap-1.5 max-w-[150px] mx-auto">
+                        <td class="px-3 py-4 text-center bg-gray-50/50 overflow-visible relative">
+                            <div class="flex flex-wrap justify-center gap-1.5 max-w-[150px] mx-auto overflow-visible">
                                 <a href="{{ route('piar.create', $student->id) }}"
                                    class="px-2.5 py-1 text-[10px] font-bold text-amber-700 bg-amber-100 rounded border border-amber-200 hover:bg-amber-200 btn-transition"
                                    title="Crear PIAR">
@@ -120,17 +128,10 @@
                                     </span>
                                 @endif
 
-                                @if($student->piar && $student->piar->characteristics)
-                                    <a href="{{ route('piar.pdf',$student->piar->id) }}"
-                                       target="_blank"
-                                       class="px-2.5 py-1 text-[10px] font-bold text-emerald-700 bg-emerald-100 rounded border border-emerald-200 hover:bg-emerald-200 btn-transition"
-                                       title="Descargar Acta">
-                                       ACTA </a>
-                                @else
-                                    <span class="px-2.5 py-1 text-[10px] font-bold text-gray-400 bg-gray-50 rounded border border-gray-100 opacity-60 cursor-not-allowed">
-                                       ACTA
-                                    </span>
-                                @endif
+                                <x-piar-acta-dropdown
+                                    :piar-id="$student->piar?->id"
+                                    :disabled="!($student->piar && $student->piar->characteristics)"
+                                />
                             </div>
                         </td>
 

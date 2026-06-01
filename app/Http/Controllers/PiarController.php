@@ -13,9 +13,15 @@ use App\Models\PiarAdjustment;
 use App\Models\Users_student;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Services\PiarActaPdfService;
 
 class PiarController extends Controller
 {
+    public function pdfActa($piar, $periodo, PiarActaPdfService $actaPdfService)
+    {
+        return $actaPdfService->download((int) $piar, $periodo);
+    }
+
    public function pdf($id)
     {
         $piar = Piar::with([

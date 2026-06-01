@@ -147,6 +147,9 @@ Route::middleware([PreventBackHistoryMiddleware::class])->group(function () {
 
             // PDF completo PIAR
             Route::get('/piar/{id}/pdf', [PiarController::class, 'pdf'])->name('piar.pdf');
+            Route::get('/piar/{piar}/pdf/acta/{periodo}', [PiarController::class, 'pdfActa'])
+                ->where('periodo', '1|2|3|todos')
+                ->name('piar.pdf.acta');
         });
 
         /*

@@ -204,10 +204,9 @@
             <div style="font-size: 1.25rem; font-weight: 800;">{{ $piar->student->name }} {{ $piar->student->last_name }}</div>
             
             @if($piar->characteristics)
-                <a href="{{ route('piar.pdf', $piar->id) }}" target="_blank" 
-                   class="inline-flex items-center mt-2 px-3 py-1 bg-emerald-500 hover:bg-emerald-600 text-white text-[10px] font-bold rounded-lg transition-colors shadow-sm">
-                    <i class="bi bi-file-earmark-pdf-fill mr-1"></i> ACTA COMPLETA
-                </a>
+                <div class="mt-2">
+                    <x-piar-acta-dropdown :piar-id="$piar->id" />
+                </div>
             @endif
         </div>
         <div class="sm:text-right">
