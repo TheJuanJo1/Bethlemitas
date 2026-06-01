@@ -38,7 +38,7 @@
 </head>
 <body>
     <div class="header">
-        @php $logoHeader = \App\Support\PdfImageHelper::institutionalLogoPath(); @endphp
+        @php $logoHeader = \App\Support\PdfImageHelper::institutionalLogoDataUri(); @endphp
         @if($logoHeader)
             <img src="{{ $logoHeader }}" alt="">
         @endif

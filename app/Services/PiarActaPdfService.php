@@ -145,7 +145,7 @@ class PiarActaPdfService
                 'periodo' => $p,
                 'docentes' => $docentes,
                 'familyActivities' => $familyActivities,
-                'firmas' => $this->buildFirmasData($director, $docentes),
+                'firmas' => $this->buildFirmasData($director, $docentes, $piar->id, $p),
             ];
         }
 
@@ -156,7 +156,7 @@ class PiarActaPdfService
             'bloques' => $bloques,
             'familiar_manual' => $estudiante->acudiente,
             'parentesco_manual' => $estudiante->parentesco_acudiente,
-            'logoPath' => PdfImageHelper::institutionalLogoPath(),
+            'logoPath' => PdfImageHelper::institutionalLogoDataUri(),
         ])->output();
     }
 
@@ -164,7 +164,7 @@ class PiarActaPdfService
      * @param  \Illuminate\Support\Collection<int, \App\Models\Users_teacher>  $docentes
      * @return array<int, array{name: string, role: string, image: ?string}>
      */
-    private function buildFirmasData($director, $docentes): array
+    private function buildFirmasData($director, $docentes, int $piarId, int $period): array
     {
         $firmas = [];
 
@@ -172,13 +172,7 @@ class PiarActaPdfService
             $firmas[] = [
                 'name' => trim($director->name.' '.$director->last_name),
                 'role' => 'Dir. Grupo',
-                'image' => $this->resolveSignaturePath(
-                    $director->signature
-                    ?? PiarAdjustment::where('teacher_id', $director->id)
-                        ->whereNotNull('teacher_signature')
-                        ->latest()
-                        ->value('teacher_signature')
-                ),
+                'image' => $this->resolveSignatureDataUri($director, $piarId, $period),
             ];
         }
 
@@ -190,32 +184,52 @@ class PiarActaPdfService
             $firmas[] = [
                 'name' => trim($docente->name.' '.$docente->last_name),
                 'role' => 'Docente',
-                'image' => $this->resolveSignaturePath(
-                    $docente->signature
-                    ?? PiarAdjustment::where('teacher_id', $docente->id)
-                        ->whereNotNull('teacher_signature')
-                        ->latest()
-                        ->value('teacher_signature')
-                ),
+                'image' => $this->resolveSignatureDataUri($docente, $piarId, $period),
             ];
         }
 
         return $firmas;
     }
 
-    private function resolveSignaturePath(?string $sig): ?string
+    private function resolveSignatureDataUri(Users_teacher $teacher, int $piarId, int $period): ?string
+    {
+        $sig = PiarAdjustment::where('piar_id', $piarId)
+            ->where('period', $period)
+            ->where('teacher_id', $teacher->id)
+            ->whereNotNull('teacher_signature')
+            ->value('teacher_signature')
+            ?? $teacher->signature;
+
+        $filePath = $this->resolveSignatureFilePath($sig);
+
+        return $filePath ? PdfImageHelper::dataUriForDompdf($filePath) : null;
+    }
+
+    private function resolveSignatureFilePath(?string $sig): ?string
     {
         if (! $sig) {
             return null;
         }
 
+        $sig = str_replace('\\', '/', ltrim($sig, '/'));
+
+        $candidates = [];
+
         if (str_contains($sig, 'Imagenes_Firma')) {
-            $path = public_path(ltrim(str_replace('\\', '/', $sig), '/'));
+            $candidates[] = public_path($sig);
         } else {
-            $path = storage_path('app/public/'.ltrim(str_replace('\\', '/', $sig), '/'));
+            $candidates[] = Storage::disk('public')->path($sig);
+            $candidates[] = storage_path('app/public/'.$sig);
+            $candidates[] = public_path($sig);
         }
 
-        return PdfImageHelper::pathForDompdf(is_file($path) ? $path : null);
+        foreach ($candidates as $path) {
+            if (is_file($path)) {
+                return $path;
+            }
+        }
+
+        return null;
     }
 
     private function appendPdfFile(Fpdi $merger, string $filePath): void
