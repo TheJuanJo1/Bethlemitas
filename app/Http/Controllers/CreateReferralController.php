@@ -164,7 +164,7 @@ class CreateReferralController extends Controller
     public function edit_student(string $id)
     {
 
-        $student = Users_student::find($id);
+        $student = Users_student::with('latestReferral')->findOrFail($id);
         $groups = Group::orderByRaw('CAST(`group` AS UNSIGNED), `group`')->get();
         $degrees = Degree::orderByRaw('CAST(`degree` AS UNSIGNED), `degree`')->get();
 
@@ -181,6 +181,9 @@ class CreateReferralController extends Controller
             'degree' => 'required',
             'group' => 'required',
             'age' => 'nullable|integer|min:0',  // Validación de edad si se ingresa
+            'reason_referral' => 'required|string',
+            'observation' => 'required|string',
+            'strategies' => 'required|string',
         ]);
 
         $student = Users_student::find($id);
@@ -214,11 +217,36 @@ class CreateReferralController extends Controller
         if ($huboCambios) {
 
             $student->update($nuevos_datos);
-
-            return redirect()->back()->with('success', 'Usuario editado correctamente.');
-        } else {
-            return redirect()->back()->with('info', 'No hubo cambios en el usuario.');
         }
+
+        $degreeName = Degree::where('id', $request->input('degree'))->value('degree');
+
+        $latestReferral = Referral::where('id_user_student', $student->id)
+            ->where('id_user_teacher', Auth::id())
+            ->latest()
+            ->first();
+
+        $referralData = [
+            'reason' => $request->reason_referral,
+            'observation' => $request->observation,
+            'strategies' => $request->strategies,
+            'course' => $degreeName,
+        ];
+
+        if ($latestReferral) {
+            $latestReferral->update($referralData);
+        } else {
+            Referral::create(array_merge($referralData, [
+                'id_user_student' => $student->id,
+                'id_user_teacher' => Auth::id(),
+            ]));
+        }
+
+        if ($huboCambios) {
+            return redirect()->back()->with('success', 'Estudiante y remisión actualizados correctamente.');
+        }
+
+        return redirect()->back()->with('success', 'Remisión actualizada correctamente.');
     }
 
     // Añadir acta, aqui se lista los estudiantes en Piar pero se podran selecionar para añadir un acta.

@@ -17,7 +17,7 @@
         <form action="{{ route('update.student', $student->id) }}" method="POST">
             @csrf
             @method('PUT')
-<x-referral-form :degrees="$degrees" :groups="$groups" :student="$student" />
+<x-referral-form :degrees="$degrees" :groups="$groups" :student="$student" :referral="$student->latestReferral" />
 
             <!-- Botón de envío -->
             <div class="text-left">

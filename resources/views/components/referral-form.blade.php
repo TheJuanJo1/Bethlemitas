@@ -6,7 +6,7 @@
 </style>
 
 {{-- Blade component for referral form --}}
-@props(['degrees', 'groups', 'student' => null])
+@props(['degrees', 'groups', 'student' => null, 'referral' => null])
 
 <div class="grid grid-cols-1 gap-6 sm:grid-cols-3">
     <!-- Nombres -->
@@ -73,18 +73,18 @@
             <span class="text-[10px] lowercase font-normal opacity-70">Razón principal de la remisión</span>
         </label>
         <textarea id="reason_referral" name="reason_referral" rows="3" required placeholder="Describa brevemente por qué remite al estudiante..."
-            class="block w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-slate-700 focus:ring-2 focus:ring-indigo-500 outline-none">{{ old('reason_referral', optional($student)->reason_referral) }}</textarea>
+            class="block w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-slate-700 focus:ring-2 focus:ring-indigo-500 outline-none">{{ old('reason_referral', optional($referral)->reason) }}</textarea>
     </div>
     <!-- Observaciones -->
     <div class="space-y-1.5">
         <label for="observation" class="block text-xs font-bold text-slate-500 uppercase ml-1">Observaciones Detalladas *</label>
         <textarea id="observation" name="observation" rows="3" required placeholder="Aspectos cognitivos, afectivos, comportamiento..."
-            class="block w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-slate-700 focus:ring-2 focus:ring-indigo-500 outline-none">{{ old('observation', optional($student)->observation) }}</textarea>
+            class="block w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-slate-700 focus:ring-2 focus:ring-indigo-500 outline-none">{{ old('observation', optional($referral)->observation) }}</textarea>
     </div>
     <!-- Estrategias -->
     <div class="space-y-1.5">
         <label for="strategies" class="block text-xs font-bold text-slate-500 uppercase ml-1">Estrategias Aplicadas *</label>
         <textarea id="strategies" name="strategies" rows="3" required placeholder="¿Qué acciones ha tomado usted como docente previamente?"
-            class="block w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-slate-700 focus:ring-2 focus:ring-indigo-500 outline-none">{{ old('strategies', optional($student)->strategies) }}</textarea>
+            class="block w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-slate-700 focus:ring-2 focus:ring-indigo-500 outline-none">{{ old('strategies', optional($referral)->strategies) }}</textarea>
     </div>
 </div>

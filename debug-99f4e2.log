@@ -64,3 +64,4 @@
 {"sessionId":"99f4e2","runId":"pre-fix","hypothesisId":"H2","location":"app\/Http\/Controllers\/PiarController.php:storeEvaluacion","message":"storeEvaluacion redirecting to periodos","data":{"to":"piar.periodos","piar_id":2},"timestamp":1779802588844}
 {"sessionId":"99f4e2","runId":"pre-fix","hypothesisId":"H-create-1","location":"app\/Http\/Controllers\/PiarController.php:create","message":"PIAR create accessed by psico","data":{"student_id":3,"has_piar":false},"timestamp":1779808377350}
 {"sessionId":"99f4e2","runId":"pre-fix","hypothesisId":"H-create-1","location":"app\/Http\/Controllers\/PiarController.php:create","message":"PIAR create accessed by psico","data":{"student_id":1,"has_piar":true},"timestamp":1780329756549}
+{"sessionId":"99f4e2","runId":"updated","hypothesisId":"H1","location":"storePeriodo1","message":"redirecting","data":{"piar_id":1},"timestamp":1780420370567}
