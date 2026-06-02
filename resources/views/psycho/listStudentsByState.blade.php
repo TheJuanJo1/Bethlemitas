@@ -140,7 +140,7 @@
                                 <a href="{{ route('details.referral', $student->id) }}"
                                    class="p-1.5 md:px-3 md:py-1 text-white bg-blue-500 rounded hover:bg-blue-600 btn-transition flex items-center justify-center"
                                    title="Ver Remisión">
-                                   <i class="bi bi-eye md:hidden"></i><span class="hidden md:inline">Ver</span>
+                                   <i class="bi bi-eye md:hidden"></i><span class="hidden md:inline">Ver Remisión</span>
                                 </a>
 
                                 <a href="{{ route('report.student', $student->id) }}"
@@ -151,14 +151,14 @@
 
                                 <a href="{{ route('show.student.history', $student->id) }}"
                                    class="p-1.5 md:px-3 md:py-1 text-white bg-yellow-500 rounded hover:bg-orange-600 btn-transition flex items-center justify-center"
-                                   title="Historial">
+                                   title="Historial de Informes e Remisiones">
                                    <i class="bi bi-clock-history md:hidden"></i><span class="hidden md:inline">Historial</span>
                                 </a>
 
                                 @if($student->piar)
                                     <a href="{{ route('piar.periodos', $student->piar->id) }}"
                                        class="p-1.5 md:px-3 md:py-1 text-white bg-indigo-600 rounded hover:bg-indigo-800 btn-transition flex items-center justify-center"
-                                       title="Fecha Periodos">
+                                       title="Habilitar Fechas de Periodos">
                                        <i class="bi bi-calendar-check md:hidden"></i><span class="hidden md:inline text-[10px] leading-tight">Fechas</span>
                                     </a>
                                 @else
