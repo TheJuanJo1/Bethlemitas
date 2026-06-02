@@ -129,6 +129,7 @@ class PiarActaPdfService
             'periodosLista' => $periodosLista,
             'mostrarCaracterizacion' => true,
             'docentesElaboran' => PiarFirmasResolver::docentesConAreas($piar->id, $periodos),
+            'firmasDocentesAnexo2' => PiarFirmasResolver::firmasDocentesAnexo2($piar->id, $periodos, true),
         ])->output();
     }
 

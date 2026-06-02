@@ -133,8 +133,8 @@
                     $docentesElaboranCompleto = \App\Services\PiarFirmasResolver::docentesConAreas($piar->id, [1, 2, 3]);
                 @endphp
                 @forelse($docentesElaboranCompleto as $item)
-                    <strong>{{ $item['teacher']->name }} {{ $item['teacher']->last_name }}</strong>
-                    — Docente de {{ implode(', ', $item['areas']) }}<br>
+                    <strong>Docente {{ $item['teacher']->name }} {{ $item['teacher']->last_name }}</strong>
+                    — {{ \App\Services\PiarFirmasResolver::formatearEtiquetaAreas($item['areas']) }}<br>
                 @empty
                     Sin docentes registrados.
                 @endforelse
@@ -262,6 +262,11 @@
             <div style="height: 10px;"></div>
         @endforeach
     @endforeach
+
+    @php
+        $firmasDocentesAnexo2 = \App\Services\PiarFirmasResolver::firmasDocentesAnexo2($piar->id, [1, 2, 3], true);
+    @endphp
+    @include('pdf.partials.anexo2_firmas_docentes', ['firmasDocentesAnexo2' => $firmasDocentesAnexo2])
 
 </body>
 </html>

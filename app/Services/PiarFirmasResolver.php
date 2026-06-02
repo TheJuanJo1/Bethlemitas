@@ -57,6 +57,57 @@ class PiarFirmasResolver
         return array_values($agrupados);
     }
 
+    /**
+     * Etiqueta de áreas: "Área: X" o "Áreas: X y Y".
+     *
+     * @param  string[]  $areas
+     */
+    public static function formatearEtiquetaAreas(array $areas): string
+    {
+        $areas = array_values(array_filter(array_map(
+            fn ($a) => trim((string) $a),
+            $areas
+        )));
+
+        if ($areas === []) {
+            return '';
+        }
+
+        if (count($areas) === 1) {
+            return 'Área: '.$areas[0];
+        }
+
+        if (count($areas) === 2) {
+            return 'Áreas: '.$areas[0].' y '.$areas[1];
+        }
+
+        $ultima = array_pop($areas);
+
+        return 'Áreas: '.implode(', ', $areas).' y '.$ultima;
+    }
+
+    /**
+     * Firmas de docentes para el pie del Anexo 2 (una vez por docente, con áreas agrupadas).
+     *
+     * @param  int[]  $periodos
+     * @return array<int, array{name: string, areas_label: string, image: ?string}>
+     */
+    public static function firmasDocentesAnexo2(int $piarId, array $periodos, bool $paraPdf = true): array
+    {
+        $firmas = [];
+
+        foreach (self::docentesConAreas($piarId, $periodos) as $item) {
+            $teacher = $item['teacher'];
+            $firmas[] = [
+                'name' => trim($teacher->name.' '.$teacher->last_name),
+                'areas_label' => self::formatearEtiquetaAreas($item['areas']),
+                'image' => self::imagenFirma($teacher, $piarId, null, $paraPdf),
+            ];
+        }
+
+        return $firmas;
+    }
+
     public static function psicorientadoraParaEstudiante(int $studentId): ?Users_teacher
     {
         $informe = Psychoorientation::where('id_user_student', $studentId)
@@ -200,6 +251,17 @@ class PiarFirmasResolver
 
             if ($desdeAjuste) {
                 return $desdeAjuste;
+            }
+        }
+
+        if ($piarId) {
+            $desdeCualquierPeriodo = PiarAdjustment::where('piar_id', $piarId)
+                ->where('teacher_id', $teacher->id)
+                ->whereNotNull('teacher_signature')
+                ->value('teacher_signature');
+
+            if ($desdeCualquierPeriodo) {
+                return $desdeCualquierPeriodo;
             }
         }
 
