@@ -170,8 +170,8 @@
 
                                 <a href="{{ route('piar.periodos.historial', $student->id) }}"
                                    class="p-1.5 md:px-3 md:py-1 text-white bg-slate-600 rounded hover:bg-slate-800 btn-transition flex items-center justify-center text-center"
-                                   title="Cronología de los Periodos">
-                                   <i class="bi bi-list-ol md:hidden"></i><span class="hidden md:inline text-[10px] leading-tight">Cronología</span>
+                                   title="Piar">
+                                   <i class="bi bi-list-ol md:hidden"></i><span class="hidden md:inline text-[10px] leading-tight">Piar</span>
                                 </a>
 
                                 @if($student->piar)
