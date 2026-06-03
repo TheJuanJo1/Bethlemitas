@@ -227,13 +227,120 @@
             <div class="fields-grid" style="grid-template-columns: 1fr;">
                 <div class="form-group" style="grid-column: span 2;">
                     <label style="line-height: 1.4; color: #1e293b;">1. Descripción general del estudiante con énfasis en gustos e intereses o aspectos que le desagradan, expectativas del estudiante y la familia:</label>
-                    <textarea name="descripcion" class="form-control" style="height: 120px; resize: vertical;" placeholder="Escriba la descripción general, gustos, intereses, aspectos que le desagradan y expectativas..." required>{{ old('descripcion') }}</textarea>
+                    <div class="quill-wrapper">
+                        <div id="editor_descripcion" style="min-height: 60px;">{!! old('descripcion') !!}</div>
+                        <input type="hidden" name="descripcion" id="input_descripcion">
+                    </div>
                 </div>
 
                 <div class="form-group" style="grid-column: span 2; margin-top: 1rem;">
                     <label style="line-height: 1.4; color: #1e293b;">2. Descripción en términos de lo que hace, puede hacer o requiere apoyo el estudiante para favorecer su proceso educativo. Indique las habilidades, competencias, cualidades y aprendizajes con los que cuenta el estudiante para el grado en el que fue matriculado:</label>
-                    <textarea name="habilidades" class="form-control" style="height: 120px; resize: vertical;" placeholder="Escriba lo que hace, puede hacer, requiere apoyo, habilidades, competencias, cualidades y aprendizajes..." required>{{ old('habilidades') }}</textarea>
+                    <div class="quill-wrapper">
+                        <div id="editor_habilidades" style="min-height: 60px;">{!! old('habilidades') !!}</div>
+                        <input type="hidden" name="habilidades" id="input_habilidades">
+                    </div>
                 </div>
+@push('styles')
+<link href="https://cdn.quilljs.com/1.3.7/quill.snow.css" rel="stylesheet">
+<style>
+    /* Expandable Quill styles */
+    .quill-wrapper {
+        position: relative;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        border: 2px solid var(--border-color);
+        border-radius: 10px;
+        background-color: #ffffff;
+        overflow: hidden;
+    }
+    .quill-wrapper:focus-within, .quill-wrapper.expanded {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+    }
+    .quill-wrapper .ql-container {
+        height: 60px;
+        min-height: 60px;
+        font-family: inherit;
+        font-size: 0.95rem;
+        transition: height 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        border: none !important;
+    }
+    .quill-wrapper.expanded .ql-container {
+        height: 200px;
+    }
+    .quill-wrapper .ql-toolbar {
+        border: none !important;
+        border-bottom: 1px solid var(--border-color) !important;
+        background-color: #f8fafc;
+        padding: 4px 8px;
+        max-height: 0;
+        overflow: hidden;
+        opacity: 0;
+        visibility: hidden;
+        transition: max-height 0.25s ease-out, opacity 0.2s ease-out, visibility 0.2s;
+    }
+    .quill-wrapper.expanded .ql-toolbar {
+        max-height: 80px;
+        opacity: 1;
+        visibility: visible;
+        padding: 8px 12px;
+    }
+    .quill-wrapper .ql-editor.ql-blank::before {
+        font-style: italic;
+        color: var(--text-muted);
+    }
+</style>
+@endpush
+
+@push('scripts')
+<script src="https://cdn.quilljs.com/1.3.7/quill.min.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const toolbarOptions = [
+      ['bold', 'italic', 'underline', 'strike'],
+      [{ 'color': [] }, { 'background': [] }],
+      [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+      ['clean']
+    ];
+
+    function setupExpandableQuill(editorId, inputId) {
+      const editorEl = document.getElementById(editorId);
+      const inputEl = document.getElementById(inputId);
+      const wrapper = editorEl.closest('.quill-wrapper');
+      
+      const quill = new Quill(editorEl, {
+        theme: 'snow',
+        modules: { toolbar: toolbarOptions }
+      });
+
+      quill.on('selection-change', function(range) {
+        if (range) {
+          wrapper.classList.add('expanded');
+        }
+      });
+
+      document.addEventListener('click', function(event) {
+        if (!wrapper.contains(event.target)) {
+          wrapper.classList.remove('expanded');
+        }
+      });
+
+      return { quill, inputEl };
+    }
+
+    const editors = [
+      setupExpandableQuill('editor_descripcion', 'input_descripcion'),
+      setupExpandableQuill('editor_habilidades', 'input_habilidades')
+    ];
+
+    const form = document.querySelector('form');
+    form.addEventListener('submit', function () {
+      editors.forEach(item => {
+        item.inputEl.value = item.quill.root.innerHTML;
+      });
+    });
+  });
+</script>
+@endpush
             </div>
         </div>
 

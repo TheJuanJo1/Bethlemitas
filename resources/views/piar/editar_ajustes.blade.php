@@ -47,7 +47,7 @@
                 </h2>
             </div>
             
-            <form action="{{ route('piar.psico.ajustes.store') }}" method="POST" class="p-6">
+                        <form id="ajustesForm" action="{{ route('piar.psico.ajustes.store') }}" method="POST" class="p-6">
                 @csrf
                 <input type="hidden" name="piar_id" value="{{ $piar->id }}">
                 <input type="hidden" name="seccion_characteristics" value="1">
@@ -65,12 +65,20 @@
                 <div class="grid grid-cols-1 gap-6">
                     <div class="space-y-2">
                         <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider" style="line-height: 1.4;">1. Descripción general del estudiante con énfasis en gustos e intereses o aspectos que le desagradan, expectativas del estudiante y la familia:</label>
-                        <textarea name="descripcion_estudiante" rows="4" required class="block w-full rounded-lg border-slate-300 bg-slate-50 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-3 transition-colors hover:bg-white">{{ old('descripcion_estudiante', $piar->characteristics->descripcion_estudiante ?? '') }}</textarea>
+                        <!-- Quill editor for descripción_general -->
+                        <div class="quill-wrapper">
+                          <div id="editor_descripcion_estudiante" style="min-height:60px;">{!! old('descripcion_estudiante', $piar->characteristics->descripcion_estudiante ?? '') !!}</div>
+                          <input type="hidden" name="descripcion_estudiante" id="input_descripcion_estudiante">
+                        </div>
                     </div>
 
                     <div class="space-y-2">
                         <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider" style="line-height: 1.4;">2. Descripción en términos de lo que hace, puede hacer o requiere apoyo el estudiante para favorecer su proceso educativo. Indique las habilidades, competencias, cualidades y aprendizajes con los que cuenta el estudiante para el grado en el que fue matriculado:</label>
-                        <textarea name="habilidades" rows="4" required class="block w-full rounded-lg border-slate-300 bg-slate-50 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-3 transition-colors hover:bg-white">{{ old('habilidades', $piar->characteristics->habilidades ?? '') }}</textarea>
+                        <!-- Quill editor for habilidades -->
+                        <div class="quill-wrapper">
+                          <div id="editor_habilidades" style="min-height:60px;">{!! old('habilidades', $piar->characteristics->habilidades ?? '') !!}</div>
+                          <input type="hidden" name="habilidades" id="input_habilidades">
+                        </div>
                     </div>
                 </div>
 
@@ -84,12 +92,12 @@
 
         {{-- Periodos --}}
         @php
-            $periodosData = [
-                ['titulo' => 'Periodo 1', 'id' => 1, 'datos' => $periodo1],
-                ['titulo' => 'Periodo 2', 'id' => 2, 'datos' => $periodo2],
-                ['titulo' => 'Periodo 3', 'id' => 3, 'datos' => $periodo3],
-            ];
-        @endphp
+    $periodosData = [
+        ['titulo' => 'Periodo 1', 'id' => 1, 'datos' => $periodo1],
+        ['titulo' => 'Periodo 2', 'id' => 2, 'datos' => $periodo2],
+        ['titulo' => 'Periodo 3', 'id' => 3, 'datos' => $periodo3],
+    ];
+@endphp
 
         @foreach($periodosData as $periodo)
             <div class="mb-12">
@@ -217,11 +225,56 @@
                 @endif
             </div>
         @endforeach
-
-    </div>
-</div>
-
+@push('styles')
+<link href="https://cdn.quilljs.com/1.3.7/quill.snow.css" rel="stylesheet">
 <style>
+    /* Expandable Quill styles */
+    .quill-wrapper {
+        position: relative;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        border: 1px solid #cbd5e1;
+        border-radius: 0.75rem;
+        background-color: #ffffff;
+        overflow: hidden;
+        margin-bottom: 0.5rem;
+    }
+    .quill-wrapper:focus-within, .quill-wrapper.expanded {
+        border-color: #4f46e5;
+        box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1);
+    }
+    .quill-wrapper .ql-container {
+        height: 60px;
+        min-height: 60px;
+        font-family: inherit;
+        font-size: 0.875rem;
+        transition: height 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        border: none !important;
+    }
+    .quill-wrapper.expanded .ql-container {
+        height: 200px;
+    }
+    .quill-wrapper .ql-toolbar {
+        border: none !important;
+        border-bottom: 1px solid #cbd5e1 !important;
+        background-color: #f8fafc;
+        padding: 4px 8px;
+        max-height: 0;
+        overflow: hidden;
+        opacity: 0;
+        visibility: hidden;
+        transition: max-height 0.25s ease-out, opacity 0.2s ease-out, visibility 0.2s;
+    }
+    .quill-wrapper.expanded .ql-toolbar {
+        max-height: 80px;
+        opacity: 1;
+        visibility: visible;
+        padding: 8px 12px;
+    }
+    .quill-wrapper .ql-editor.ql-blank::before {
+        font-style: italic;
+        color: #94a3b8;
+    }
+
     /* Estilos personalizados para complementar Tailwind */
     textarea {
         resize: vertical;
@@ -242,4 +295,115 @@
         border-radius: 2px;
     }
 </style>
+@endpush
+
+@push('scripts')
+<script src="https://cdn.quilljs.com/1.3.7/quill.min.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const toolbarOptions = [
+      ['bold', 'italic', 'underline', 'strike'],
+      [{ 'color': [] }, { 'background': [] }],
+      [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+      ['clean']
+    ];
+
+    // Setup for explicit editor elements (Characteristics)
+    function setupExplicitQuill(editorId, inputId) {
+      const editorEl = document.getElementById(editorId);
+      if (!editorEl) return null;
+      const inputEl = document.getElementById(inputId);
+      const wrapper = editorEl.closest('.quill-wrapper');
+      
+      const quill = new Quill(editorEl, {
+        theme: 'snow',
+        modules: { toolbar: toolbarOptions }
+      });
+
+      // Synchronize initial content to hidden input
+      inputEl.value = quill.root.innerHTML;
+
+      quill.on('selection-change', function(range) {
+        if (range) {
+          wrapper.classList.add('expanded');
+        }
+      });
+
+      return { quill, inputEl };
+    }
+
+    const explicitEditors = [];
+    const descEditor = setupExplicitQuill('editor_descripcion_estudiante', 'input_descripcion_estudiante');
+    if (descEditor) explicitEditors.push(descEditor);
+    const habEditor = setupExplicitQuill('editor_habilidades', 'input_habilidades');
+    if (habEditor) explicitEditors.push(habEditor);
+
+    const mainForm = document.getElementById('ajustesForm');
+    if (mainForm) {
+      mainForm.addEventListener('submit', function () {
+        explicitEditors.forEach(item => {
+          item.inputEl.value = item.quill.root.innerHTML;
+        });
+      });
+    }
+
+    // Setup for dynamic period textareas
+    const periodForms = document.querySelectorAll('form:not(#ajustesForm)');
+    periodForms.forEach(function(form) {
+      const textareas = form.querySelectorAll('textarea');
+      const quills = [];
+      
+      textareas.forEach(function(textarea) {
+        if (textarea.style.display === 'none') return;
+        
+        // Skip date field
+        if (textarea.getAttribute('type') === 'date' || textarea.name === 'evaluation_date') return;
+
+        const content = textarea.value;
+        
+        // Create wrapper
+        const wrapper = document.createElement('div');
+        wrapper.classList.add('quill-wrapper');
+        
+        // Create editor div
+        const editorDiv = document.createElement('div');
+        editorDiv.style.minHeight = '60px';
+        editorDiv.innerHTML = content;
+        
+        wrapper.appendChild(editorDiv);
+        textarea.style.display = 'none';
+        textarea.parentNode.insertBefore(wrapper, textarea);
+        
+        const quill = new Quill(editorDiv, {
+          theme: 'snow',
+          modules: { toolbar: toolbarOptions }
+        });
+
+        quill.on('selection-change', function(range) {
+          if (range) {
+            wrapper.classList.add('expanded');
+          }
+        });
+
+        quills.push({ textarea, quill });
+      });
+
+      form.addEventListener('submit', function () {
+        quills.forEach(function(item) {
+          item.textarea.value = item.quill.root.innerHTML;
+        });
+      });
+    });
+
+    // Single global listener to collapse editors when clicking outside
+    document.addEventListener('click', function(event) {
+      document.querySelectorAll('.quill-wrapper.expanded').forEach(function(wrapper) {
+        if (!wrapper.contains(event.target)) {
+          wrapper.classList.remove('expanded');
+        }
+      });
+    });
+  });
+</script>
+@endpush
 @endsection

@@ -8,6 +8,7 @@
     <link rel="stylesheet" type="text/css" href="{{ asset('css/sweetalert.css')}}">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     @yield('css')
+    @stack('styles')
     <title>@yield('title')</title>
 </head>
 <body class="bg-[#D5DBDB] ">
@@ -200,7 +201,7 @@
          <script src="https://cdn.tailwindcss.com"></script>
          <script src="https://cdn.jsdelivr.net/npm/alpinejs@2.8.2/dist/alpine.min.js" defer></script>
          <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-         @yield('JS')
+         @stack('scripts')
 
          {{-- Sweetalet de exito --}}
          @if (session('success'))

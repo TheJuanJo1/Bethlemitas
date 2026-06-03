@@ -328,4 +328,128 @@
     }
 </script>
 
+@push('styles')
+<link href="https://cdn.quilljs.com/1.3.7/quill.snow.css" rel="stylesheet">
+<style>
+    /* Expandable Quill styles for tables */
+    .quill-wrapper {
+        position: relative;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        border: 1px solid #cbd5e1;
+        border-radius: 4px;
+        background-color: #ffffff;
+        overflow: hidden;
+        min-width: 140px;
+    }
+    .quill-wrapper:focus-within, .quill-wrapper.expanded {
+        border-color: #1e40af;
+        box-shadow: 0 0 0 3px rgba(30, 64, 175, 0.15);
+        min-width: 250px;
+        z-index: 50;
+    }
+    .quill-wrapper .ql-container {
+        height: 60px;
+        min-height: 60px;
+        font-family: inherit;
+        font-size: 12px;
+        transition: height 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        border: none !important;
+    }
+    .quill-wrapper.expanded .ql-container {
+        height: 180px;
+    }
+    .quill-wrapper .ql-toolbar {
+        border: none !important;
+        border-bottom: 1px solid #cbd5e1 !important;
+        background-color: #f8fafc;
+        padding: 2px 4px;
+        max-height: 0;
+        overflow: hidden;
+        opacity: 0;
+        visibility: hidden;
+        transition: max-height 0.25s ease-out, opacity 0.2s ease-out, visibility 0.2s;
+    }
+    .quill-wrapper.expanded .ql-toolbar {
+        max-height: 80px;
+        opacity: 1;
+        visibility: visible;
+        padding: 4px 6px;
+    }
+    .quill-wrapper .ql-editor {
+        padding: 6px 8px;
+    }
+    .quill-wrapper .ql-editor.ql-blank::before {
+        font-style: italic;
+        color: #94a3b8;
+    }
+    td {
+        position: relative;
+    }
+</style>
+@endpush
+
+@push('scripts')
+<script src="https://cdn.quilljs.com/1.3.7/quill.min.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const toolbarOptions = [
+      ['bold', 'italic', 'underline', 'strike'],
+      [{ 'color': [] }, { 'background': [] }],
+      [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+      ['clean']
+    ];
+
+    const form = document.querySelector('form');
+    if (form) {
+      const textareas = form.querySelectorAll('textarea:not([name^="anexo3"])');
+      const quills = [];
+      
+      textareas.forEach(function(textarea) {
+        if (textarea.style.display === 'none') return;
+        
+        const content = textarea.value;
+        const wrapper = document.createElement('div');
+        wrapper.classList.add('quill-wrapper');
+        
+        const editorDiv = document.createElement('div');
+        editorDiv.style.minHeight = '60px';
+        editorDiv.innerHTML = content;
+        
+        wrapper.appendChild(editorDiv);
+        textarea.style.display = 'none';
+        textarea.parentNode.insertBefore(wrapper, textarea);
+        
+        const quill = new Quill(editorDiv, {
+          theme: 'snow',
+          modules: { toolbar: toolbarOptions }
+        });
+
+        quill.on('selection-change', function(range) {
+          if (range) {
+            wrapper.classList.add('expanded');
+          }
+        });
+
+        quills.push({ textarea, quill });
+      });
+
+      form.addEventListener('submit', function () {
+        quills.forEach(function(item) {
+          item.textarea.value = item.quill.root.innerHTML;
+        });
+      });
+    }
+
+    // Single global listener to collapse editors when clicking outside
+    document.addEventListener('click', function(event) {
+      document.querySelectorAll('.quill-wrapper.expanded').forEach(function(wrapper) {
+        if (!wrapper.contains(event.target)) {
+          wrapper.classList.remove('expanded');
+        }
+      });
+    });
+  });
+</script>
+@endpush
+
 @endsection
