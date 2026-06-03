@@ -347,7 +347,53 @@
       });
     }
 
-    // Setup for dynamic period textareas
+  // Initialize Quill editors for all textarea fields within period forms
+    const textareaFields = document.querySelectorAll('.mt-6 textarea');
+    let textareaCounter = 0;
+    textareaFields.forEach(function(txt) {
+        // Create wrapper and editor div
+        const wrapper = document.createElement('div');
+        wrapper.classList.add('quill-wrapper');
+        const editorDiv = document.createElement('div');
+        const editorId = 'dynamic_editor_' + textareaCounter;
+        editorDiv.id = editorId;
+        wrapper.appendChild(editorDiv);
+        // Insert wrapper before the textarea and hide textarea
+        txt.parentNode.insertBefore(wrapper, txt);
+        txt.style.display = 'none';
+        // Initialize Quill
+        const quill = new Quill(editorDiv, {
+            theme: 'snow',
+            modules: { toolbar: toolbarOptions }
+        });
+        // Set initial content from textarea
+        quill.root.innerHTML = txt.value;
+        // Store reference for later sync
+        txt.dataset.quillId = editorId;
+        txt.quillInstance = quill;
+        textareaCounter++;
+    });
+
+    // Extend form submit handler to sync dynamic editors
+    if (mainForm) {
+        const originalSubmit = mainForm.onsubmit;
+        mainForm.addEventListener('submit', function (e) {
+            // Sync explicit editors (already handled above)
+            explicitEditors.forEach(item => {
+                item.inputEl.value = item.quill.root.innerHTML;
+            });
+            // Sync all dynamic textarea editors
+            document.querySelectorAll('textarea').forEach(function (txt) {
+                if (txt.quillInstance) {
+                    txt.value = txt.quillInstance.root.innerHTML;
+                }
+            });
+            // If there was an original submit handler, call it
+            if (typeof originalSubmit === 'function') {
+                originalSubmit.call(this, e);
+            }
+        });
+    }
     const periodForms = document.querySelectorAll('form:not(#ajustesForm)');
     periodForms.forEach(function(form) {
       const textareas = form.querySelectorAll('textarea');
