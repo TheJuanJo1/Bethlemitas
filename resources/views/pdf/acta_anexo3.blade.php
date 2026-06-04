@@ -114,7 +114,7 @@
         @forelse($bloque['familyActivities'] as $activity)
         <tr>
             <td><strong>{{ $activity->activity }}</strong></td>
-            <td>{{ $activity->strategy }}</td>
+            <td>{!! nl2br(e(strip_tags($activity->strategy ?? ''))) !!}</td>
             <td class="text-center">
                 @if($activity->frequency == 'D') D (Diaria)
                 @elseif($activity->frequency == 'S') S (Semanal)
