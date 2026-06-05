@@ -171,21 +171,6 @@
             <p class="text-lg font-bold text-indigo-600 capitalize">{{ implode(', ', $roles) }}</p>
         </div>
 
-        {{-- GRADOS --}}
-        <div class="md:col-span-2">
-            <p class="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-2">Grupos / grados a cargo</p>
-
-            @if ($degrees->count())
-                <ul class="list-disc ml-6 mt-2 text-slate-600 font-medium space-y-1">
-                    @foreach ($degrees as $degree)
-                        <li>{{ $degree }}</li>
-                    @endforeach
-                </ul>
-            @else
-                <p class="italic text-slate-400 text-sm">No tiene grados asignados</p>
-            @endif
-        </div>
-
         {{-- DIRECTOR DE GRUPO --}}
         <div class="md:col-span-2">
             <p class="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-1">Director de grupo</p>
