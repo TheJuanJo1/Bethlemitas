@@ -1,114 +1,137 @@
 document.addEventListener('DOMContentLoaded', function () {
-    const roleSelect = document.getElementById('role');
+
+    // ─── 1. DECLARAR ELEMENTOS DEL DOM ────────────────────────────────────────
+    const roleSelect           = document.getElementById('role');
+    const areasSelect          = document.getElementById('areas');
+    const groupsSelect         = document.getElementById('groups');
+    const directorSelect       = document.getElementById('group_director');
+    const degreeSelect         = document.getElementById('load_degree');
+
+    const groupAreasDiv        = document.getElementById('group_areas');
+    const groupLoadGroupDiv    = document.getElementById('group_load_group');
+    const groupGroupDirectorDiv = document.getElementById('group_group_director');
+    const groupLoadDegreeDiv   = document.getElementById('group_load_degree');
+
+    // ─── 2. FUNCIONES ────────────────────────────────────────────────────────
+    function resetAll() {
+        groupAreasDiv.style.display         = 'none';
+        groupLoadGroupDiv.style.display     = 'none';
+        groupGroupDirectorDiv.style.display = 'none';
+        groupLoadDegreeDiv.style.display    = 'none';
+
+        areasSelect.disabled    = true;
+        groupsSelect.disabled   = true;
+        directorSelect.disabled = true;
+        degreeSelect.disabled   = true;
+    }
+
+    function setForDocente() {
+        resetAll();
+        groupAreasDiv.style.display         = 'block';
+        groupLoadGroupDiv.style.display     = 'block';
+        groupGroupDirectorDiv.style.display = 'block';
+        groupLoadDegreeDiv.style.display    = 'none';
+
+        areasSelect.disabled    = false;
+        groupsSelect.disabled   = false;
+        directorSelect.disabled = false;
+        degreeSelect.disabled   = true;
+    }
+
+    function setForPsicoorientador() {
+        resetAll();
+        groupAreasDiv.style.display         = 'none';
+        groupLoadGroupDiv.style.display     = 'none';
+        groupGroupDirectorDiv.style.display = 'none';
+        groupLoadDegreeDiv.style.display    = 'block';
+
+        areasSelect.disabled    = true;
+        groupsSelect.disabled   = true;
+        directorSelect.disabled = true;
+        degreeSelect.disabled   = false;
+    }
+
+    // ─── 3. ESTADO INICIAL ───────────────────────────────────────────────────
+    resetAll(); // oculta todo al cargar la página
+
+    // Si el rol ya está pre-seleccionado (ej: al volver con errores de validación)
     if (roleSelect) {
-        roleSelect.addEventListener('change', function() {
-            let selectedRole = this.options[this.selectedIndex].text.trim(); //obtiene el texto del rol seleccionado
+        const initialVal = roleSelect.value.trim().toLowerCase();
+        if (initialVal === 'docente') {
+            setForDocente();
+        } else if (initialVal === 'psicoorientador') {
+            setForPsicoorientador();
+        }
+    }
 
-            let group_areas = document.getElementById('group_areas');
-            let group_load_group = document.getElementById('group_load_group');
-            let group_group_director = document.getElementById('group_group_director');
-            let group_load_degree =  document.getElementById('group_load_degree');
-            let load_degree = document.getElementById('load_degree');
-            let areas = document.getElementById('areas');
-            let groups = document.getElementById('groups');
-            let group_director = document.getElementById('group_director');
+    // ─── 4. LISTENER: CAMBIO DE ROL ──────────────────────────────────────────
+    if (roleSelect) {
+        roleSelect.addEventListener('change', function () {
+            const val  = this.value.trim().toLowerCase();
+            const text = this.options[this.selectedIndex].text.trim().toLowerCase();
+            console.log('[createUser] Rol → value:', val, '| texto:', text);
 
-            //Condicion para ocultar el div dependiendo el rol que escoja
-            // (aquí iría tu lógica de mostrar/ocultar)
+            if (val === 'docente' || text.includes('docente')) {
+                setForDocente();
+            } else if (val === 'psicoorientador' || text.includes('psicoorientador')) {
+                setForPsicoorientador();
+            } else {
+                resetAll();
+            }
         });
     }
-    const areasSelect = document.getElementById('areas');
+
+    // ─── 5. LISTENER: SELECCIÓN DE ÁREAS (solo para docente) ─────────────────
     if (areasSelect) {
-        areasSelect.addEventListener('change', function() {
-            // existing logic here (placeholder)
+        areasSelect.addEventListener('change', function () {
+            const selectedAreas = Array.from(this.selectedOptions).map(opt => ({
+                id: opt.value,
+                name: opt.text.trim()
+            }));
+
+            const container  = document.getElementById('selected-areas-container');
+            const description = document.getElementById('description');
+
+            container.innerHTML = '';
+            description.textContent = selectedAreas.length
+                ? 'Para cada área, asigna el/los grupo(s) donde el docente impartirá la materia.'
+                : '';
+
+            selectedAreas.forEach(area => {
+                const areaDiv = document.createElement('div');
+                areaDiv.classList.add('area-item');
+                areaDiv.dataset.id = area.id;
+
+                const hiddenInput = document.createElement('input');
+                hiddenInput.type  = 'hidden';
+                hiddenInput.name  = 'area_id[]';
+                hiddenInput.value = area.id;
+
+                const nameInput = document.createElement('input');
+                nameInput.classList.add('title-area');
+                nameInput.placeholder = area.name;
+                nameInput.value       = area.name;
+                nameInput.disabled    = true;
+
+                const dbSelect = document.createElement('select');
+                dbSelect.classList.add('db-options');
+                dbSelect.name     = `groups_asig[${area.id}][]`;
+                dbSelect.multiple = true;
+
+                if (typeof dbOptions !== 'undefined') {
+                    dbOptions.forEach(group => {
+                        const opt  = document.createElement('option');
+                        opt.value  = group.id;
+                        opt.text   = group.group;
+                        dbSelect.appendChild(opt);
+                    });
+                }
+
+                areaDiv.appendChild(hiddenInput);
+                areaDiv.appendChild(nameInput);
+                areaDiv.appendChild(dbSelect);
+                container.appendChild(areaDiv);
+            });
         });
     }
-});
-    let selectedRole = this.options[this.selectedIndex].text.trim(); //obtiene el texto del rol seleccionado
-
-    let group_areas = document.getElementById('group_areas');
-    let group_load_group = document.getElementById('group_load_group');
-    let group_group_director = document.getElementById('group_group_director');
-    let group_load_degree =  document.getElementById('group_load_degree');
-    let load_degree = document.getElementById('load_degree');
-    let areas = document.getElementById('areas');
-    let groups = document.getElementById('groups');
-    let group_director = document.getElementById('group_director');
-
-    //Condicion para ocultar el div dependiendo el rol que escoja
-    if (selectedRole == 'psicoorientador') {
-        group_areas.style.display = 'none'; // Oculta el div
-        group_load_group.style.display = 'none'; // Oculta el div
-        group_group_director.style.display = 'none'; // Oculta el div
-        group_load_degree.classList.remove('hidden');
-        load_degree.disabled = false; // Habilita el select de grados
-        areas.disabled = true;
-        groups.disabled = true;
-        group_director.disabled = true;
-        
-    }
-
-    if (selectedRole == 'docente') {
-        group_areas.style.display = 'block'; // Mostrar el div
-        group_load_group.style.display = 'block'; // Mostrar el div
-        group_group_director.style.display = 'block'; // Mostrar el div
-        group_load_degree.classList.add('hidden');
-        load_degree.disabled = true; // Deshabilita el select de grados
-        areas.disabled = false;
-        groups.disabled = false;
-        group_director.disabled = false;
-
-    } 
-});
-
-document.getElementById('areas').addEventListener('change', function() {
-    const selectedAreas = Array.from(this.selectedOptions).map(option => ({
-        id: option.value,
-        name: option.text
-    }));
-
-    const container = document.getElementById('selected-areas-container');
-    container.innerHTML = ''; // Limpiar contenedor antes de agregar nuevos elementos
-    const description = document.getElementById('description');
-    description.innerHTML = '';
-    description.innerHTML = 'Para cada area, es necesario asignar el grupo o los grupos en los que el docente llevará a cabo la instrucción correspondiente.';
-
-    selectedAreas.forEach(area => {
-        const areaDiv = document.createElement('div');
-        areaDiv.classList.add('area-item');
-        areaDiv.setAttribute('data-id', area.id);
-
-        // Crear input oculto para evaluar el id de la area.
-        const hiddenInput = document.createElement('input');
-        hiddenInput.type = 'hidden';
-        hiddenInput.name = 'area_id[]';
-        hiddenInput.value = area.id;
-
-        // Mostrar el nombre de la area
-        const nameSpan = document.createElement('input');
-        nameSpan.classList.add('title-area');
-        nameSpan.placeholder = area.name;
-        nameSpan.value = area.name;
-        nameSpan.disabled = true; 
-
-        // Crear un <select> adicional para opciones de la base de datos
-        const dbSelect = document.createElement('select');
-        dbSelect.classList.add('db-options');
-        dbSelect.name = `groups_asig[${area.id}][]`; // Agregar [] al name
-        dbSelect.multiple = true; // Establecer el select como múltiple
-
-        // Llenar el <select> con las opciones de la base de datos
-        dbOptions.forEach(group => {
-            const optionElement = document.createElement('option');
-            optionElement.value = group.id;
-            optionElement.text = group.group;
-            dbSelect.appendChild(optionElement);
-        });
-
-        // Agregar los elementos al contenedor de la area
-        areaDiv.appendChild(hiddenInput);
-        areaDiv.appendChild(nameSpan);
-        areaDiv.appendChild(dbSelect);
-        container.appendChild(areaDiv);
-    });
 });

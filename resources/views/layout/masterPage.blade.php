@@ -196,12 +196,13 @@
                </main>
             </div>
          </div>
-         <script async defer src="https://buttons.github.io/buttons.js"></script>
-         <script src="https://demo.themesberg.com/windster/app.bundle.js"></script>
          <script src="https://cdn.tailwindcss.com"></script>
          <script src="https://cdn.jsdelivr.net/npm/alpinejs@2.8.2/dist/alpine.min.js" defer></script>
          <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
          @stack('scripts')
+         @yield('JS')
+         {{-- Sidebar toggle para mobile (reemplaza el app.bundle.js de Windster) --}}
+         <script src="{{ asset('scripts/sidebar.js') }}"></script>
 
          {{-- Sweetalet de exito --}}
          @if (session('success'))
