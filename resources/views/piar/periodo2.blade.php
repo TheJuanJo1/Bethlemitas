@@ -417,6 +417,7 @@
         
         wrapper.appendChild(editorDiv);
         textarea.style.display = 'none';
+        textarea.removeAttribute('required'); // Evita el error "is not focusable" en campos ocultos
         textarea.parentNode.insertBefore(wrapper, textarea);
         
         const quill = new Quill(editorDiv, {

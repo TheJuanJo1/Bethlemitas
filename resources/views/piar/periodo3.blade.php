@@ -418,6 +418,7 @@
         wrapper.appendChild(editorDiv);
         textarea.style.display = 'none';
         textarea.parentNode.insertBefore(wrapper, textarea);
+        textarea.removeAttribute('required'); 
         
         const quill = new Quill(editorDiv, {
           theme: 'snow',

@@ -18,8 +18,7 @@ class CreateController extends Controller
     public function index_users(Request $request)
     {
         // 1. NO mostrar al Coordinador en la lista
-        $query = Users_teacher::role(['docente', 'psicoorientador'])
-            ->with(['roles', 'areas', 'groups', 'loadDegrees.degree', 'director']);
+        $query = Users_teacher::with(['roles', 'areas', 'groups', 'loadDegrees.degree', 'director']);
 
         if ($request->filled('search')) {
             $search = $request->search;

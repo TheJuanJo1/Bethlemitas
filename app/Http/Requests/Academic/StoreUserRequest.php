@@ -48,18 +48,18 @@ class StoreUserRequest extends FormRequest
                 'number_documment' => [
                     'required',
                     'digits_between:1,11',
-                    Rule::unique('users_teachers', 'number_documment')->ignore($ignoreId),
+                    Rule::unique('users_teachers', 'number_documment'),
                 ],
                 'name' => ['required', 'string'],
                 'last_name' => ['required', 'string'],
                 'email' => [
                     'required',
                     'email',
-                    Rule::unique('users_teachers', 'email')->ignore($ignoreId),
+                    Rule::unique('users_teachers', 'email'),
                 ],
                 'group_director' => [
                     'nullable',
-                    Rule::unique('users_teachers', 'group_director')->ignore($ignoreId),
+                    Rule::unique('users_teachers', 'group_director')->whereNotNull('group_director'),
                 ],
                 'areas' => ['required', 'array', 'min:1'],
                 'areas.*' => ['integer', 'exists:areas,id'],
