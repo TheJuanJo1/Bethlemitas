@@ -205,41 +205,41 @@
                 <div class="grid-details">
                     <div class="detail-box">
                         <label>Objetivo</label>
-                        <p>{{ $adj->objetivo }}</p>
+                        <p>{!! $adj->objetivo !!}</p>
                     </div>
                     <div class="detail-box">
                         <label>Barrera Identificada</label>
-                        <p>{{ $adj->barrera }}</p>
+                        <p>{!! $adj->barrera !!}</p>
                     </div>
 
                     <div class="detail-box">
                         <label>Ajuste Curricular</label>
-                        <p>{{ $adj->ajuste_curricular }}</p>
+                        <p>{!! $adj->ajuste_curricular !!}</p>
                     </div>
                     <div class="detail-box">
                         <label>Metodología</label>
-                        <p>{{ $adj->ajuste_metodologico }}</p>
+                        <p>{!! $adj->ajuste_metodologico !!}</p>
                     </div>
 
                     <div class="detail-box">
                         <label>Convivencia</label>
-                        <p>{{ $adj->convivencia }}</p>
+                        <p>{!! $adj->convivencia !!}</p>
                     </div>
                     <div class="detail-box">
                         <label>Socialización</label>
-                        <p>{{ $adj->socializacion }}</p>
+                        <p>{!! $adj->socializacion !!}</p>
                     </div>
                     <div class="detail-box">
                         <label>Participación</label>
-                        <p>{{ $adj->participacion }}</p>
+                        <p>{!! $adj->participacion !!}</p>
                     </div>
                     <div class="detail-box">
                         <label>Autonomía</label>
-                        <p>{{ $adj->autonomia }}</p>
+                        <p>{!! $adj->autonomia !!}</p>
                     </div>
                     <div class="detail-box" style="grid-column: span 2;">
                         <label>Autocontrol</label>
-                        <p>{{ $adj->autocontrol }}</p>
+                        <p>{!! $adj->autocontrol !!}</p>
                     </div>
                 </div>
 
