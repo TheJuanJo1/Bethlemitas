@@ -154,6 +154,7 @@
         border-radius: 6px;
         border-left: 5px solid var(--primary);
     }
+    select.area-select option:disabled { display:none; }
 </style>
 
 <div class="container-piar">
@@ -207,7 +208,7 @@
                     <tbody>
                         <tr>
                             <td>
-                                <select name="area[]" class="form-control" required style="font-weight: bold;">
+                                <select name="area[]" class="form-control area-select" required style="font-weight: bold;">
                                     <option value="">-- Seleccione Área --</option>
                                     @foreach($areas as $area)
                                         <option value="{{ $area->name_area }}">{{ $area->name_area }}</option>
@@ -247,6 +248,29 @@
                         </tr>
                     </thead>
                     <tbody>
+                        @forelse($familyActivities as $act)
+                        <tr>
+                            <td>
+                                <input type="text" name="anexo3_actividad[]" class="form-control" placeholder="Si no cumple escriba: N/A" required value="{{ $act->activity }}">
+                            </td>
+                            <td>
+                                <textarea name="anexo3_estrategia[]" class="form-control" style="height: 60px;" placeholder="Si no cumple escriba: N/A" required>{{ $act->strategy }}</textarea>
+                            </td>
+                            <td>
+                                <select name="anexo3_frecuencia[]" class="form-control" required>
+                                    <option value="D" {{ $act->frequency == 'D' ? 'selected' : '' }}>D (Diaria)</option>
+                                    <option value="S" {{ $act->frequency == 'S' ? 'selected' : '' }}>S (Semanal)</option>
+                                    <option value="P" {{ $act->frequency == 'P' ? 'selected' : '' }}>P (Permanente)</option>
+                                    <option value="N/A" {{ $act->frequency == 'N/A' ? 'selected' : '' }}>N/A (No aplica)</option>
+                                </select>
+                            </td>
+                            <td style="text-align:center; vertical-align:middle;">
+                                <button type="button" onclick="this.parentElement.parentElement.remove()" class="btn" style="color: #ef4444; background: none; border: none; cursor: pointer;">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        @empty
                         <tr>
                             <td>
                                 <input type="text" name="anexo3_actividad[]" class="form-control" placeholder="Si no cumple escriba: N/A" required>
@@ -262,7 +286,9 @@
                                     <option value="N/A">N/A (No aplica)</option>
                                 </select>
                             </td>
-                            <td></td> </tr>
+                            <td></td>
+                        </tr>
+                        @endforelse
                     </tbody>
                 </table>
                 <div style="margin-top: 15px;">
@@ -297,29 +323,31 @@
         }
     }
 
-    function agregarFilaAnexo() {
-        const tbody = document.querySelector('#tabla-anexo3 tbody');
-        const nuevaFila = document.createElement('tr');
-        
-        nuevaFila.innerHTML = `
-            <td><input type="text" name="anexo3_actividad[]" class="form-control" placeholder="Si no cumple escriba: N/A" required></td>
-            <td><textarea name="anexo3_estrategia[]" class="form-control" style="height: 60px;" placeholder="Si no cumple escriba: N/A" required></textarea></td>
-            <td>
-                <select name="anexo3_frecuencia[]" class="form-control" required>
-                    <option value="D">D (Diaria)</option>
-                    <option value="S">S (Semanal)</option>
-                    <option value="P">P (Permanente)</option>
-                    <option value="N/A">N/A (No aplica)</option>
-                </select>
-            </td>
-            <td style="text-align:center; vertical-align:middle;">
-                <button type="button" onclick="this.parentElement.parentElement.remove()" class="btn" style="color: #ef4444;">
-                    <i class="bi bi-trash"></i>
-                </button>
-            </td>
-        `;
-        tbody.appendChild(nuevaFila);
-    }
+        function agregarFilaAnexo() {
+            const tbody = document.querySelector('#tabla-anexo3 tbody');
+            const nuevaFila = document.createElement('tr');
+            
+            nuevaFila.innerHTML = `
+                <td><input type="text" name="anexo3_actividad[]" class="form-control" placeholder="Si no cumple escriba: N/A" required></td>
+                <td><textarea name="anexo3_estrategia[]" class="form-control" style="height: 60px;" placeholder="Si no cumple escriba: N/A" required></textarea></td>
+                <td>
+                    <select name="anexo3_frecuencia[]" class="form-control" required>
+                        <option value="D">D (Diaria)</option>
+                        <option value="S">S (Semanal)</option>
+                        <option value="P">P (Permanente)</option>
+                        <option value="N/A">N/A (No aplica)</option>
+                    </select>
+                </td>
+                <td style="text-align:center; vertical-align:middle;">
+                    <button type="button" onclick="this.parentElement.parentElement.remove()" class="btn" style="color: #ef4444;">
+                        <i class="bi bi-trash"></i>
+                    </button>
+                </td>
+            `;
+            tbody.appendChild(nuevaFila);
+            // Refresh area option disabling after adding a new row
+            updateAreaOptions();
+        }
 </script>
 
 @push('styles')
@@ -443,6 +471,28 @@
         }
       });
     });
+
+        // Disable already selected areas in other rows
+        function updateAreaOptions() {
+            const selects = document.querySelectorAll('select.area-select');
+            const selected = [];
+            selects.forEach(s => { if (s.value && s.value !== 'N/A') selected.push(s.value); });
+            selects.forEach(s => {
+                const current = s.value;
+                Array.from(s.options).forEach(opt => {
+                    if (opt.value && opt.value !== 'N/A' && opt.value !== current && selected.includes(opt.value)) {
+                        opt.disabled = true;
+                    } else {
+                        opt.disabled = false;
+                    }
+                });
+            });
+        }
+        document.querySelectorAll('select.area-select').forEach(s => {
+            s.addEventListener('change', updateAreaOptions);
+        });
+        updateAreaOptions();
+    setTimeout(updateAreaOptions, 0);
   });
 </script>
 @endpush

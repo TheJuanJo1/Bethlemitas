@@ -257,6 +257,13 @@ class PiarController extends Controller
 
         $teacherId = Auth::id();
         $studentGroupId = $piar->student->id_group;
+
+        $filledAreas = PiarAdjustment::where('piar_id', $piar_id)
+            ->where('period', 1)
+            ->where('teacher_id', $teacherId)
+            ->pluck('area')
+            ->toArray();
+
         $areas = Area::query()
             ->whereIn('id', function ($sub) use ($teacherId, $studentGroupId) {
                 $sub->select('id_area')
@@ -264,10 +271,15 @@ class PiarController extends Controller
                     ->where('id_teacher', $teacherId)
                     ->where('id_group', $studentGroupId);
             })
+            ->whereNotIn('name_area', $filledAreas)
             ->orderBy('name_area')
             ->get();
 
-        return view('piar.periodo1', compact('piar','areas'));
+        $familyActivities = \App\Models\PiarFamilyActivity::where('piar_id', $piar_id)
+            ->where('period', 1)
+            ->get();
+
+        return view('piar.periodo1', compact('piar', 'areas', 'familyActivities'));
     }
 
     public function storePeriodo1(Request $request)
@@ -510,23 +522,35 @@ class PiarController extends Controller
 
     //Periodo 2
      public function periodo2($piar_id)
-    {
-        $piar = Piar::with('student')->findOrFail($piar_id);
-
-        $teacherId = Auth::id();
-        $studentGroupId = $piar->student->id_group;
-        $areas = Area::query()
-            ->whereIn('id', function ($sub) use ($teacherId, $studentGroupId) {
-                $sub->select('id_area')
-                    ->from('teachers_areas_groups')
-                    ->where('id_teacher', $teacherId)
-                    ->where('id_group', $studentGroupId);
-            })
-            ->orderBy('name_area')
-            ->get();
-
-        return view('piar.periodo2', compact('piar','areas'));
-    }
+     {
+         $piar = Piar::with('student')->findOrFail($piar_id);
+ 
+         $teacherId = Auth::id();
+         $studentGroupId = $piar->student->id_group;
+ 
+         $filledAreas = PiarAdjustment::where('piar_id', $piar_id)
+             ->where('period', 2)
+             ->where('teacher_id', $teacherId)
+             ->pluck('area')
+             ->toArray();
+ 
+         $areas = Area::query()
+             ->whereIn('id', function ($sub) use ($teacherId, $studentGroupId) {
+                 $sub->select('id_area')
+                     ->from('teachers_areas_groups')
+                     ->where('id_teacher', $teacherId)
+                     ->where('id_group', $studentGroupId);
+             })
+             ->whereNotIn('name_area', $filledAreas)
+             ->orderBy('name_area')
+             ->get();
+ 
+         $familyActivities = \App\Models\PiarFamilyActivity::where('piar_id', $piar_id)
+             ->where('period', 2)
+             ->get();
+ 
+         return view('piar.periodo2', compact('piar', 'areas', 'familyActivities'));
+     }
 
     public function storePeriodo2(Request $request)
     {
@@ -740,23 +764,35 @@ class PiarController extends Controller
 
     //Y PPeiorodo 3
      public function periodo3($piar_id)
-    {
-        $piar = Piar::with('student')->findOrFail($piar_id);
-
-        $teacherId = Auth::id();
-        $studentGroupId = $piar->student->id_group;
-        $areas = Area::query()
-            ->whereIn('id', function ($sub) use ($teacherId, $studentGroupId) {
-                $sub->select('id_area')
-                    ->from('teachers_areas_groups')
-                    ->where('id_teacher', $teacherId)
-                    ->where('id_group', $studentGroupId);
-            })
-            ->orderBy('name_area')
-            ->get();
-
-        return view('piar.periodo3', compact('piar','areas'));
-    }
+     {
+         $piar = Piar::with('student')->findOrFail($piar_id);
+ 
+         $teacherId = Auth::id();
+         $studentGroupId = $piar->student->id_group;
+ 
+         $filledAreas = PiarAdjustment::where('piar_id', $piar_id)
+             ->where('period', 3)
+             ->where('teacher_id', $teacherId)
+             ->pluck('area')
+             ->toArray();
+ 
+         $areas = Area::query()
+             ->whereIn('id', function ($sub) use ($teacherId, $studentGroupId) {
+                 $sub->select('id_area')
+                     ->from('teachers_areas_groups')
+                     ->where('id_teacher', $teacherId)
+                     ->where('id_group', $studentGroupId);
+             })
+             ->whereNotIn('name_area', $filledAreas)
+             ->orderBy('name_area')
+             ->get();
+ 
+         $familyActivities = \App\Models\PiarFamilyActivity::where('piar_id', $piar_id)
+             ->where('period', 3)
+             ->get();
+ 
+         return view('piar.periodo3', compact('piar', 'areas', 'familyActivities'));
+     }
 
     public function storePeriodo3(Request $request)
     {
