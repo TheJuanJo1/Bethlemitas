@@ -1,4 +1,4 @@
-@extends('layout.masterPage')
+ @extends('layout.masterPage')
 
 @section('css')
     <style>
@@ -95,7 +95,7 @@
                                             <i class="bi bi-journal-check mr-1 md:mr-1.5"></i>
                                             Periodos
                                         </a>
-                                        <x-piar-acta-dropdown :piar-id="$student->piar->id" />
+
                                     @else
                                         <span class="inline-flex items-center justify-center px-3 py-1.5 md:px-4 md:py-2 rounded-lg bg-amber-50 text-amber-700 text-[10px] font-bold border border-amber-200">
                                             <i class="bi bi-hourglass-split mr-1 md:mr-1.5 animate-pulse"></i>

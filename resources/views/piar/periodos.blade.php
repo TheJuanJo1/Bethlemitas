@@ -202,12 +202,6 @@
         <div>
             <div style="font-size: 11px; opacity: 0.8; text-transform: uppercase; font-weight: 700;">Expediente Estudiantil</div>
             <div style="font-size: 1.25rem; font-weight: 800;">{{ $piar->student->name }} {{ $piar->student->last_name }}</div>
-            
-            @if($piar->characteristics)
-                <div class="mt-2">
-                    <x-piar-acta-dropdown :piar-id="$piar->id" />
-                </div>
-            @endif
         </div>
         <div class="sm:text-right">
             <div style="font-size: 11px; opacity: 0.8; text-transform: uppercase; font-weight: 700;">Grado</div>

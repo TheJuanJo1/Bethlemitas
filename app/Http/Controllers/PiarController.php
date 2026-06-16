@@ -277,6 +277,7 @@ class PiarController extends Controller
 
         $familyActivities = \App\Models\PiarFamilyActivity::where('piar_id', $piar_id)
             ->where('period', 1)
+            ->where('teacher_id', $teacherId)
             ->get();
 
         return view('piar.periodo1', compact('piar', 'areas', 'familyActivities'));
@@ -379,6 +380,7 @@ class PiarController extends Controller
         // Guardar actividades para la familia (Anexo 3)
         \App\Models\PiarFamilyActivity::where('piar_id', $piarId)
             ->where('period', 1)
+            ->where('teacher_id', $teacherId)
             ->delete();
 
         if ($request->has('anexo3_actividad')) {
@@ -455,6 +457,7 @@ class PiarController extends Controller
 
         $familyActivities = \App\Models\PiarFamilyActivity::where('piar_id', $piar_id)
             ->where('period', 1)
+            ->where('teacher_id', auth()->id())
             ->get();
 
         return view('piar.editar_periodo1', compact('adjustments', 'piar_id', 'familyActivities'));
@@ -497,10 +500,10 @@ class PiarController extends Controller
             }
         }
 
-        $piarId = (int) $request->piar_id;
-        // Guardar actividades para la familia (Anexo 3)
+        $teacherId = auth()->id();
         \App\Models\PiarFamilyActivity::where('piar_id', $piarId)
             ->where('period', 1)
+            ->where('teacher_id', $teacherId)
             ->delete();
 
         if ($request->has('anexo3_actividad')) {
@@ -546,8 +549,9 @@ class PiarController extends Controller
              ->get();
  
          $familyActivities = \App\Models\PiarFamilyActivity::where('piar_id', $piar_id)
-             ->where('period', 2)
-             ->get();
+            ->where('period', 2)
+            ->where('teacher_id', $teacherId)
+            ->get();
  
          return view('piar.periodo2', compact('piar', 'areas', 'familyActivities'));
      }
@@ -638,6 +642,7 @@ class PiarController extends Controller
         // Guardar actividades para la familia (Anexo 3)
         \App\Models\PiarFamilyActivity::where('piar_id', $piarId)
             ->where('period', 2)
+            ->where('teacher_id', $teacherId)
             ->delete();
 
         if ($request->has('anexo3_actividad')) {
@@ -697,6 +702,7 @@ class PiarController extends Controller
 
         $familyActivities = \App\Models\PiarFamilyActivity::where('piar_id', $piar_id)
             ->where('period', 2)
+            ->where('teacher_id', auth()->id())
             ->get();
 
         return view('piar.editar_periodo2', compact('adjustments', 'piar_id', 'familyActivities'));
@@ -740,9 +746,11 @@ class PiarController extends Controller
         }
 
         $piarId = (int) $request->piar_id;
+        $teacherId = auth()->id();
         // Guardar actividades para la familia (Anexo 3)
         \App\Models\PiarFamilyActivity::where('piar_id', $piarId)
             ->where('period', 2)
+            ->where('teacher_id', $teacherId)
             ->delete();
 
         if ($request->has('anexo3_actividad')) {
@@ -788,8 +796,9 @@ class PiarController extends Controller
              ->get();
  
          $familyActivities = \App\Models\PiarFamilyActivity::where('piar_id', $piar_id)
-             ->where('period', 3)
-             ->get();
+            ->where('period', 3)
+            ->where('teacher_id', $teacherId)
+            ->get();
  
          return view('piar.periodo3', compact('piar', 'areas', 'familyActivities'));
      }
@@ -880,6 +889,7 @@ class PiarController extends Controller
         // Guardar actividades para la familia (Anexo 3)
         \App\Models\PiarFamilyActivity::where('piar_id', $piarId)
             ->where('period', 3)
+            ->where('teacher_id', $teacherId)
             ->delete();
 
         if ($request->has('anexo3_actividad')) {
@@ -939,6 +949,7 @@ class PiarController extends Controller
 
         $familyActivities = \App\Models\PiarFamilyActivity::where('piar_id', $piar_id)
             ->where('period', 3)
+            ->where('teacher_id', auth()->id())
             ->get();
 
         return view('piar.editar_periodo3', compact('adjustments', 'piar_id', 'familyActivities'));
@@ -982,9 +993,11 @@ class PiarController extends Controller
         }
 
         $piarId = (int) $request->piar_id;
+        $teacherId = auth()->id();
         // Guardar actividades para la familia (Anexo 3)
         \App\Models\PiarFamilyActivity::where('piar_id', $piarId)
             ->where('period', 3)
+            ->where('teacher_id', $teacherId)
             ->delete();
 
         if ($request->has('anexo3_actividad')) {
@@ -1242,6 +1255,7 @@ class PiarController extends Controller
 
         $familyActivities = \App\Models\PiarFamilyActivity::where('piar_id', $piar_id)
             ->where('period', $periodo)
+            ->where('teacher_id', auth()->id())
             ->get();
 
         $periodo_actual = $periodo;

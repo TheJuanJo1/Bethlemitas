@@ -12,6 +12,7 @@ class PiarFamilyActivity extends Model
     protected $fillable = [
         'piar_id',
         'period',
+        'teacher_id',
         'activity',
         'strategy',
         'frequency',

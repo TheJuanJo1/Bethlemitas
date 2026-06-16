@@ -57,7 +57,7 @@
                                 </h4>
                                 
                                 <p class="text-xs text-slate-500 mb-4 line-clamp-3">
-                                    <strong>Objetivo:</strong> {{ Str::limit($adjustment->objetivo ?? 'No registrado.', 100) }}
+                                    <strong>Objetivo:</strong> {!! $adjustment->objetivo ?? 'No registrado.' !!}
                                 </p>
 
                                 <div class="flex gap-2">
