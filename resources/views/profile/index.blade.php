@@ -191,35 +191,56 @@
 {{-- FIRMA DE DOCENTE --}}
 @php
     $signaturePath = null;
-    foreach (['png','jpg','jpeg'] as $ext) {
-        if (file_exists(public_path("Imagenes_Firma/firma_{$user->number_documment}.$ext"))) {
-            $signaturePath = asset("Imagenes_Firma/firma_{$user->number_documment}.$ext");
+
+    $extensions = ['jpg', 'jpeg', 'png'];
+
+    foreach ($extensions as $ext) {
+
+        $path = public_path(
+            "Imagenes_Firma/firma_{$user->number_documment}.{$ext}"
+        );
+
+        if (file_exists($path)) {
+
+            // Se agrega timestamp para evitar caché
+            $signaturePath = asset(
+                "Imagenes_Firma/firma_{$user->number_documment}.{$ext}"
+            ) . '?v=' . filemtime($path);
+
             break;
         }
     }
 @endphp
 
 <div class="flex flex-col lg:flex-row items-start gap-10 mb-10">
-    <!-- PREVIA DE FIRMA -->
+
+    {{-- PREVIA DE FIRMA --}}
     <div class="flex flex-col items-center gap-4">
+
         <img
             id="previewSignature"
             src="{{ $signaturePath ?? asset('img/default-signature.png') }}"
             class="w-48 h-24 object-contain border-2 border-slate-200 rounded-md"
             alt="Firma del docente">
+
     </div>
 
-    <!-- FORMULARIO FIRMA -->
+    {{-- FORMULARIO FIRMA --}}
     <div class="flex-1">
-        <form method="POST"
-              action="{{ route('profile.update.signature') }}"
-              enctype="multipart/form-data"
-              class="flex flex-col gap-4">
+
+        <form
+            method="POST"
+            action="{{ route('profile.update.signature') }}"
+            enctype="multipart/form-data"
+            class="flex flex-col gap-4">
+
             @csrf
             @method('PUT')
 
             <label class="cursor-pointer inline-block bg-slate-100 text-slate-700 px-4 py-2 rounded-xl border border-slate-200 hover:bg-slate-200 text-sm font-bold w-fit transition-all">
+
                 Seleccionar firma
+
                 <input
                     type="file"
                     name="signature"
@@ -228,31 +249,58 @@
                     class="hidden"
                     onchange="previewSignature(event)"
                 >
+
             </label>
 
-            <p class="text-xs text-slate-500 font-medium">PNG, JPG o JPEG — máximo 2 MB</p>
+            <p class="text-xs text-slate-500 font-medium">
+                PNG, JPG o JPEG — máximo 2 MB
+            </p>
 
             @error('signature')
-                <p class="text-sm text-rose-500 font-medium">{{ $message }}</p>
+                <p class="text-sm text-rose-500 font-medium">
+                    {{ $message }}
+                </p>
             @enderror
 
             <div class="flex gap-3">
-                <button type="submit" class="bg-indigo-600 text-white px-5 py-2 rounded-xl font-bold hover:bg-indigo-700 shadow-lg shadow-indigo-100 transition-all text-sm">
+
+                <button
+                    type="submit"
+                    class="bg-indigo-600 text-white px-5 py-2 rounded-xl font-bold hover:bg-indigo-700 shadow-lg shadow-indigo-100 transition-all text-sm">
+
                     Guardar firma
+
                 </button>
+
             </div>
+
         </form>
 
         @if ($signaturePath)
-            <form method="POST" action="{{ route('profile.delete.signature') }}" onsubmit="return confirmDeleteSignature()" class="inline">
+
+            <form
+                method="POST"
+                action="{{ route('profile.delete.signature') }}"
+                onsubmit="return confirmDeleteSignature()"
+                class="inline">
+
                 @csrf
                 @method('DELETE')
-                <button type="submit" class="bg-rose-600 text-white px-5 py-2 rounded-xl font-bold hover:bg-rose-700 shadow-lg shadow-rose-100 transition-all text-sm">
+
+                <button
+                    type="submit"
+                    class="bg-rose-600 text-white px-5 py-2 rounded-xl font-bold hover:bg-rose-700 shadow-lg shadow-rose-100 transition-all text-sm">
+
                     Eliminar firma
+
                 </button>
+
             </form>
+
         @endif
+
     </div>
+
 </div>
 
 {{-- SCRIPTS --}}

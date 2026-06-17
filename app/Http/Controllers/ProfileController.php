@@ -128,41 +128,70 @@ class ProfileController extends Controller
         return back()->with('success_photo', 'Foto de perfil eliminada correctamente.');
     }
 
-    // 📜 SUBIR / REEMPLAZAR FIRMA
-    public function updateSignature(Request $request)
-    {
-        $request->validate([
-            'signature' => 'required|image|mimes:png,jpg,jpeg|max:2048',
-        ]);
+// 📜 SUBIR / REEMPLAZAR FIRMA
+public function updateSignature(Request $request)
+{
+    $request->validate([
+        'signature' => 'required|image|mimes:png,jpg,jpeg|max:2048',
+    ]);
 
-        $user = Auth::user();
-        $documento = $user->number_documment;
+    $user = Auth::user();
+    $documento = $user->number_documment;
 
-        $folder = public_path('Imagenes_Firma');
-        if (!file_exists($folder)) {
-            mkdir($folder, 0755, true);
-        }
+    // Carpeta donde se guardarán las firmas
+    $folder = public_path('Imagenes_Firma');
 
-        // Eliminar firmas anteriores
-        foreach (['png', 'jpg', 'jpeg'] as $ext) {
-            $oldFile = $folder . '/firma_' . $documento . '.' . $ext;
-            if (file_exists($oldFile)) {
-                unlink($oldFile);
-            }
-        }
-
-        $extension = $request->file('signature')->getClientOriginalExtension();
-        $fileName = 'firma_' . $documento . '.' . $extension;
-        $request->file('signature')->move($folder, $fileName);
-
-        // Guardar ruta en la base de datos
-        $user->signature = "Imagenes_Firma/" . $fileName;
-        $user->save();
-        // Propagar firma a los ajustes existentes del docente
-        \App\Models\PiarAdjustment::where('teacher_id', $user->id)->update(['teacher_signature' => $user->signature]);
-
-        return back()->with('success_signature', 'Firma actualizada correctamente.');
+    if (!is_dir($folder)) {
+        mkdir($folder, 0755, true);
     }
+
+    // Eliminar cualquier firma previa
+    foreach (['png', 'jpg', 'jpeg'] as $ext) {
+
+        $oldFile = $folder . DIRECTORY_SEPARATOR .
+                   "firma_{$documento}.{$ext}";
+
+        if (file_exists($oldFile)) {
+            @unlink($oldFile);
+        }
+    }
+
+    // Obtener extensión limpia y en minúsculas
+    $extension = strtolower(
+        $request->file('signature')->extension()
+    );
+
+    // Nombre fijo
+    $fileName = "firma_{$documento}.{$extension}";
+
+    // Mover archivo
+    $request->file('signature')->move(
+        $folder,
+        $fileName
+    );
+
+    // Guardar ruta relativa
+    $signaturePath = "Imagenes_Firma/{$fileName}";
+
+    $user->signature = $signaturePath;
+    $user->save();
+
+    // Actualizar ajustes PIAR del docente
+    \App\Models\PiarAdjustment::where(
+        'teacher_id',
+        $user->id
+    )->update([
+        'teacher_signature' => $signaturePath
+    ]);
+
+    // Limpiar caché de archivos
+    clearstatcache();
+
+    return back()->with(
+        'success_signature',
+        'Firma actualizada correctamente.'
+    );
+}
 
     // 🗑️ ELIMINAR FIRMA
     public function deleteSignature()
