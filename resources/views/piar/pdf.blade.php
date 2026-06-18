@@ -68,7 +68,7 @@ Información General
 
 <tr>
 <td><b>Institución</b></td>
-<td>Bethelemitas</td>
+<td>Colegio Sagrado Corazón de Jesús Hermanas Bethlemitas Pereira</td>
 </tr>
 
 <tr>

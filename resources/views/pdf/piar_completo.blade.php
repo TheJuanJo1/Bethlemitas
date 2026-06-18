@@ -118,13 +118,13 @@
             <td class="campo">Fecha de elaboración:</td>
             <td>{{ $piar->created_at->format('d/m/Y') }}</td>
             <td class="campo">Institución Educativa:</td>
-            <td>Bethelemitas</td>
+            <td>Colegio Sagrado Corazón de Jesús Hermanas Bethlemitas Pereira</td>
         </tr>
         <tr>
             <td class="campo">Sede:</td>
             <td>Pereira</td>
             <td class="campo">Jornada:</td>
-            <td>Unica</td>
+            <td>Única</td>
         </tr>
         <tr>
             <td class="campo" style="vertical-align: top;">Docentes que elaboran:</td>

@@ -57,13 +57,13 @@
             <td class="campo">Fecha de elaboración:</td>
             <td>{{ $piar->created_at->format('d/m/Y') }}</td>
             <td class="campo">Institución Educativa:</td>
-            <td>Bethelemitas</td>
+            <td>Colegio Sagrado Corazón de Jesús Hermanas Bethlemitas Pereira</td>
         </tr>
         <tr>
             <td class="campo">Sede:</td>
             <td>Pereira</td>
             <td class="campo">Jornada:</td>
-            <td>Unica</td>
+            <td>Única</td>
         </tr>
         <tr>
             <td class="campo" style="vertical-align: top;">Docentes que elaboran:</td>
@@ -145,11 +145,11 @@
                         </td>
                         <td rowspan="3">{{ strip_tags($row->objetivo ?? '') }}</td>
                         <td rowspan="3">{{ strip_tags($row->barrera ?? '') }}</td>
-                        <td><strong>Currículo:</strong><br>{{ strip_tags($row->ajuste_curricular ?? '') }}</td>
+                        <td><strong>Ajuste Curricular:</strong><br>{{ strip_tags($row->ajuste_curricular ?? '') }}</td>
                         <td rowspan="3">{{ strip_tags($row->evaluacion ?? '') }}</td>
                     </tr>
-                    <tr><td><strong>Metodología:</strong><br>{{ strip_tags($row->ajuste_metodologico ?? '') }}</td></tr>
-                    <tr><td><strong>Evaluación:</strong><br>{{ strip_tags($row->ajuste_evaluativo ?? '') }}</td></tr>
+                    <tr><td><strong>Ajuste Metodológico:</strong><br>{{ strip_tags($row->ajuste_metodologico ?? '') }}</td></tr>
+                    <tr><td><strong>Ajuste Evaluativo:</strong><br>{{ strip_tags($row->ajuste_evaluativo ?? '') }}</td></tr>
                     <tr>
                         <td rowspan="5" class="vertical-text">O<br>T<br>R<br>A<br>S</td>
                         <td class="inner-label">Convivencia</td>

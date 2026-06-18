@@ -217,7 +217,7 @@
                         <p>{!! $adj->ajuste_curricular !!}</p>
                     </div>
                     <div class="detail-box">
-                        <label>Metodología</label>
+                        <label>Ajuste Metodológico</label>
                         <p>{!! $adj->ajuste_metodologico !!}</p>
                     </div>
 
