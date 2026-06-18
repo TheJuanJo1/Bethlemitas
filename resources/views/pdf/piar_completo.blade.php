@@ -226,14 +226,14 @@
                         </td>
                         <td rowspan="3">{{ $row->objetivo ?? '' }}</td>
                         <td rowspan="3">{{ $row->barrera ?? '' }}</td>
-                        <td style="height: 40px;"><strong>Currículo:</strong><br>{{ $row->ajuste_curricular ?? '' }}</td>
+                        <td style="height: 40px;"><strong>Ajuste Currícular:</strong><br>{{ $row->ajuste_curricular ?? '' }}</td>
                         <td rowspan="3">{{ $row->evaluacion ?? '' }}</td>
                     </tr>
                     <tr>
-                        <td style="height: 40px;"><strong>Metodología:</strong><br>{{ $row->ajuste_metodologico ?? '' }}</td>
+                        <td style="height: 40px;"><strong>Ajuste Metodologíco:</strong><br>{{ $row->ajuste_metodologico ?? '' }}</td>
                     </tr>
                     <tr>
-                        <td style="height: 40px;"><strong>Evaluación:</strong><br>{{ $row->ajuste_evaluativo ?? '' }}</td>
+                        <td style="height: 40px;"><strong>Ajuste Evaluativo:</strong><br>{{ $row->ajuste_evaluativo ?? '' }}</td>
                     </tr>
 
                     <tr>
