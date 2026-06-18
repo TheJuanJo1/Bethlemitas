@@ -78,7 +78,7 @@ Información General
 
 <tr>
 <td><b>Jornada</b></td>
-<td>Diurna</td>
+<td>Unica</td>
 </tr>
 </table>
 

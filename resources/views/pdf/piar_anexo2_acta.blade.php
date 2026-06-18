@@ -63,7 +63,7 @@
             <td class="campo">Sede:</td>
             <td>Pereira</td>
             <td class="campo">Jornada:</td>
-            <td>Diurna</td>
+            <td>Unica</td>
         </tr>
         <tr>
             <td class="campo" style="vertical-align: top;">Docentes que elaboran:</td>

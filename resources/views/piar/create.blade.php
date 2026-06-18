@@ -175,7 +175,7 @@
                 </div>
                 <div class="data-item">
                     <label>Jornada</label>
-                    <span>Diurna</span>
+                    <span>Unica</span>
                 </div>
                 <div class="data-item">
                     <label>Fecha Elaboración</label>
