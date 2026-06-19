@@ -75,17 +75,21 @@
             </div>
         </div>
 
-        <a href="{{ route('piar.anexo3', ['piar' => $piar->id, 'periodo' => $periodo_actual, 'download' => 1]) }}" 
-           id="btn-pdf"
-           target="_blank"
-           class="flex items-center justify-center bg-red-600 hover:bg-red-700 text-white px-6 py-2.5 rounded-lg font-bold text-sm transition-colors shadow-lg">
-            <i class="bi bi-file-earmark-pdf mr-2"></i> GENERAR PDF OFICIAL
-        </a>
+<div class="flex space-x-2">
+    <a href="{{ route('piar.anexo3', ['piar' => $piar->id, 'periodo' => $periodo_actual, 'download' => 1]) }}" id="btn-pdf" target="_blank" class="flex items-center justify-center bg-red-600 hover:bg-red-700 text-white px-6 py-2.5 rounded-lg font-bold text-sm transition-colors shadow-lg">
+        <i class="bi bi-file-earmark-pdf mr-2"></i> GENERAR PDF OFICIAL
+    </a>
+    <button type="submit" form="family-form" class="flex items-center justify-center bg-blue-700 hover:bg-blue-800 text-white px-6 py-2.5 rounded-lg font-bold text-sm transition-colors shadow-lg">Guardar datos de la familia</button>
+</div>
     </div>
 
     <div class="bg-white border border-gray-300 shadow-sm p-8" id="documento-oficial">
         
-        <table class="w-full border-2 border-black border-collapse">
+        <form id="family-form" method="POST" action="{{ route('piar.anexo3.store') }}">
+@csrf
+<input type="hidden" name="piar_id" value="{{ $piar->id }}">
+<input type="hidden" name="periodo" value="{{ $periodo_actual }}">
+<table class="w-full border-2 border-black border-collapse">
             <thead>
                 <tr>
                     <td class="border-2 border-black p-2 w-2/3 text-center">
@@ -127,7 +131,15 @@
                 </td>
             </tr>
             
-            <tr class="border border-black">
+            <tr>
+    <td class="border border-black p-2 w-1/3"><span class="font-bold uppercase text-[9px]">Acudiente:</span></td>
+    <td class="border border-black p-2"><input type="text" name="acudiente" id="acudiente_input" value="{{ old('acudiente', $estudiante->acudiente) }}" class="w-full border border-gray-300 p-1" required></td>
+</tr>
+<tr>
+    <td class="border border-black p-2 w-1/3"><span class="font-bold uppercase text-[9px]">Parentesco:</span></td>
+    <td class="border border-black p-2"><input type="text" name="parentesco" id="parentesco_input" value="{{ old('parentesco', $estudiante->parentesco_acudiente) }}" class="w-full border border-gray-300 p-1" required></td>
+</tr>
+<tr class="border border-black">
                 <td class="border border-black p-2 align-top w-1/4">
                     <span class="font-bold uppercase text-[9px]">Equipo Directivo y Docentes:</span>
                 </td>
@@ -175,24 +187,9 @@
                     </div>
                 </td>
             </tr>
+    </table>
 
-            <tr>
-                <td class="border border-black p-2">
-                    <span class="font-bold uppercase text-[9px]">Nombres familia del estudiante:</span><br>
-                    <input type="text" id="acudiente_input" 
-                        class="w-full bg-blue-50 border-b border-blue-200 outline-none p-1 text-[10px] font-semibold" 
-                        placeholder="Escriba el nombre del familiar..."
-                        value="{{ $estudiante->acudiente }}" required>
-                </td>
-                <td colspan="2" class="border border-black p-2">
-                    <span class="font-bold uppercase text-[9px]">Parentesco:</span><br>
-                    <input type="text" id="parentesco_input" 
-                        class="w-full bg-blue-50 border-b border-blue-200 outline-none p-1 text-[10px] font-semibold" 
-                        placeholder="Ej: Madre, Padre, Tío..."
-                        value="{{ $estudiante->parentesco_acudiente }}" required>
-                </td>
-            </tr>
-        </table>
+        
 
         <div class="my-6 text-[10.5px] text-justify leading-tight space-y-3 px-1">
             <p>Según el Decreto 1421 de 2017 la educación inclusiva es un proceso permanente que reconoce, valora y responde a la diversidad de características, intereses, posibilidades y expectativas de los estudiantes para promover su desarrollo, aprendizaje y participación, en un ambiente de aprendizaje común, sin discriminación o exclusión.</p>
@@ -250,26 +247,26 @@
                 </thead>
                 <tbody>
                     @forelse($familyActivities as $activity)
-                    <tr>
-                        <td class="border border-black p-2 align-top font-semibold">{{ $activity->activity }}</td>
-                        <td class="border border-black p-2 align-top text-justify">{{ $activity->strategy }}</td>
-                        <td class="border border-black p-2 align-top text-center font-semibold">
-                            @if($activity->frequency == 'D') D (Diaria)
-                            @elseif($activity->frequency == 'S') S (Semanal)
-                            @elseif($activity->frequency == 'P') P (Permanente)
-                            @elseif($activity->frequency == 'N/A') N/A (No aplica)
-                            @else {{ $activity->frequency }}
-                            @endif
-                        </td>
-                    </tr>
+                        <tr>
+                            <td class="border border-black p-2 align-top font-semibold">{{ $activity->activity }}</td>
+                            <td class="border border-black p-2 align-top text-justify">{{ $activity->strategy }}</td>
+                            <td class="border border-black p-2 align-top text-center font-semibold">{{ $activity->frequency }}</td>
+                        </tr>
                     @empty
-                    <tr>
-                        <td colspan="3" class="border border-black p-2 text-center text-gray-400 italic">No se han registrado actividades de apoyo en el hogar para este periodo.</td>
-                    </tr>
+                        <tr>
+                            <td colspan="3" class="border border-black p-4 text-center text-gray-500 italic">
+                                No se han registrado compromisos de la familia para este periodo por parte de los docentes.
+                            </td>
+                        </tr>
                     @endforelse
-                </tbody>
-            </table>
+                 </tbody>
+             </table>
+            
+                
+            
+            </form>
         </div>
+
 
         @include('psycho.partials.anexo3_firmas', ['firmasAnexo3' => $firmasAnexo3])
 

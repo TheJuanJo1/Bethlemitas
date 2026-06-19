@@ -177,7 +177,7 @@
         </tr>
         <tr>
             <td style="padding: 8px; min-height: 80px; font-size: 10px; line-height: 1.4;">
-                {!! nl2br(e($piar->characteristics->descripcion_estudiante ?? '')) !!}
+                {!! $piar->characteristics->descripcion_estudiante ?? '' !!}
             </td>
         </tr>
     </table>
@@ -190,7 +190,7 @@
         </tr>
         <tr>
             <td style="padding: 8px; min-height: 80px; font-size: 10px; line-height: 1.4;">
-                {!! nl2br(e($piar->characteristics->habilidades ?? '')) !!}
+                {!! $piar->characteristics->habilidades ?? '' !!}
             </td>
         </tr>
     </table>

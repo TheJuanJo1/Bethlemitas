@@ -1255,7 +1255,6 @@ class PiarController extends Controller
 
         $familyActivities = \App\Models\PiarFamilyActivity::where('piar_id', $piar_id)
             ->where('period', $periodo)
-            ->where('teacher_id', auth()->id())
             ->get();
 
         $periodo_actual = $periodo;
@@ -1282,7 +1281,28 @@ class PiarController extends Controller
             'firmasAnexo3'
         ));
     }
+
+    /**
+     * Store family (acudiente) information from Anexo 3 form.
+     */
+    public function storeAnexo3(Request $request)
+    {
+        $data = $request->validate([
+            'piar_id'   => 'required|integer|exists:piar,id',
+            'periodo'   => 'required|integer|in:1,2,3',
+            'acudiente' => 'required|string|max:255',
+            'parentesco'=> 'required|string|max:255',
+        ]);
+
+        $piar = Piar::findOrFail($data['piar_id']);
+        $student = $piar->student;
+        $student->acudiente = $data['acudiente'];
+        $student->parentesco_acudiente = $data['parentesco'];
+        $student->save();
+
+        return redirect()
+            ->route('piar.anexo3', ['piar' => $data['piar_id'], 'periodo' => $data['periodo']])
+            ->with('success', 'Datos de la familia guardados correctamente.');
+    }
     // #endregion Psico - Edición de Ajustes Razonables
-
-
 }

@@ -30,6 +30,8 @@ class Users_student extends Model
         'sent_by',
         'id_state',
         'activation_period',
+        'acudiente',
+        'parentesco_acudiente',
     ];
 
 

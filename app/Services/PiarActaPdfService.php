@@ -33,7 +33,17 @@ class PiarActaPdfService
 
         $anexo1Path = $this->resolveAnexo1Path($piar);
         if ($anexo1Path) {
-            $this->appendPdfFile($merger, $anexo1Path);
+            try {
+                $this->appendPdfFile($merger, $anexo1Path);
+            } catch (\Exception $e) {
+                \Log::warning("No se pudo adjuntar el Anexo 1 al Acta del PIAR id {$piarId}: " . $e->getMessage());
+                $merger->AddPage();
+                $merger->SetFont('Arial', 'B', 14);
+                $merger->Cell(0, 15, utf8_decode('ANEXO 1 - DIAGNÓSTICO Y CARACTERIZACIÓN'), 0, 1, 'C');
+                $merger->Ln(10);
+                $merger->SetFont('Arial', '', 11);
+                $merger->MultiCell(0, 6, utf8_decode("El documento original del Anexo 1 se encuentra cargado y guardado en el sistema.\n\nNo se pudo consolidar automaticamente dentro de este PDF unificado debido a que el archivo PDF original subido utiliza un formato o compresion incompatible con el motor de exportacion de la plataforma.\n\nPor favor, consulte o descargue el Anexo 1 directamente desde la plataforma en la ficha del estudiante."), 0, 'J');
+            }
         }
 
         $anexo2Pdf = $this->renderAnexo2Pdf($piar, $periodosAnexo);

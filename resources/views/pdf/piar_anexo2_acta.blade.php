@@ -106,7 +106,7 @@
         </tr>
         <tr>
             <td style="padding: 8px; font-size: 10px;">
-                {!! nl2br(e($piar->characteristics->descripcion_estudiante ?? '')) !!}
+                {!! $piar->characteristics->descripcion_estudiante ?? '' !!}
             </td>
         </tr>
     </table>
@@ -118,7 +118,7 @@
         </tr>
         <tr>
             <td style="padding: 8px; font-size: 10px;">
-                {!! nl2br(e($piar->characteristics->habilidades ?? '')) !!}
+                {!! $piar->characteristics->habilidades ?? '' !!}
             </td>
         </tr>
     </table>
