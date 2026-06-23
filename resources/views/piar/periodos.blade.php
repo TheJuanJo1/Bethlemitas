@@ -270,10 +270,20 @@
     {{-- LISTADO DE PERIODOS --}}
     @php
         $periodos = [
-            ['id' => 1, 'data' => $period1, 'slug' => 'periodo1'],
-            ['id' => 2, 'data' => $period2, 'slug' => 'periodo2'],
-            ['id' => 3, 'data' => $period3, 'slug' => 'periodo3'],
+            ['id' => 1, 'data' => $period1, 'slug' => 'periodo1', 'title' => 'Periodo Académico 1'],
+            ['id' => 2, 'data' => $period2, 'slug' => 'periodo2', 'title' => 'Periodo Académico 2'],
+            ['id' => 3, 'data' => $period3, 'slug' => 'periodo3', 'title' => 'Periodo Académico 3'],
         ];
+
+        $isGroupDirector = ($user->group_director === $piar->student->id_group) && ($user->group_director !== null);
+        if ($isPsico || $isGroupDirector) {
+            $periodos[] = [
+                'id' => 4, 
+                'data' => $period4, 
+                'slug' => 'annual-report', 
+                'title' => 'Informe Anual por Competencias'
+            ];
+        }
     @endphp
 
     @foreach($periodos as $p)
@@ -292,9 +302,15 @@
     @endphp
     <div class="period-card">
         <div class="period-info">
-            <div class="period-num">{{ $p['id'] }}</div>
+            <div class="period-num">
+                @if($p['id'] == 4)
+                    <i class="bi bi-journal-text" style="font-size: 1.15rem;"></i>
+                @else
+                    {{ $p['id'] }}
+                @endif
+            </div>
             <div>
-                <div style="font-weight: 800; color: #1e293b; font-size: 14px;">Periodo Académico {{ $p['id'] }}</div>
+                <div style="font-weight: 800; color: #1e293b; font-size: 14px;">{{ $p['title'] }}</div>
                 <div class="flex flex-wrap gap-1 mt-1">
                     @if($status['isCompleted'])
                         <span class="badge-status bg-complete">Completado</span>
@@ -316,28 +332,53 @@
         </div>
 
         <div class="action-group">
-            @if($canFillOrEdit)
-                <a href="{{ route('piar.' . $p['slug'], $piar->id) }}" class="btn-action btn-primary">
-                    <i class="bi bi-plus-circle-fill"></i> Llenar
-                </a>
-            @else
-                <button class="btn-action btn-disabled" disabled title="{{ $lockMessage }}">
-                    <i class="bi bi-lock-fill"></i> Llenar
-                </button>
-            @endif
-
-            @if($p['data'])
-                @if($canFillOrEdit)
-                    <a href="{{ route('piar.editar.'.$p['slug'], $piar->id) }}" class="btn-action btn-edit">
-                        <i class="bi bi-pencil-fill"></i> Editar
+            {{-- Para docentes, el Informe Anual (ID 4) sólo se puede rellenar si cumple las fechas --}}
+            @if($p['id'] == 4)
+                @if($canFillOrEdit && !$isPsico)
+                    <a href="{{ route('piar.annual_report.edit', $piar->id) }}" class="btn-action btn-primary">
+                        <i class="bi bi-plus-circle-fill"></i> Llenar
                     </a>
-                    <a href="{{ route('piar.evaluacion', [$piar->id, $p['id']]) }}" class="btn-action btn-eval">
-                        <i class="bi bi-journal-check"></i> Evaluar
+                @elseif(!$isPsico)
+                    <button class="btn-action btn-disabled" disabled title="{{ $lockMessage }}">
+                        <i class="bi bi-lock-fill"></i> Llenar
+                    </button>
+                @endif
+            @else
+                @if($canFillOrEdit)
+                    <a href="{{ route('piar.' . $p['slug'], $piar->id) }}" class="btn-action btn-primary">
+                        <i class="bi bi-plus-circle-fill"></i> Llenar
                     </a>
                 @else
                     <button class="btn-action btn-disabled" disabled title="{{ $lockMessage }}">
-                        <i class="bi bi-pencil-fill"></i> Editar
+                        <i class="bi bi-lock-fill"></i> Llenar
                     </button>
+                @endif
+            @endif
+
+            @if($p['data'])
+                @if($p['id'] == 4)
+                    @if($canFillOrEdit && !$isPsico)
+                        <a href="{{ route('piar.annual_report.edit', $piar->id) }}" class="btn-action btn-edit">
+                            <i class="bi bi-pencil-fill"></i> Editar
+                        </a>
+                    @elseif(!$isPsico)
+                        <button class="btn-action btn-disabled" disabled title="{{ $lockMessage }}">
+                            <i class="bi bi-pencil-fill"></i> Editar
+                        </button>
+                    @endif
+                @else
+                    @if($canFillOrEdit)
+                        <a href="{{ route('piar.editar.'.$p['slug'], $piar->id) }}" class="btn-action btn-edit">
+                            <i class="bi bi-pencil-fill"></i> Editar
+                        </a>
+                        <a href="{{ route('piar.evaluacion', [$piar->id, $p['id']]) }}" class="btn-action btn-eval">
+                            <i class="bi bi-journal-check"></i> Evaluar
+                        </a>
+                    @else
+                        <button class="btn-action btn-disabled" disabled title="{{ $lockMessage }}">
+                            <i class="bi bi-pencil-fill"></i> Editar
+                        </button>
+                    @endif
                 @endif
             @endif
 
@@ -350,10 +391,18 @@
                 </button>
             @endif
 
-            @if($p['data'])
-                <a href="{{ route('piar.pdf.'.$p['slug'], $piar->id) }}" target="_blank" class="btn-action btn-pdf">
-                    <i class="bi bi-file-earmark-pdf-fill"></i> PDF
-                </a>
+            @if($p['id'] == 4)
+                @if($p['data'] || $isPsico)
+                    <a href="{{ route('piar.annual_report.pdf', $piar->id) }}" target="_blank" class="btn-action btn-pdf">
+                        <i class="bi bi-file-earmark-pdf-fill"></i> PDF
+                    </a>
+                @endif
+            @else
+                @if($p['data'])
+                    <a href="{{ route('piar.pdf.'.$p['slug'], $piar->id) }}" target="_blank" class="btn-action btn-pdf">
+                        <i class="bi bi-file-earmark-pdf-fill"></i> PDF
+                    </a>
+                @endif
             @endif
         </div>
     </div>

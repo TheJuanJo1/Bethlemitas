@@ -153,7 +153,7 @@ class PiarController extends Controller
 
     public function periodos($piar_id)
     {
-        $piar = Piar::with('student.degree', 'characteristics')->findOrFail($piar_id);
+        $piar = Piar::with('student.degree', 'characteristics', 'annualReport')->findOrFail($piar_id);
         $ready = (bool) $piar->characteristics;
 
         $periodAdjustments = PiarAdjustment::where('piar_id', $piar_id)->get();
@@ -165,11 +165,16 @@ class PiarController extends Controller
         $minutosRestantesGlobal = null;
         $hoy = now();
 
-        // Calculamos el estado de cada periodo
-        for ($i = 1; $i <= 3; $i++) {
-            $adjustments = $periodAdjustments->where('period', $i);
-            $hasData = $adjustments->isNotEmpty();
-            $isCompleted = $adjustments->where('is_completed', true)->isNotEmpty();
+        // Calculamos el estado de cada periodo, incluyendo el 4 (Informe Anual)
+        for ($i = 1; $i <= 4; $i++) {
+            if ($i <= 3) {
+                $adjustments = $periodAdjustments->where('period', $i);
+                $hasData = $adjustments->isNotEmpty();
+                $isCompleted = $adjustments->where('is_completed', true)->isNotEmpty();
+            } else {
+                $hasData = (bool) $piar->annualReport;
+                $isCompleted = $hasData;
+            }
             
             $globalPeriod = $globalPeriods->get($i);
             $openingDate = $globalPeriod ? $globalPeriod->opening_date : null;
@@ -181,8 +186,14 @@ class PiarController extends Controller
             // Lógica secuencial
             $prevPeriodComplete = true;
             if ($i > 1) {
-                $prevAdjustments = $periodAdjustments->where('period', $i - 1);
-                $prevPeriodComplete = $prevAdjustments->where('is_completed', true)->isNotEmpty();
+                if ($i <= 3) {
+                    $prevAdjustments = $periodAdjustments->where('period', $i - 1);
+                    $prevPeriodComplete = $prevAdjustments->where('is_completed', true)->isNotEmpty();
+                } else {
+                    // El informe anual (periodo 4) requiere que el periodo 3 esté completado
+                    $prevAdjustments = $periodAdjustments->where('period', 3);
+                    $prevPeriodComplete = $prevAdjustments->where('is_completed', true)->isNotEmpty();
+                }
             }
 
             // Un periodo está bloqueado si ya pasó su fecha de cierre
@@ -230,6 +241,7 @@ class PiarController extends Controller
         $period1 = $periodData[1]['hasData'];
         $period2 = $periodData[2]['hasData'];
         $period3 = $periodData[3]['hasData'];
+        $period4 = $periodData[4]['hasData'];
         
         $diasRestantes = $diasRestantesGlobal;
         $horasRestantes = $horasRestantesGlobal;
@@ -240,6 +252,7 @@ class PiarController extends Controller
             'period1',
             'period2',
             'period3',
+            'period4',
             'ready',
             'diasRestantes',
             'horasRestantes',

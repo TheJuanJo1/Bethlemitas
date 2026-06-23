@@ -30,6 +30,23 @@ class PiarAnnualReportController extends Controller
             }
         }
 
+        // Validar rango de fechas para el informe anual
+        $hoy = now();
+        $globalPeriod = \App\Models\Period::find(4);
+        
+        $openingDate = $globalPeriod ? $globalPeriod->opening_date : null;
+        $closingDate = $globalPeriod ? $globalPeriod->closing_date : null;
+        
+        $isOpened = $openingDate ? $hoy->greaterThanOrEqualTo($openingDate) : false;
+        $isClosed = $closingDate ? $hoy->greaterThan($closingDate) : false;
+
+        if ($user->hasRole('docente')) {
+            if (!$isOpened || $isClosed) {
+                return redirect()->route('piar.periodos', $piar->id)
+                    ->with('error', 'El periodo para diligenciar el Informe Anual está cerrado o aún no ha sido habilitado por Psicoorientación.');
+            }
+        }
+
         $annualReport = $piar->annualReport ?? new PiarAnnualReport();
         $director = Users_teacher::where('group_director', $student->id_group)->first();
 
@@ -49,6 +66,23 @@ class PiarAnnualReportController extends Controller
         if ($user->hasRole('docente')) {
             if ($user->group_director !== $student->id_group || $user->group_director === null) {
                 abort(403, 'No tienes permiso para guardar el informe anual de este estudiante.');
+            }
+        }
+
+        // Validar rango de fechas para el informe anual
+        $hoy = now();
+        $globalPeriod = \App\Models\Period::find(4);
+        
+        $openingDate = $globalPeriod ? $globalPeriod->opening_date : null;
+        $closingDate = $globalPeriod ? $globalPeriod->closing_date : null;
+        
+        $isOpened = $openingDate ? $hoy->greaterThanOrEqualTo($openingDate) : false;
+        $isClosed = $closingDate ? $hoy->greaterThan($closingDate) : false;
+
+        if ($user->hasRole('docente')) {
+            if (!$isOpened || $isClosed) {
+                return redirect()->route('piar.periodos', $piar->id)
+                    ->with('error', 'El periodo para diligenciar el Informe Anual está cerrado o aún no ha sido habilitado por Psicoorientación.');
             }
         }
 
