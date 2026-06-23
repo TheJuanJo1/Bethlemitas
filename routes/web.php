@@ -10,6 +10,7 @@ use App\Http\Controllers\CreateGroupController;
 use App\Http\Controllers\CreateReferralController;
 use App\Http\Controllers\PsicoController;
 use App\Http\Controllers\PiarController;
+use App\Http\Controllers\PiarAnnualReportController;
 use App\Http\Middleware\PreventBackHistoryMiddleware;
 use App\Http\Middleware\RoleMiddleware;
 use App\Http\Middleware\RoleDocenteMiddleware;
@@ -129,6 +130,10 @@ Route::middleware([PreventBackHistoryMiddleware::class])->group(function () {
             // Evaluación por periodo
             Route::get('/piar/{piar}/evaluacion/{period}', [PiarController::class, 'evaluacion'])->name('piar.evaluacion');
             Route::post('/piar/evaluacion/store', [PiarController::class, 'storeEvaluacion'])->name('piar.evaluacion.store');
+
+            // Informe Anual
+            Route::get('/piar/{piar}/annual-report', [PiarAnnualReportController::class, 'edit'])->name('piar.annual_report.edit');
+            Route::post('/piar/{piar}/annual-report/store', [PiarAnnualReportController::class, 'store'])->name('piar.annual_report.store');
         });
 
         /*
@@ -150,6 +155,9 @@ Route::middleware([PreventBackHistoryMiddleware::class])->group(function () {
             Route::get('/piar/{piar}/pdf/acta/{periodo}', [PiarController::class, 'pdfActa'])
                 ->where('periodo', '1|2|3|todos')
                 ->name('piar.pdf.acta');
+
+            // PDF Informe Anual
+            Route::get('/piar/{piar}/annual-report/pdf', [PiarAnnualReportController::class, 'pdf'])->name('piar.annual_report.pdf');
         });
 
         /*

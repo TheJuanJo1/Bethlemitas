@@ -178,12 +178,26 @@
                                     <a href="{{ route('piar.anexo3', ['piar' => $student->piar->id, 'periodo' => 1]) }}"
                                        class="p-1.5 md:px-3 md:py-1 text-white bg-green-600 rounded hover:bg-green-800 btn-transition flex items-center justify-center"
                                        title="Anexo 3">
-                                       <i class="bi bi-file-plus md:hidden"></i><span class="hidden md:inline text-[10px] leading-tight">Anexo 3</span>
+                                        <i class="bi bi-file-plus md:hidden"></i><span class="hidden md:inline text-[10px] leading-tight">Anexo 3</span>
                                     </a>
                                 @else
                                     <button class="p-1.5 md:px-3 md:py-1 text-white bg-gray-400 rounded cursor-not-allowed opacity-60 flex items-center justify-center" 
                                             disabled title="Sin PIAR">
                                         <i class="bi bi-file-x md:hidden"></i><span class="hidden md:inline text-[10px] leading-tight">Anexo 3</span>
+                                    </button>
+                                @endif
+
+                                @if($student->piar)
+                                    <a href="{{ route('piar.annual_report.pdf', $student->piar->id) }}"
+                                       target="_blank"
+                                       class="p-1.5 md:px-3 md:py-1 text-white bg-indigo-600 rounded hover:bg-indigo-850 btn-transition flex items-center justify-center"
+                                       title="Informe Anual">
+                                        <i class="bi bi-file-earmark-bar-graph md:hidden"></i><span class="hidden md:inline text-[10px] leading-tight">Inf. Anual</span>
+                                    </a>
+                                @else
+                                    <button class="p-1.5 md:px-3 md:py-1 text-white bg-gray-400 rounded cursor-not-allowed opacity-60 flex items-center justify-center" 
+                                            disabled title="Sin PIAR">
+                                        <i class="bi bi-file-earmark-bar-graph md:hidden"></i><span class="hidden md:inline text-[10px] leading-tight">Inf. Anual</span>
                                     </button>
                                 @endif
                             </div>

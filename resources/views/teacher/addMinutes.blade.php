@@ -95,12 +95,19 @@
                                             <i class="bi bi-journal-check mr-1 md:mr-1.5"></i>
                                             Periodos
                                         </a>
-
                                     @else
                                         <span class="inline-flex items-center justify-center px-3 py-1.5 md:px-4 md:py-2 rounded-lg bg-amber-50 text-amber-700 text-[10px] font-bold border border-amber-200">
                                             <i class="bi bi-hourglass-split mr-1 md:mr-1.5 animate-pulse"></i>
                                             PENDIENTE PSICO
                                         </span>
+                                    @endif
+
+                                    @if(Auth::user()->group_director === $student->id_group && $student->piar)
+                                        <a href="{{ route('piar.annual_report.edit', $student->piar->id) }}" 
+                                           class="inline-flex items-center justify-center px-2.5 py-1.5 md:px-3 md:py-2 text-[10px] md:text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg shadow-sm transition-all btn-transition">
+                                            <i class="bi bi-file-earmark-bar-graph mr-1 md:mr-1.5"></i>
+                                            Inf. Anual
+                                        </a>
                                     @endif
                                 </div>
                             </td>

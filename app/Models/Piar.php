@@ -41,4 +41,9 @@ class Piar extends Model
     {
         return $this->hasMany(PiarFamilyActivity::class);
     }
+
+    public function annualReport()
+    {
+        return $this->hasOne(PiarAnnualReport::class, 'piar_id');
+    }
 }
