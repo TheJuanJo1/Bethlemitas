@@ -20,3 +20,13 @@ yarn-error.log
 /.vscode
 /.zed
 /.zip
+
+# Archivos generados por usuarios
+/public/Imagenes_Firma/
+/public/Imagenes_Perfil/
+/public/piars/
+
+# Si también existe en public_html (Hostinger)
+/public_html/Imagenes_Firma/
+/public_html/Imagenes_Perfil/
+/public_html/piars/
