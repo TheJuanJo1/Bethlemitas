@@ -154,6 +154,9 @@ class PsicoController extends Controller
             ->latest()
             ->first();
 
+        // Retrieve the teacher who made the referral, if available
+        $referralTeacher = $info_referral ? $info_referral->user_teacher : null;
+
         $report = Psychoorientation::where('id_user_student', $id)
             ->latest()
             ->first();
@@ -166,7 +169,8 @@ class PsicoController extends Controller
             'info_referral',
             'degrees',
             'groups',
-            'report'
+            'report',
+            'referralTeacher'
         ));
     }
 
@@ -220,11 +224,16 @@ class PsicoController extends Controller
 
         $info_student = Users_student::findOrFail($id);
 
+        // Retrieve the teacher who made the latest referral for this student
+        $latestReferral = Referral::where('id_user_student', $id)->latest()->first();
+        $referralTeacher = $latestReferral ? $latestReferral->user_teacher : null;
+
         return view('psycho.addReportStudent', compact(
             'groups',
             'degrees',
             'states',
-            'info_student'
+            'info_student',
+            'referralTeacher'
         ));
     }
 

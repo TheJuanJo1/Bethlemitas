@@ -16,6 +16,7 @@
                 <div>
                     <h1 class="text-xl font-black text-slate-800 tracking-tight">Informe de la consulta</h1>
                     <p class="text-slate-500 text-[10px] font-bold uppercase tracking-widest">Registro de nueva sesión</p>
+                    <p class="text-xs text-green-500">Remitido por: {{ $referralTeacher->name ?? '' }} {{ $referralTeacher->last_name ?? '' }}</p>
                 </div>
             </div>
         </div>

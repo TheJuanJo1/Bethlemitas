@@ -45,6 +45,7 @@
             <div>
                 <h1 class="text-xl md:text-2xl font-bold">Detalles de Remisión</h1>
                 <p class="text-xs text-blue-300 opacity-80">Expediente de {{ $info_student->name }} {{ $info_student->last_name }}</p>
+                <p class="text-xs text-green-500">Remitido por: {{ $referralTeacher->name ?? '' }} {{ $referralTeacher->last_name ?? '' }}</p>
             </div>
         </div>
 
