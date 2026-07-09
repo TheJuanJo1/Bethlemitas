@@ -22,7 +22,8 @@
             background: #e5e5e5; padding: 5px; text-align: center;
             margin-top: 10px; border: 1px solid #000;
         }
-        table { width: 100%; border-collapse: collapse; margin-bottom: 15px; table-layout: fixed; }
+        table { width: 100%; border-collapse: collapse; margin-bottom: 15px; table-layout: fixed; page-break-inside: avoid; }
+        tr { page-break-inside: avoid; }
         table, th, td { border: 1px solid black; }
         th, td { padding: 4px; vertical-align: top; word-wrap: break-word; }
         th { background: #f2f2f2; text-align: center; font-size: 9px; font-weight: bold; }
@@ -131,37 +132,64 @@
             <table>
                 <thead>
                     <tr>
-                        <th style="width: 30px;">ÁREAS</th>
-                        <th style="width: 23%;">OBJETIVOS / PROPÓSITOS (EBC / DBA)</th>
-                        <th style="width: 23%;">BARRERAS EVIDENCIADAS</th>
-                        <th style="width: 28%;">AJUSTES RAZONABLES (Apoyos)</th>
-                        <th>EVALUACIÓN DE AJUSTES (SIEE)</th>
+                        <th style="width: 12%;">ÁREAS</th>
+                        <th style="width: 22%;">OBJETIVOS / PROPÓSITOS (EBC / DBA)</th>
+                        <th style="width: 22%;">BARRERAS EVIDENCIADAS</th>
+                        <th style="width: 24%;">AJUSTES RAZONABLES (Apoyos)</th>
+                        <th style="width: 20%;">EVALUACIÓN DE AJUSTES (SIEE)</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
-                        <td rowspan="3" class="vertical-text">
-                            @foreach(str_split($row->area ?? 'AREA') as $char){{ $char }}<br>@endforeach
+                        <td style="font-weight: bold; text-align: center; vertical-align: middle; background: #fafafa; font-size: 9px;">
+                            {{ $row->area ?? 'N/A' }}
                         </td>
-                        <td rowspan="3">{{ $row->cleanField('objetivo') }}</td>
-                        <td rowspan="3">{{ $row->cleanField('barrera') }}</td>
-                        <td><strong>Ajuste Curricular:</strong><br>{{ $row->cleanField('ajuste_curricular') }}</td>
-                        <td rowspan="3">{{ $row->cleanField('evaluacion') }}</td>
+                        <td>{{ $row->cleanField('objetivo') }}</td>
+                        <td>{{ $row->cleanField('barrera') }}</td>
+                        <td>
+                            <div style="margin-bottom: 6px;">
+                                <strong>Ajuste Curricular:</strong><br>
+                                {{ $row->cleanField('ajuste_curricular') ?: 'N/A' }}
+                            </div>
+                            <div style="margin-bottom: 6px;">
+                                <strong>Ajuste Metodológico:</strong><br>
+                                {{ $row->cleanField('ajuste_metodologico') ?: 'N/A' }}
+                            </div>
+                            <div>
+                                <strong>Ajuste Evaluativo:</strong><br>
+                                {{ $row->cleanField('ajuste_evaluativo') ?: 'N/A' }}
+                            </div>
+                        </td>
+                        <td>{{ $row->cleanField('evaluacion') }}</td>
                     </tr>
-                    <tr><td><strong>Ajuste Metodológico:</strong><br>{{ $row->cleanField('ajuste_metodologico') }}</td></tr>
-                    <tr><td><strong>Ajuste Evaluativo:</strong><br>{{ $row->cleanField('ajuste_evaluativo') }}</td></tr>
+
+                    <tr style="background: #f2f2f2;">
+                        <th colspan="5" style="text-align: left; font-size: 8px; font-weight: bold; padding: 4px 6px;">
+                            OTROS AJUSTES
+                        </th>
+                    </tr>
                     <tr>
-                        <td rowspan="5" class="vertical-text">O<br>T<br>R<br>A<br>S</td>
-                        <td class="inner-label">Convivencia</td>
-                        <td colspan="3">{{ $row->cleanField('convivencia') }}</td>
+                        <td colspan="2"><strong>Convivencia:</strong></td>
+                        <td colspan="3">{{ $row->cleanField('convivencia') ?: 'N/A' }}</td>
                     </tr>
-                    <tr><td class="inner-label">Socialización</td><td colspan="3">{{ $row->cleanField('socializacion') }}</td></tr>
-                    <tr><td class="inner-label">Participación</td><td colspan="3">{{ $row->cleanField('participacion') }}</td></tr>
-                    <tr><td class="inner-label">Autonomía</td><td colspan="3">{{ $row->cleanField('autonomia') }}</td></tr>
-                    <tr><td class="inner-label">Autocontrol</td><td colspan="3">{{ $row->cleanField('autocontrol') }}</td></tr>
+                    <tr>
+                        <td colspan="2"><strong>Socialización:</strong></td>
+                        <td colspan="3">{{ $row->cleanField('socializacion') ?: 'N/A' }}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2"><strong>Participación:</strong></td>
+                        <td colspan="3">{{ $row->cleanField('participacion') ?: 'N/A' }}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2"><strong>Autonomía:</strong></td>
+                        <td colspan="3">{{ $row->cleanField('autonomia') ?: 'N/A' }}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2"><strong>Autocontrol:</strong></td>
+                        <td colspan="3">{{ $row->cleanField('autocontrol') ?: 'N/A' }}</td>
+                    </tr>
                 </tbody>
             </table>
-            <div style="height: 10px;"></div>
         @empty
             <p style="text-align: center; font-style: italic; color: #666;">Sin ajustes registrados para este periodo.</p>
         @endforelse

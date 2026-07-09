@@ -50,6 +50,10 @@
             table-layout: fixed; /* Fuerza a respetar los anchos */
         }
 
+        tr {
+            page-break-inside: avoid;
+        }
+
         table th, table td {
             border: 1px solid #cbd5e1;
             padding: 6px 4px;
