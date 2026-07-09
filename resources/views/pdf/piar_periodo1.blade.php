@@ -136,17 +136,17 @@
                     <small style="color: #64748b;">{{ $a->teacher->last_name ?? '' }}</small>
                 </td>
                 <td class="text-center"><strong>{{ $a->area }}</strong></td>
-                <td>{{ strip_tags($a->objetivo) }}</td>
-                <td>{{ strip_tags($a->barrera) }}</td>
-                <td>{{ strip_tags($a->ajuste_curricular) }}</td>
-                <td>{{ strip_tags($a->ajuste_metodologico) }}</td>
-                <td>{{ strip_tags($a->ajuste_evaluativo) }}</td>
-                <td class="text-center">{{ strip_tags($a->convivencia) }}</td>
-                <td class="text-center">{{ strip_tags($a->socializacion) }}</td>
-                <td class="text-center">{{ strip_tags($a->participacion) }}</td>
-                <td class="text-center">{{ strip_tags($a->autonomia) }}</td>
-                <td class="text-center">{{ strip_tags($a->autocontrol) }}</td>
-                <td class="col-eval">{{ strip_tags($a->evaluacion) }}</td>
+                <td>{{ $a->cleanField('objetivo') }}</td>
+                <td>{{ $a->cleanField('barrera') }}</td>
+                <td>{{ $a->cleanField('ajuste_curricular') }}</td>
+                <td>{{ $a->cleanField('ajuste_metodologico') }}</td>
+                <td>{{ $a->cleanField('ajuste_evaluativo') }}</td>
+                <td class="text-center">{{ $a->cleanField('convivencia') }}</td>
+                <td class="text-center">{{ $a->cleanField('socializacion') }}</td>
+                <td class="text-center">{{ $a->cleanField('participacion') }}</td>
+                <td class="text-center">{{ $a->cleanField('autonomia') }}</td>
+                <td class="text-center">{{ $a->cleanField('autocontrol') }}</td>
+                <td class="col-eval">{{ $a->cleanField('evaluacion') }}</td>
             </tr>
             @endforeach
         </tbody>

@@ -77,23 +77,23 @@
         <tbody>
             <tr>
                 <td><strong>Competencias, habilidades y/o saberes adquiridos:</strong></td>
-                <td>{!! !empty($annualReport->competencies) ? nl2br(e(strip_tags($annualReport->competencies))) : '<span style="color:#aaa; font-style:italic;">No registrado</span>' !!}</td>
+                <td>{!! !empty($annualReport->competencies) ? nl2br(e($annualReport->cleanField('competencies'))) : '<span style="color:#aaa; font-style:italic;">No registrado</span>' !!}</td>
             </tr>
             <tr>
                 <td><strong>Dificultades y/o necesidades persistentes:</strong></td>
-                <td>{!! !empty($annualReport->aspects) ? nl2br(e(strip_tags($annualReport->aspects))) : '<span style="color:#aaa; font-style:italic;">No registrado</span>' !!}</td>
+                <td>{!! !empty($annualReport->aspects) ? nl2br(e($annualReport->cleanField('aspects'))) : '<span style="color:#aaa; font-style:italic;">No registrado</span>' !!}</td>
             </tr>
             <tr>
                 <td><strong>Observaciones sobre comportamiento y convivencia escolar:</strong></td>
-                <td>{!! !empty($annualReport->behavior_observation) ? nl2br(e(strip_tags($annualReport->behavior_observation))) : '<span style="color:#aaa; font-style:italic;">No registrado</span>' !!}</td>
+                <td>{!! !empty($annualReport->behavior_observation) ? nl2br(e($annualReport->cleanField('behavior_observation'))) : '<span style="color:#aaa; font-style:italic;">No registrado</span>' !!}</td>
             </tr>
             <tr>
                 <td><strong>Observaciones sobre desempeño académico:</strong></td>
-                <td>{!! !empty($annualReport->academic_observation) ? nl2br(e(strip_tags($annualReport->academic_observation))) : '<span style="color:#aaa; font-style:italic;">No registrado</span>' !!}</td>
+                <td>{!! !empty($annualReport->academic_observation) ? nl2br(e($annualReport->cleanField('academic_observation'))) : '<span style="color:#aaa; font-style:italic;">No registrado</span>' !!}</td>
             </tr>
             <tr>
                 <td><strong>Recomendaciones para el siguiente año escolar (para la familia, docentes y directivos):</strong></td>
-                <td>{!! !empty($annualReport->recommendations) ? nl2br(e(strip_tags($annualReport->recommendations))) : '<span style="color:#aaa; font-style:italic;">No registrado</span>' !!}</td>
+                <td>{!! !empty($annualReport->recommendations) ? nl2br(e($annualReport->cleanField('recommendations'))) : '<span style="color:#aaa; font-style:italic;">No registrado</span>' !!}</td>
             </tr>
         </tbody>
     </table>

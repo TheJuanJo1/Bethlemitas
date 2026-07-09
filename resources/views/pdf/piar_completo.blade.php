@@ -224,38 +224,38 @@
                                 {{ $char }}<br>
                             @endforeach
                         </td>
-                        <td rowspan="3">{{ $row->objetivo ?? '' }}</td>
-                        <td rowspan="3">{{ $row->barrera ?? '' }}</td>
-                        <td style="height: 40px;"><strong>Ajuste Currícular:</strong><br>{{ $row->ajuste_curricular ?? '' }}</td>
-                        <td rowspan="3">{{ $row->evaluacion ?? '' }}</td>
+                        <td rowspan="3">{{ $row->cleanField('objetivo') }}</td>
+                        <td rowspan="3">{{ $row->cleanField('barrera') }}</td>
+                        <td style="height: 40px;"><strong>Ajuste Currícular:</strong><br>{{ $row->cleanField('ajuste_curricular') }}</td>
+                        <td rowspan="3">{{ $row->cleanField('evaluacion') }}</td>
                     </tr>
                     <tr>
-                        <td style="height: 40px;"><strong>Ajuste Metodologíco:</strong><br>{{ $row->ajuste_metodologico ?? '' }}</td>
+                        <td style="height: 40px;"><strong>Ajuste Metodologíco:</strong><br>{{ $row->cleanField('ajuste_metodologico') }}</td>
                     </tr>
                     <tr>
-                        <td style="height: 40px;"><strong>Ajuste Evaluativo:</strong><br>{{ $row->ajuste_evaluativo ?? '' }}</td>
+                        <td style="height: 40px;"><strong>Ajuste Evaluativo:</strong><br>{{ $row->cleanField('ajuste_evaluativo') }}</td>
                     </tr>
 
                     <tr>
                         <td rowspan="5" class="vertical-text">O<br>T<br>R<br>A<br>S</td>
                         <td class="inner-label">Convivencia</td>
-                        <td colspan="3">{{ $row->convivencia ?? '' }}</td>
+                        <td colspan="3">{{ $row->cleanField('convivencia') }}</td>
                     </tr>
                     <tr>
                         <td class="inner-label">Socialización</td>
-                        <td colspan="3">{{ $row->socializacion ?? '' }}</td>
+                        <td colspan="3">{{ $row->cleanField('socializacion') }}</td>
                     </tr>
                     <tr>
                         <td class="inner-label">Participación</td>
-                        <td colspan="3">{{ $row->participacion ?? '' }}</td>
+                        <td colspan="3">{{ $row->cleanField('participacion') }}</td>
                     </tr>
                     <tr>
                         <td class="inner-label">Autonomía</td>
-                        <td colspan="3">{{ $row->autonomia ?? '' }}</td>
+                        <td colspan="3">{{ $row->cleanField('autonomia') }}</td>
                     </tr>
                     <tr>
                         <td class="inner-label">Autocontrol</td>
-                        <td colspan="3">{{ $row->autocontrol ?? '' }}</td>
+                        <td colspan="3">{{ $row->cleanField('autocontrol') }}</td>
                     </tr>
                 </tbody>
             </table>

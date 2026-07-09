@@ -147,7 +147,7 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @forelse($familyActivities as $activity)
+                                    @forelse($familyActivities->where('frequency', '!=', 'N/A') as $activity)
                                     <tr>
                                         <td class="border border-black p-2 align-top font-semibold">{{ $activity->activity }}</td>
                                         <td class="border border-black p-2 align-top text-justify">{{ $activity->strategy }}</td>

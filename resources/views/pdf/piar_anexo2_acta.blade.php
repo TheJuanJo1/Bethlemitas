@@ -143,22 +143,22 @@
                         <td rowspan="3" class="vertical-text">
                             @foreach(str_split($row->area ?? 'AREA') as $char){{ $char }}<br>@endforeach
                         </td>
-                        <td rowspan="3">{{ strip_tags($row->objetivo ?? '') }}</td>
-                        <td rowspan="3">{{ strip_tags($row->barrera ?? '') }}</td>
-                        <td><strong>Ajuste Curricular:</strong><br>{{ strip_tags($row->ajuste_curricular ?? '') }}</td>
-                        <td rowspan="3">{{ strip_tags($row->evaluacion ?? '') }}</td>
+                        <td rowspan="3">{{ $row->cleanField('objetivo') }}</td>
+                        <td rowspan="3">{{ $row->cleanField('barrera') }}</td>
+                        <td><strong>Ajuste Curricular:</strong><br>{{ $row->cleanField('ajuste_curricular') }}</td>
+                        <td rowspan="3">{{ $row->cleanField('evaluacion') }}</td>
                     </tr>
-                    <tr><td><strong>Ajuste Metodológico:</strong><br>{{ strip_tags($row->ajuste_metodologico ?? '') }}</td></tr>
-                    <tr><td><strong>Ajuste Evaluativo:</strong><br>{{ strip_tags($row->ajuste_evaluativo ?? '') }}</td></tr>
+                    <tr><td><strong>Ajuste Metodológico:</strong><br>{{ $row->cleanField('ajuste_metodologico') }}</td></tr>
+                    <tr><td><strong>Ajuste Evaluativo:</strong><br>{{ $row->cleanField('ajuste_evaluativo') }}</td></tr>
                     <tr>
                         <td rowspan="5" class="vertical-text">O<br>T<br>R<br>A<br>S</td>
                         <td class="inner-label">Convivencia</td>
-                        <td colspan="3">{{ strip_tags($row->convivencia ?? '') }}</td>
+                        <td colspan="3">{{ $row->cleanField('convivencia') }}</td>
                     </tr>
-                    <tr><td class="inner-label">Socialización</td><td colspan="3">{{ strip_tags($row->socializacion ?? '') }}</td></tr>
-                    <tr><td class="inner-label">Participación</td><td colspan="3">{{ strip_tags($row->participacion ?? '') }}</td></tr>
-                    <tr><td class="inner-label">Autonomía</td><td colspan="3">{{ strip_tags($row->autonomia ?? '') }}</td></tr>
-                    <tr><td class="inner-label">Autocontrol</td><td colspan="3">{{ strip_tags($row->autocontrol ?? '') }}</td></tr>
+                    <tr><td class="inner-label">Socialización</td><td colspan="3">{{ $row->cleanField('socializacion') }}</td></tr>
+                    <tr><td class="inner-label">Participación</td><td colspan="3">{{ $row->cleanField('participacion') }}</td></tr>
+                    <tr><td class="inner-label">Autonomía</td><td colspan="3">{{ $row->cleanField('autonomia') }}</td></tr>
+                    <tr><td class="inner-label">Autocontrol</td><td colspan="3">{{ $row->cleanField('autocontrol') }}</td></tr>
                 </tbody>
             </table>
             <div style="height: 10px;"></div>

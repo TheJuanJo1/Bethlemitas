@@ -111,10 +111,10 @@
             <th>Descripción de la estrategia / Compromiso</th>
             <th style="width: 18%;">Frecuencia</th>
         </tr>
-        @forelse($bloque['familyActivities'] as $activity)
+        @forelse($bloque['familyActivities']->where('frequency', '!=', 'N/A') as $activity)
         <tr>
             <td><strong>{{ $activity->activity }}</strong></td>
-            <td>{!! nl2br(e(strip_tags($activity->strategy ?? ''))) !!}</td>
+            <td>{!! nl2br(e($activity->cleanField('strategy'))) !!}</td>
             <td class="text-center">
                 @if($activity->frequency == 'D') D (Diaria)
                 @elseif($activity->frequency == 'S') S (Semanal)
