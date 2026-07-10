@@ -21,7 +21,7 @@
 
 <tr>
 
-<th>Área</th>
+<th>Asignatura</th>
 <th>Objetivo</th>
 <th>Barrera</th>
 <th>Ajuste</th>

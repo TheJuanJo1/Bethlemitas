@@ -94,7 +94,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
             container.innerHTML = '';
             description.textContent = selectedAreas.length
-                ? 'Para cada área, asigna el/los grupo(s) donde el docente impartirá la materia.'
+                ? 'Para cada asignatura, asigna el/los grupo(s) donde el docente impartirá la materia.'
                 : '';
 
             selectedAreas.forEach(area => {

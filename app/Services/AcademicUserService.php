@@ -150,7 +150,7 @@ class AcademicUserService
 
             if ($conflict) {
                 throw new \Exception(
-                    "El área {$conflict->name_area} ya está asignada al docente {$conflict->name} {$conflict->last_name} en el grupo {$conflict->group}."
+                    "La Asignatura {$conflict->name_area} ya está asignada al docente {$conflict->name} {$conflict->last_name} en el grupo {$conflict->group}."
                 );
             }
         }

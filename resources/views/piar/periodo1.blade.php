@@ -188,7 +188,7 @@
                 <table>
                     <thead>
                         <tr>
-                            <th rowspan="2" style="min-width: 180px;">Área</th>
+                            <th rowspan="2" style="min-width: 180px;">Asignatura</th>
                             <th rowspan="2">Objetivo / Propósito</th>
                             <th rowspan="2">Barreras</th>
                             <th colspan="3" style="background: #bfdbfe; border-bottom: 2px solid var(--primary);">Ajustes Razonables</th>
@@ -209,7 +209,7 @@
                         <tr>
                             <td>
                                 <select name="area[]" class="form-control area-select" required style="font-weight: bold;">
-                                    <option value="">-- Seleccione Área --</option>
+                                    <option value="">-- Seleccione Asignatura --</option>
                                     @foreach($areas as $area)
                                         <option value="{{ $area->name_area }}">{{ $area->name_area }}</option>
                                     @endforeach

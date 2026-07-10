@@ -89,7 +89,7 @@
                             <td class="px-4 md:px-6 py-5 hidden md:table-cell">
                                 <div class="flex flex-col gap-1">
                                     <div class="flex items-center gap-2">
-                                        <span class="text-[9px] font-bold text-slate-400 uppercase min-w-[40px]">Áreas:</span>
+                                        <span class="text-[9px] font-bold text-slate-400 uppercase min-w-[40px]">Asignaturas:</span>
                                         <span class="text-[11px] text-slate-600 font-medium truncate max-w-[200px]" title="{{ $user->areas->unique('id')->pluck('name_area')->implode(', ') }}">
                                             {{ $user->hasRole('docente') && $user->areas->isNotEmpty() ? $user->areas->unique('id')->pluck('name_area')->implode(', ') : '---' }}
                                         </span>

@@ -42,7 +42,7 @@ class PiarFirmasResolver
             }
 
             $area = trim((string) ($row->area ?? ''));
-            $area = $area !== '' ? $area : 'Área no especificada';
+            $area = $area !== '' ? $area : 'Asignatura no especificada';
 
             if (! in_array($area, $agrupados[$id]['areas'], true)) {
                 $agrupados[$id]['areas'][] = $area;
@@ -74,16 +74,16 @@ class PiarFirmasResolver
         }
 
         if (count($areas) === 1) {
-            return 'Área: '.$areas[0];
+            return 'Asignatura: '.$areas[0];
         }
 
         if (count($areas) === 2) {
-            return 'Áreas: '.$areas[0].' y '.$areas[1];
+            return 'Asignaturas: '.$areas[0].' y '.$areas[1];
         }
 
         $ultima = array_pop($areas);
 
-        return 'Áreas: '.implode(', ', $areas).' y '.$ultima;
+        return 'Asignaturas: '.implode(', ', $areas).' y '.$ultima;
     }
 
     /**

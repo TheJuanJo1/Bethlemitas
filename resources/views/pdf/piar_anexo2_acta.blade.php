@@ -132,7 +132,7 @@
             <table>
                 <thead>
                     <tr>
-                        <th style="width: 12%;">ÁREAS</th>
+                        <th style="width: 12%;">Asignaturas</th>
                         <th style="width: 22%;">OBJETIVOS / PROPÓSITOS (EBC / DBA)</th>
                         <th style="width: 22%;">BARRERAS EVIDENCIADAS</th>
                         <th style="width: 24%;">AJUSTES RAZONABLES (Apoyos)</th>

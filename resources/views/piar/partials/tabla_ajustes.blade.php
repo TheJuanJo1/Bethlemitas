@@ -1,7 +1,7 @@
 <table>
     <thead>
         <tr>
-            <th>Área</th>
+            <th>Asignatura</th>
             <th>Objetivo</th>
             <th>Barrera</th>
             <th>Curricular</th>

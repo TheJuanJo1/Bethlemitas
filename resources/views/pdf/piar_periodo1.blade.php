@@ -118,7 +118,7 @@
         <thead>
             <tr>
                 <th class="col-teacher">Docente</th>
-                <th class="col-area">Área</th>
+                <th class="col-area">Asignatura</th>
                 <th class="col-main">Objetivo</th>
                 <th class="col-main">Barrera</th>
                 <th class="col-ajustes">Ajuste Curricular</th>
