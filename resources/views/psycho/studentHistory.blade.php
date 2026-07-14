@@ -126,13 +126,9 @@
                                 <td class="px-4 py-2 text-center border">{{ $piar->created_at->format('Y-m-d') }}</td>
                                 <td class="px-4 py-2 text-center border">
                                     <div class="flex justify-center gap-4">
-                                        <a href="{{ route('piar.pdf', $piar->id) }}" target="_blank" class="text-emerald-600 hover:underline font-semibold flex items-center gap-1">
-                                            <i class="bi bi-file-earmark-pdf-fill"></i> PDF Completo
+                                        <a href="{{ route('piar.pdf.acta', ['piar' => $piar->id, 'periodo' => 'todos']) }}" target="_blank" class="text-emerald-600 hover:underline font-semibold flex items-center gap-1">
+                                            <i class="bi bi-file-earmark-pdf-fill"></i> PDF Completo (Anexo 1, 2 y 3)
                                         </a>
-                                        <a href="{{ route('piar.periodos', $piar->id) }}" class="text-blue-600 hover:underline font-semibold flex items-center gap-1">
-                                            <i class="bi bi-journal-check"></i> Ver Periodos
-                                        </a>
-                                        
                                     </div>
                                 </td>
                             </tr>
