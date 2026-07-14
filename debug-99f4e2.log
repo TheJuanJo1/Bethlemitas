@@ -76,3 +76,4 @@
 {"sessionId":"99f4e2","runId":"pre-fix","hypothesisId":"H-create-1","location":"app\/Http\/Controllers\/PiarController.php:create","message":"PIAR create accessed by psico","data":{"student_id":2,"has_piar":false},"timestamp":1782216470125}
 {"sessionId":"99f4e2","runId":"pre-fix","hypothesisId":"H-create-1","location":"app\/Http\/Controllers\/PiarController.php:create","message":"PIAR create accessed by psico","data":{"student_id":1,"has_piar":false},"timestamp":1782993446720}
 {"sessionId":"99f4e2","runId":"updated","hypothesisId":"H1","location":"storePeriodo1","message":"redirecting","data":{"piar_id":1},"timestamp":1782993512112}
+{"sessionId":"99f4e2","runId":"pre-fix","hypothesisId":"H-create-1","location":"app\/Http\/Controllers\/PiarController.php:create","message":"PIAR create accessed by psico","data":{"student_id":1,"has_piar":false},"timestamp":1784041665205}

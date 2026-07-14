@@ -373,10 +373,16 @@ class PsicoController extends Controller
             ->orderBy('created_at', 'desc')
             ->paginate(10);
 
+        $piars = \App\Models\Piar::where('student_id', $id)
+            ->with('teacher')
+            ->orderBy('year', 'desc')
+            ->get();
+
         return view('psycho.studentHistory', compact(
             'student',
             'referrals',
-            'reports'
+            'reports',
+            'piars'
         ));
     }
 
@@ -509,22 +515,24 @@ class PsicoController extends Controller
 
      public function show_piar_periods_history(string $id)
     {
-         // 1. Buscamos al estudiante con su relación piar
-         $student = Users_student::with('piar')->findOrFail($id);
+         // 1. Buscamos al estudiante
+         $student = Users_student::findOrFail($id);
          
-         if (!$student->piar) {
+         // 2. Traemos todos los ids de PIAR de este estudiante
+         $piarIds = \App\Models\Piar::where('student_id', $id)->pluck('id')->toArray();
+         
+         if (empty($piarIds)) {
              return back()->with('error', 'Este estudiante aún no tiene un proceso PIAR iniciado.');
          }
      
-         // 2. Traemos los ajustes usando las columnas REALES de tu tabla
-         // Usamos 'period' (sin 'o') y 'created_at' para el orden
-         $history = $student->piar->adjustments()
+         // 3. Traemos los ajustes de todos sus PIAR
+         $history = \App\Models\PiarAdjustment::whereIn('piar_id', $piarIds)
              ->orderBy('created_at', 'desc')
              ->orderBy('period', 'asc') 
              ->get()
              ->groupBy(function($item) {
-                 // Agrupamos por el año de creación (ej: 2026)
-                 return $item->created_at->format('Y'); 
+                 // Agrupamos por el año del PIAR
+                 return $item->piar->year ?? $item->created_at->format('Y'); 
              });
      
          return view('psycho.piarPeriodsHistory', compact('student', 'history'));

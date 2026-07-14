@@ -78,9 +78,14 @@ class Users_student extends Model
         return $this->hasOne(Referral::class, 'id_user_student')->latestOfMany();
     }
 
-        public function piar()
+    public function piar()
     {
-        return $this->hasOne(Piar::class,'student_id');
+        return $this->hasOne(Piar::class, 'student_id')->where('year', date('Y'));
+    }
+
+    public function piars()
+    {
+        return $this->hasMany(Piar::class, 'student_id');
     }
     
 }

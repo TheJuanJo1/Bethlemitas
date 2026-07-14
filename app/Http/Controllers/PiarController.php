@@ -79,7 +79,7 @@ class PiarController extends Controller
         // #endregion agent log
 
         // Mostrar siempre el formulario inicial; store() decide si crea o solo completa
-        return view('piar.create',compact('student'));
+        return view('piar.create',compact('student', 'piar'));
 
     }
 
@@ -111,9 +111,13 @@ class PiarController extends Controller
 
         }
 
-        // Crear caracterización si no existe
-        if(!$piar->characteristics){
-
+        // Crear/Actualizar caracterización
+        if($piar->characteristics){
+            $piar->characteristics->update([
+                'descripcion_estudiante'=>$request->descripcion,
+                'habilidades'=>$request->habilidades,
+            ]);
+        } else {
             PiarCharacteristic::create([
                 'piar_id'=>$piar->id,
                 'descripcion_estudiante'=>$request->descripcion,
@@ -122,7 +126,6 @@ class PiarController extends Controller
                 'habilidades'=>$request->habilidades,
                 'apoyos_requeridos'=>''
             ]);
-
         }
 
         return redirect()

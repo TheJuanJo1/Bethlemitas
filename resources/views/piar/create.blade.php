@@ -153,7 +153,7 @@
         <span>Volver</span>
     </a>
 
-    <h2 style="font-weight: 800; color: #0f172a; margin-bottom: 2rem;">Crear Nuevo <span style="color: var(--primary)">PIAR</span></h2>
+    <h2 style="font-weight: 800; color: #0f172a; margin-bottom: 2rem;">{{ $piar ? 'Editar' : 'Crear Nuevo' }} <span style="color: var(--primary)">PIAR</span></h2>
 
     <form action="{{ route('piar.store') }}" method="POST">
         @csrf
@@ -228,7 +228,7 @@
                 <div class="form-group" style="grid-column: span 2;">
                     <label style="line-height: 1.4; color: #1e293b;">1. Descripción general del estudiante con énfasis en gustos e intereses o aspectos que le desagradan, expectativas del estudiante y la familia:</label>
                     <div class="quill-wrapper">
-                        <div id="editor_descripcion" style="min-height: 60px;">{!! old('descripcion') !!}</div>
+                        <div id="editor_descripcion" style="min-height: 60px;">{!! old('descripcion', $piar?->characteristics?->descripcion_estudiante) !!}</div>
                         <input type="hidden" name="descripcion" id="input_descripcion">
                     </div>
                 </div>
@@ -236,7 +236,7 @@
                 <div class="form-group" style="grid-column: span 2; margin-top: 1rem;">
                     <label style="line-height: 1.4; color: #1e293b;">2. Descripción en términos de lo que hace, puede hacer o requiere apoyo el estudiante para favorecer su proceso educativo. Indique las habilidades, competencias, cualidades y aprendizajes con los que cuenta el estudiante para el grado en el que fue matriculado:</label>
                     <div class="quill-wrapper">
-                        <div id="editor_habilidades" style="min-height: 60px;">{!! old('habilidades') !!}</div>
+                        <div id="editor_habilidades" style="min-height: 60px;">{!! old('habilidades', $piar?->characteristics?->habilidades) !!}</div>
                         <input type="hidden" name="habilidades" id="input_habilidades">
                     </div>
                 </div>
@@ -346,7 +346,7 @@
 
         <div style="text-align:right; margin-bottom: 5rem;">
             <button type="submit" class="btn-save">
-                <i class="bi bi-save-fill" style="margin-right: 8px;"></i> REGISTRAR PIAR
+                <i class="bi bi-save-fill" style="margin-right: 8px;"></i> {{ $piar ? 'ACTUALIZAR PIAR' : 'REGISTRAR PIAR' }}
             </button>
         </div>
 

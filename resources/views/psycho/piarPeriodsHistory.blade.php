@@ -61,12 +61,12 @@
                                 </p>
 
                                 <div class="flex gap-2">
-                                <a href="{{ route('piar.pdf.period', ['piar' => $student->piar->id, 'adjustment' => $adjustment->id]) }}" 
+                                <a href="{{ route('piar.pdf.period', ['piar' => $adjustment->piar_id, 'adjustment' => $adjustment->id]) }}" 
                                 target="_blank"
                                 class="flex-1 text-center py-2 bg-emerald-50 text-emerald-700 text-xs font-bold rounded border border-emerald-100 hover:bg-emerald-100 transition">
                                     <i class="bi bi-file-earmark-pdf"></i> PDF
                                 </a>
-                                    <a href="{{ route('piar.psico.ajustes.edit', $student->piar->id) }}?year={{ $year }}&period={{ $adjustment->period }}" 
+                                    <a href="{{ route('piar.psico.ajustes.edit', $adjustment->piar_id) }}?year={{ $year }}&period={{ $adjustment->period }}" 
                                        class="px-3 py-2 bg-slate-50 text-slate-600 text-xs font-bold rounded border border-slate-200 hover:bg-slate-100 transition">
                                         <i class="bi bi-eye"></i>
                                     </a>
